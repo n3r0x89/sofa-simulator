@@ -439,6 +439,7 @@ function drawRoom(t){const wall=L.wall;
   if(S.furn.massage){const m=L.massage;if(!spr('massage',m)){rr(m.x,m.y,m.w,m.h,26,'#1d1d1f');rr(m.x+14,m.y+14,m.w-28,m.h*.55,18,'#2c2c30')}}
   // puddles
   for(const p of S.puddles){const sh=1-p.taps*.25,pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
+  drawEmpties(t,'back');
   if(S.furn.gold){const g=L.gold;if(!spr('goldchair',g)){rr(g.x,g.y,g.w,g.h,30,grad(g.y,g.y+g.h,'#ffe27a','#b8860b'));rr(g.x+18,g.y+20,g.w-36,g.h*.5,20,'#a3122a')}}
 }
 
@@ -501,8 +502,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   if(!L.roomMode&&!spr('table',{x:10,y:y0-10,w:W-20,h:y1-y0+40})){cx.beginPath();cx.moveTo(70,y0);cx.lineTo(W-70,y0);cx.lineTo(W-14,y1);cx.lineTo(14,y1);cx.closePath();cx.fillStyle=grad(y0,y1,'#7a5434','#5e3f25');cx.fill();cx.fillStyle='#43301e';cx.fillRect(14,y1,W-28,14);
     ell(200,y0+50,16,6,'#00000022');ell(360,y0+70,20,7,'#00000022')}
   hit('table',L.tableHit);
-  // empties: one bottle per drunk bottle
-  EH=[];drawEmpties(t);
+
   // basket
   const bk=L.basket;if(bk){const TH=[0,1,3,5,8,12,16,20];let st=0;for(let i=0;i<TH.length;i++)if(S.basket>=TH[i])st=i;const bkk='basket_'+st;
     if(SP[bkk]&&SP[bkk].naturalWidth)spr(bkk,bk);else if(S.basket>0)spr('basket',bk);
@@ -532,6 +532,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   const k=L.catalog;if(!spr('catalog',k)){rr(k.x,k.y,k.w,k.h,3,'#e8e2d0');rr(k.x+6,k.y+6,k.w-12,k.h-18,2,'#b5552c');cx.fillStyle='#333';cx.font='800 8px Nunito,sans-serif';cx.fillText('MÖBEL',k.x+k.w/2,k.y+k.h-4)}hit('catalog',k);
   // controller
   if(S.furn.console&&S.right!=='ctrl'){const g=L.ctrl;if(!spr('controller',g)){rr(g.x,g.y,g.w,g.h,12,'#1a1a1a');ell(g.x+14,g.y+12,4,4,'#555');ell(g.x+g.w-14,g.y+12,4,4,'#555')}hit('ctrl',g)}
+  drawEmpties(t,'front');
   for(const h of EH)hit('empty',h);
 }
 let handAnim={drink:0,throwT:0,throwFrom:null,puff:0,snack:0,capT:0,cigFly:0};
@@ -556,25 +557,24 @@ function smokeTick(t){const dt=Math.min(.1,t-(smkLast||t));smkLast=t;
   SMK=SMK.filter(p=>p.life<p.max&&p.y>-40);if(SMK.length>260)SMK.splice(0,SMK.length-260);
   for(const p of SMK){const al=p.a*(1-p.life/p.max);const g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,'rgba(225,228,235,'+al+')');g.addColorStop(1,'rgba(225,228,235,0)');cx.fillStyle=g;cx.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2)}}
 function exhale(){for(let k=0;k<14;k++)SMK.push({x:W*.5+R(-30,30),y:H*.98,vx:R(-30,30),vy:R(-110,-70),r:R(8,16),a:.38,life:0,max:R(2.5,4)})}
-function emptySlots(){if(L.slots&&L.slotsW===W&&L.slotsH===H)return L.slots;const out=[];const m=L.mm;if(!m)return out;
+const SLOTDEF=[ // [x,y,lying] in room-image coords, filled in this order
+ [470,1030,0],[880,1075,1],[255,1128,0],[605,1036,0],[485,1140,1],[700,1150,0],[160,1145,1],[560,1155,0],
+ [330,960,0],[45,965,1],[420,975,1],[790,955,0],[500,950,0],[880,975,1],[300,688,0],[700,690,0],
+ [560,980,1],[835,925,0],[905,590,0],[60,598,1],[350,690,1],[380,935,0],[930,1040,0],
+ [210,447,0],[760,592,1],[455,925,0],[670,690,0],[30,925,0],[860,890,1],[230,722,0],[530,925,1],
+ [120,960,0],[820,1000,0],[400,1150,0],[640,955,1]];
+function emptySlots(){if(L.slots&&L.slotsW===W&&L.slotsH===H)return L.slots;const m=L.mm;if(!m)return[];
   let seed=97;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
-  // keep-out boxes in image coords (sixpack, pack+lighter, ashtray, remote, phone, catalog, basket)
-  const ko=[[110,960,290,1080],[325,1010,410,1090],[405,1045,515,1105],[540,1060,660,1125],[665,1000,730,1090],[735,1030,860,1140],[585,880,735,990]];
-  const zones=[[120,1060,880,1150,.7],[250,905,850,985,.3]];
-  const pts=[];let tries=0;
-  while(pts.length<60&&tries<6000){tries++;const z=rnd()<zones[0][4]?zones[0]:zones[1];const x=z[0]+rnd()*(z[2]-z[0]),y=z[1]+rnd()*(z[3]-z[1]);
-    if(ko.some(k=>x>k[0]-14&&x<k[2]+14&&y>k[1]&&y<k[3]+12))continue;if(pts.some(p=>Math.hypot(p[0]-x,(p[1]-y)*2)<(pts.length<30?62:42)))continue;pts.push([x,y])}
-  const res=pts.map(([x,y],i)=>{const p=m(x,y);const lying=rnd()<.42;return{x:p.x,y:p.y,lying,r:lying?(rnd()-.5)*1.2:(rnd()-.5)*.14,flip:rnd()<.5}});
+  const res=SLOTDEF.map(([x,y,ly])=>{const p=m(x+(rnd()-.5)*10,y);const dep=clamp(.42+.58*(y-600)/580,.45,1);return{x:p.x,y:p.y,iy:y,lying:!!ly,dep,r:ly?(rnd()-.5)*.5:(rnd()-.5)*.12,flip:rnd()<.5}});
   L.slots=res;L.slotsW=W;L.slotsH=H;return res}
-function drawEmpties(t){const n=S.empties;if(n<=0)return;
-  if(!L.roomMode){const E=L.empties;for(let i=0;i<Math.min(n,22);i++){const col=i%11,row=Math.floor(i/11);drawBottle(E.x+col*E.w/11.5+(row?E.w/23:0),E.y-row*E.h*.25,E.w/12,E.h*.75,5)}return}
-  const sl=emptySlots(),bh=L.bottleH||40,bw=bh*.34;const cnt=Math.min(n,sl.length);
-  // draw back-to-front
-  const idx=[...Array(cnt).keys()].sort((a,b)=>sl[a].y-sl[b].y);
-  for(const i of idx){const p=sl[i];cx.save();cx.translate(p.x,p.y);
+function drawEmpties(t,pass){const n=S.empties;if(pass==='back')EH=[];if(n<=0)return;
+  if(!L.roomMode){if(pass!=='front')return;const E=L.empties;for(let i=0;i<Math.min(n,22);i++){const col=i%11,row=Math.floor(i/11);drawBottle(E.x+col*E.w/11.5+(row?E.w/23:0),E.y-row*E.h*.25,E.w/12,E.h*.75,5)}return}
+  const sl=emptySlots(),cnt=Math.min(n,sl.length);
+  const idx=[...Array(cnt).keys()].filter(i=>pass==='front'?sl[i].iy>=1000:sl[i].iy<1000).sort((a,b)=>sl[a].y-sl[b].y);
+  for(const i of idx){const p=sl[i];const bh=(L.bottleH||40)*p.dep,bw=bh*.34;cx.save();cx.translate(p.x,p.y);
     if(p.lying&&SP.bottle_lying&&SP.bottle_lying.naturalWidth){const lw=bh*1.05,lh2=lw*.4;cx.rotate(p.r*.35);if(p.flip)cx.scale(-1,1);spr('bottle_lying',{x:-lw/2,y:-lh2,w:lw,h:lh2});cx.restore();EH.push({x:p.x-lw/2,y:p.y-lh2-6,w:lw,h:lh2+6});continue}
-    cx.rotate(p.r);if(!spr('bottle_5',{x:-bw/2,y:-bh,w:bw,h:bh}))drawBottle(-bw/2,-bh,bw,bh,5);cx.restore();EH.push({x:p.x-bw/2,y:p.y-bh,w:bw,h:bh*.6})}}
-let EH=[];
+    cx.rotate(p.r);if(!spr('bottle_5',{x:-bw/2,y:-bh,w:bw,h:bh}))drawBottle(-bw/2,-bh,bw,bh,5);cx.restore();EH.push({x:p.x-bw/2,y:p.y-bh,w:bw,h:bh*.6})}
+  if(n>sl.length){const extra=n-sl.length;cx.font='800 12px Nunito,sans-serif';cx.textAlign='center';cx.fillStyle='#000a';const tx='+'+extra+' Flaschen';const tw=cx.measureText(tx).width+10;const q=sl[0];if(pass==='front'){cx.fillRect(q.x-tw/2,q.y+4,tw,16);cx.fillStyle='#fff';cx.fillText(tx,q.x,q.y+16)}}}
 function toBasket(all){if(S.empties<=0)return;const k=all?S.empties:1;S.empties-=k;S.basket+=k;S.chaos=Math.max(0,S.chaos-.5*k);addXP(.5*k);snd('clink');
   if(all||S.empties===0)toast(all?k+' Flaschen in den Korb geräumt.':'Letzte Flasche im Korb. Fast so ordentlich wie ein Mensch.',S.basket+' im Korb · im Shop abgeben');
   else if(Math.random()<.3)toast(pick(['Ab in den Korb, du Pfandpenner.','Klirr. Uwe wird stolz auf dich sein.','Eine weniger. Noch hundert, du Messie.']),'Noch '+S.empties+' auf dem Tisch');checkAch()}
