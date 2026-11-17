@@ -705,13 +705,13 @@ function doneHint(k){S.hintsDone[k]=1;if(k==='zap')S.hintsDone.remote=1}
 function hintText(){if(S.lvl>4)return'';for(const[k,t]of HINTS)if(!S.hintsDone[k]){if(k==='zap'&&S.right!=='remote')continue;if(k==='drink'&&(!S.bottle||S.bottle.opened===false))continue;if(k==='open'&&!(S.bottle&&S.bottle.opened===false))continue;if(k==='put'&&S.right==='empty')continue;return t}return''}
 
 // ================= INPUT =================
-let PD=null,burpT=0,burpCnt=0,burpNext=RI(3,5),coughCnt=0,coughNext=RI(6,9);
+let PD=null,burpT=0,burpCnt=0,burpNext=RI(1,5),coughCnt=0,coughNext=RI(6,9);
 function lp(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 function hitAt(p){for(let i=HITS.length-1;i>=0;i--){const h=HITS[i];if(p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h)return h.id}return null}
 cv.addEventListener('pointerdown',e=>{initAudio();if(busyUI)return;const p=lp(e);PD={p,t:performance.now(),id:hitAt(p),last:performance.now(),acted:false};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
 cv.addEventListener('pointermove',e=>{if(!PD)return;PD.cur=lp(e)});
 cv.addEventListener('pointerup',e=>{if(!PD)return;const p=lp(e),dt=performance.now()-PD.t,dx=p.x-PD.p.x,dy=p.y-PD.p.y;const id=PD.id;const acted=PD.acted;PD=null;if(busyUI)return;
-  if(acted&&id==='bottle'){burpCnt++;if(burpCnt>=burpNext){burpCnt=0;burpNext=RI(3,5);clearTimeout(burpT);burpT=setTimeout(()=>{snd('burp');vib(60);if(Math.random()<.5)toast(T('burp'))},600)}}
+  if(acted&&id==='bottle'){burpCnt++;if(burpCnt>=burpNext){burpCnt=0;burpNext=RI(1,5);clearTimeout(burpT);burpT=setTimeout(()=>{snd('burp');vib(60);if(Math.random()<.5)toast(T('burp'))},600)}}
   if(id==='bottle'&&dy<-70&&dt<450&&Math.abs(dy)>Math.abs(dx)){throwBottle();return}
   if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)&&dt<700){if(S.right==='remote'){zap(dx<0?1:-1);return}}
   if(acted||dt>450&&(id==='bottle'||id==='right'))return;
