@@ -2,6 +2,8 @@
 
 Browserspiel für das Handy (Hochformat). Testversion.
 
+**Neue Version 2 mit echten Bildern:** https://n3r0x89.github.io/sofa-simulator/v2/ (Ordner `v2/`). Die alte 3D-Version bleibt unter dem bisherigen Link.
+
 **Nur für Erwachsene (18+).** Das Spiel zeigt Rauchen und Alkohol, hat derbe Beleidigungen und schwarzen Humor. Alle Sendungen und Personen sind erfunden.
 
 ## Spielen
