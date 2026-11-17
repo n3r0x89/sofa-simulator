@@ -136,7 +136,7 @@ const SAVE='sofasim_v2';
 function fresh(){return{
   day:1,hour:8,tot:0,lvl:1,xp:0,money:5,beer:6,snacks:2,cigs:10,
   th:20,hu:20,bo:20,chaos:0,prom:0,hang:0,mold:0,
-  empties:0,pfandStock:0,bottle:null,right:'empty',cigPuffs:0,butts:0,
+  empties:0,basket:0,pfandStock:0,bottle:null,right:'empty',cigPuffs:0,butts:0,
   ch:0,tvOn:true,powerOutUntil:0,remoteGone:0,
   furn:{},lampOn:false,fridge:0,fridgeColdAt:0,massageAt:0,
   puddles:[],stains:[],splats:[],
@@ -294,7 +294,7 @@ function dbAll(){return new Promise(res=>{if(!DB)return res({});try{const out={}
 function dbPut(k,v){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').put(v,k)}catch(e){}}
 function dbClear(){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').clear()}catch(e){}}
 function mkImg(src){const i=new Image();i.src=src;return i}
-const SPKEYS=["tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5", "crate", "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "vhs_1", "vhs_2", "vhs_3", "vhs_4", "vhs_5", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6"];
+const SPKEYS=["tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5", "crate", "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "vhs_1", "vhs_2", "vhs_3", "vhs_4", "vhs_5", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying"];
 async function loadSprites(){const base='sprites/';const mk=(k,src)=>{const i=new Image();i.onload=()=>{layout();if(k==='splash'&&mainOpen)mainMenu()};i.onerror=()=>{if(SP[k]===i)delete SP[k]};i.src=src;SP[k]=i};
   mk('room',base+'room.jpg');for(const k of SPKEYS)mk(k,base+k+'.webp');
   await dbOpen();const all=await dbAll();for(const k in all){const i=mkImg(all[k]);i.onload=()=>layout();SP[k]=i}}
@@ -366,9 +366,10 @@ function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Mat
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
    lh:m(30,1105,440,1395),rh:m(501,1105,911,1395),
    visitor:m(0,200,330,965),puddleZone:m(330,912,860,950),
-   mold:m(275,140,470,380),stainZone:m(290,120,680,620),
+   mold:m(275,140,470,380),basket:m(575,858,740,995),stainZone:m(290,120,680,620),
    vcr:m(420,700,610,758),console:m(425,765,605,852),lava:m(168,20,232,135)};
   const tw=S.furn.tv55?470:S.furn.tv43?380:265;const ti=SP[tvKey()];const th=ti&&ti.naturalWidth?tw*ti.naturalHeight/ti.naturalWidth:tw*.9;
+  L.mm=(x,y)=>({x:ox+x*k*s,y:oy+y*k*s});L.bottleH=118*k*s;L.slots=null;
   L.tv=m(513-tw/2,686-th,513+tw/2,686);L.scr={x:L.tv.x+L.tv.w*.1,y:L.tv.y+L.tv.h*.1,w:L.tv.w*.8,h:L.tv.h*.7};tvFromSprite()}
 
 // ================= DRAW HELPERS =================
@@ -494,10 +495,13 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   if(!L.roomMode&&!spr('table',{x:10,y:y0-10,w:W-20,h:y1-y0+40})){cx.beginPath();cx.moveTo(70,y0);cx.lineTo(W-70,y0);cx.lineTo(W-14,y1);cx.lineTo(14,y1);cx.closePath();cx.fillStyle=grad(y0,y1,'#7a5434','#5e3f25');cx.fill();cx.fillStyle='#43301e';cx.fillRect(14,y1,W-28,14);
     ell(200,y0+50,16,6,'#00000022');ell(360,y0+70,20,7,'#00000022')}
   hit('table',L.tableHit);
-  // empties
-  const e=S.empties,E=L.empties;if(e>0){const k=e>=10?3:e>=4?2:1;if(!spr('empties_'+k,E)){const n=Math.min(e,22);for(let i=0;i<n;i++){const col=i%11,row=Math.floor(i/11);drawBottle(E.x+col*E.w/11.5+(row?E.w/23:0),E.y-row*E.h*.25+((i*7)%5),E.w/12,E.h*.75,5)}}}
+  // empties: one bottle per drunk bottle
+  EH=[];drawEmpties(t);
+  // basket
+  const bk=L.basket;if(bk){cx.save();if(S.basket===0)cx.globalAlpha=.55;const okb=spr('basket',bk);cx.restore();if(!okb){rr(bk.x,bk.y+bk.h*.35,bk.w,bk.h*.65,8,'#e8dcc0','#b8a888')}
+    const lb=S.basket?S.basket+' im Korb':'Korb leer';cx.font='800 11px Nunito,sans-serif';cx.textAlign='center';const tw=cx.measureText(lb).width+10;cx.fillStyle='#000a';cx.fillRect(bk.x+bk.w/2-tw/2,bk.y-14,tw,15);cx.fillStyle='#fff';cx.fillText(lb,bk.x+bk.w/2,bk.y-3);hit('basket',bk)}
   // crate
-  const c=L.crate;const six=SP['sixpack_'+Math.min(6,S.beer)];if(!(six&&six.naturalWidth&&spr('sixpack_'+Math.min(6,S.beer),c))&&!spr('crate',c)){rr(c.x,c.y+16,c.w,c.h-16,5,'#e7b52a');cx.fillStyle='#b88a14';for(let i=0;i<4;i++)cx.fillRect(c.x+8+i*22,c.y+24,14,c.h-34);for(let i=0;i<Math.min(S.beer,8);i++){cx.fillStyle='#5a2f0e';cx.fillRect(c.x+10+(i%4)*22,c.y+4+(i>3?8:0),8,22)}}
+  const c=L.crate;const sk=S.beer>0?'sixpack_'+Math.min(6,S.beer):(SP.sixpack_trash&&SP.sixpack_trash.naturalWidth?'sixpack_trash':'sixpack_0');const six=SP[sk];if(!(six&&six.naturalWidth&&spr(sk,c))&&!spr('crate',c)){rr(c.x,c.y+16,c.w,c.h-16,5,'#e7b52a');cx.fillStyle='#b88a14';for(let i=0;i<4;i++)cx.fillRect(c.x+8+i*22,c.y+24,14,c.h-34);for(let i=0;i<Math.min(S.beer,8);i++){cx.fillStyle='#5a2f0e';cx.fillRect(c.x+10+(i%4)*22,c.y+4+(i>3?8:0),8,22)}}
   if(S.beer>6){cx.font='800 13px Nunito,sans-serif';cx.textAlign='center';const tx='×'+S.beer;cx.fillStyle='#0009';cx.fillRect(c.x+c.w-34,c.y+4,32,18);cx.fillStyle='#fff';cx.fillText(tx,c.x+c.w-18,c.y+18)}hit('crate',c);
   // cig pack
   const p=L.cigpack;if(!spr('cigpack',p)){rr(p.x,p.y,p.w,p.h,3,'#d8c02a');cx.fillStyle='#fff';for(let i=0;i<Math.min(3,S.cigs);i++)cx.fillRect(p.x+8+i*9,p.y-8,6,12)}
@@ -514,6 +518,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   const k=L.catalog;if(!spr('catalog',k)){rr(k.x,k.y,k.w,k.h,3,'#e8e2d0');rr(k.x+6,k.y+6,k.w-12,k.h-18,2,'#b5552c');cx.fillStyle='#333';cx.font='800 8px Nunito,sans-serif';cx.fillText('MÖBEL',k.x+k.w/2,k.y+k.h-4)}hit('catalog',k);
   // controller
   if(S.furn.console&&S.right!=='ctrl'){const g=L.ctrl;if(!spr('controller',g)){rr(g.x,g.y,g.w,g.h,12,'#1a1a1a');ell(g.x+14,g.y+12,4,4,'#555');ell(g.x+g.w-14,g.y+12,4,4,'#555')}hit('ctrl',g)}
+  for(const h of EH)hit('empty',h);
 }
 let handAnim={drink:0,throwT:0,throwFrom:null,puff:0,snack:0};
 function skinHand(x,y,w,h,flip){cx.save();cx.translate(x,y);if(flip){cx.scale(-1,1)}rr(-w*.5,h*.25,w,h,18,'#6b6f73');ell(0,h*.18,w*.42,h*.26,'#e8b892');for(let i=0;i<4;i++)ell(-w*.3+i*w*.2,h*.0,w*.09,h*.12,'#e2ae86');cx.restore()}
@@ -536,6 +541,26 @@ function smokeTick(t){const dt=Math.min(.1,t-(smkLast||t));smkLast=t;
   SMK=SMK.filter(p=>p.life<p.max&&p.y>-40);if(SMK.length>260)SMK.splice(0,SMK.length-260);
   for(const p of SMK){const al=p.a*(1-p.life/p.max);const g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,'rgba(225,228,235,'+al+')');g.addColorStop(1,'rgba(225,228,235,0)');cx.fillStyle=g;cx.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2)}}
 function exhale(){for(let k=0;k<14;k++)SMK.push({x:W*.5+R(-30,30),y:H*.98,vx:R(-30,30),vy:R(-110,-70),r:R(8,16),a:.38,life:0,max:R(2.5,4)})}
+function emptySlots(){if(L.slots&&L.slotsW===W&&L.slotsH===H)return L.slots;const out=[];const m=L.mm;if(!m)return out;
+  const rows=[[1045,150,870,40],[1088,170,850,40],[1012,320,560,40]];
+  for(const[y,x0,x1,st]of rows){for(let x=x0;x<=x1;x+=st)out.push([x,y])}
+  // deterministic shuffle within rows for a messy look
+  let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+  let res=out.map(([x,y])=>{const p=m(x+(rnd()-.5)*14,y+(rnd()-.5)*8);return{x:p.x,y:p.y,r:(rnd()-.5)*.12}});
+  const tbl=res.slice(0,42);for(let i=tbl.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[tbl[i],tbl[j]]=[tbl[j],tbl[i]]}res=tbl.concat(res.slice(42));
+  L.slots=res;L.slotsW=W;L.slotsH=H;return res}
+function drawEmpties(t){const n=S.empties;if(n<=0)return;
+  if(!L.roomMode){const E=L.empties;for(let i=0;i<Math.min(n,22);i++){const col=i%11,row=Math.floor(i/11);drawBottle(E.x+col*E.w/11.5+(row?E.w/23:0),E.y-row*E.h*.25,E.w/12,E.h*.75,5)}return}
+  const sl=emptySlots(),bh=L.bottleH||40,bw=bh*.34;const cnt=Math.min(n,sl.length);
+  // draw back-to-front
+  const idx=[...Array(cnt).keys()].sort((a,b)=>sl[a].y-sl[b].y);
+  for(const i of idx){const p=sl[i];const lying=i%5===3&&SP.bottle_lying&&SP.bottle_lying.naturalWidth;cx.save();cx.translate(p.x,p.y);
+    if(lying){const lw=bh*1.15,lh2=lw*.36;spr('bottle_lying',{x:-lw/2,y:-lh2,w:lw,h:lh2});cx.restore();EH.push({x:p.x-lw/2,y:p.y-lh2-6,w:lw,h:lh2+6});continue}
+    cx.rotate(p.r);if(!spr('bottle_5',{x:-bw/2,y:-bh,w:bw,h:bh}))drawBottle(-bw/2,-bh,bw,bh,5);cx.restore();EH.push({x:p.x-bw/2,y:p.y-bh,w:bw,h:bh*.55})}}
+let EH=[];
+function toBasket(all){if(S.empties<=0)return;const k=all?S.empties:1;S.empties-=k;S.basket+=k;S.chaos=Math.max(0,S.chaos-.5*k);addXP(.5*k);snd('clink');
+  if(all||S.empties===0)toast(all?k+' Flaschen in den Korb geräumt.':'Letzte Flasche im Korb. Ordnung, fast wie bei Muttern.',S.basket+' im Korb · im Shop abgeben');
+  else if(Math.random()<.3)toast(pick(['Ab in den Korb.','Klirr. Korb.','Eine weniger auf dem Tisch.']),'Noch '+S.empties+' auf dem Tisch');checkAch()}
 function hasHands(){const i=SP.lh_full;return !!(i&&i.complete&&i.naturalWidth)}
 function drawHands(t){const lh=L.lh,rh=L.rh,sway=S.prom>=.8?Math.sin(t*1.7)*S.prom*4:0;
   if(hasHands()){
@@ -691,6 +716,8 @@ function tap(id,p){
    case'phone':if(!needRightFree('phone'))return;S.right='phone';snd('pop');return openPhone();
    case'catalog':return openCatalog();
    case'ctrl':if(!needRightFree('ctrl'))return;S.right='ctrl';snd('pop');return openGames();
+   case'empty':return toBasket(false);
+   case'basket':if(S.empties>0)return toBasket(true);return toast(S.basket?S.basket+' Flaschen im Korb. Im Shop gibt’s Pfand dafür.':'Der Korb ist leer. Wie dein Kühlschrank.');
    case'table':return putDown();
    case'right':if(S.right==='phone')return openPhone();if(S.right==='ctrl')return openGames();return;
    case'bottle':if(S.bottle&&S.bottle.sips<=0)return putDown();return toast('Gedrückt halten zum Trinken, du Anfänger.');
@@ -775,8 +802,8 @@ const EVENTS=[
    {t:'Danke!',f:()=>{S.furn.console=true;S.h.giftDone=true;layout();return{say:'Gern, Schätzchen. Steht jetzt im Schrankfach.',fx:fx({nice:1}),pose:2}}},
    {t:'Wortlos nehmen',f:()=>{S.furn.console=true;S.h.giftDone=true;layout();return{say:'Kein Danke? Na ja, Männer.',pose:0}}},
    {t:'Ablehnen',f:()=>{S.h.giftDone=true;return{say:'Dann kriegt sie der Messie von gegenüber.',fx:fx({nice:-1}),pose:1}}}],2)},
- {id:'uwe',c:()=>S.empties>=3,run:()=>visit('uwe','Moin. Haste Leergut? Ich tausch drei Flaschen gegen ein Rubbellos.',[
-   {t:'Tauschen',f:()=>{S.empties-=3;S.pfandStock=Math.max(0,S.pfandStock-3);S.h.uweTrades++;let n=1;if(S.h.uweTrades>=5&&S.h.uweTrades%5===0)n=2;setTimeout(()=>scratch(n),3000);return{say:n>1?'Weil du Stammkunde bist: zwei Lose!':'Viel Glück. Ich hatte nie welches.',fx:fx({}),pose:2}}},
+ {id:'uwe',c:()=>S.empties+S.basket>=3,run:()=>visit('uwe','Moin. Haste Leergut? Ich tausch drei Flaschen gegen ein Rubbellos.',[
+   {t:'Tauschen',f:()=>{const fb=Math.min(3,S.basket);S.basket-=fb;S.empties-=3-fb;S.pfandStock=Math.max(0,S.pfandStock-3);S.h.uweTrades++;let n=1;if(S.h.uweTrades>=5&&S.h.uweTrades%5===0)n=2;setTimeout(()=>scratch(n),3000);return{say:n>1?'Weil du Stammkunde bist: zwei Lose!':'Viel Glück. Ich hatte nie welches.',fx:fx({}),pose:2}}},
    {t:'Bier schenken',f:()=>{if(S.beer<1)return{say:'Du hast ja selber nix. Armer Hund.',pose:0};return{say:'Danke, Kollege. Du bist ein Guter.',fx:fx({beer:-1,nice:1}),pose:2}}},
    {t:'Verjagen',f:()=>{rude();return{say:'Ich komm wieder. Pfand ist geduldig.',pose:3}}}])},
  {id:'jessica',c:()=>S.day>=2&&S.day-S.h.jessLast>=3,run:()=>{S.h.jessLast=S.day;visit('jessica',pick(['Na, Schatzi? Immer noch am Sofa festgewachsen?','Ich war zufällig in der Gegend. Mit meinem Neuen. Der hat ein Auto. Und Arbeit.','Hast du noch mein Glätteisen? Und Bier? Vor allem Bier.']),[
@@ -876,7 +903,7 @@ function confirmBox(q,yes,no){openModal(`<h2>Sicher?</h2><p>${esc(q)}</p><div cl
 function howMenu(back){openModal(`<h2>So geht’s</h2>
  <p><b>Fernbedienung</b> antippen, dann links/rechts wischen: Sender wechseln.</p><p><b>Bierkiste</b> antippen: neue Flasche. <b>Flasche gedrückt halten</b>: trinken. Ab 0,8 ‰ Flasche schnell <b>nach oben wischen</b>: gegen die Wand.</p>
  <p><b>Zigaretten</b> antippen, dann die Kippe in der rechten Hand gedrückt halten: 5 Züge.</p><p><b>Tisch</b> antippen: Gegenstand aus der Hand ablegen. Die rechte Hand hält immer nur eins.</p>
- <p><b>Handy</b>: Jobs und Anrufe. <b>Katalog</b>: Möbel. <b>Kotze</b> 3× antippen zum Wegwischen. Möbel antippen zum Benutzen.</p>
+ <p><b>Leergut</b>: Jede leere Flasche bleibt auf dem Tisch stehen. Flasche antippen legt sie in den Korb, den Korb antippen räumt alle ein. Pfand gibt es im Shop nur für Flaschen im Korb.</p><p><b>Handy</b>: Jobs und Anrufe. <b>Katalog</b>: Möbel. <b>Kotze</b> 3× antippen zum Wegwischen. Möbel antippen zum Benutzen.</p>
  <p>Unten: 🥨 Snack, 🛒 Shop, 📖 Tagebuch, 🛏 Schlafen (19 bis 6 Uhr). 1 Spielstunde = 10 Sekunden.</p>
  <p>Durst, Hunger und Langeweile über 80 kosten Erfahrung. Promille: ab 1,1 lallst du, ab 1,9 wird dir schlecht, zweimal kotzen in kurzer Zeit gibt Filmriss.</p>${closeBtn}`,()=>bindAll({'[data-x]':back}))}
 
@@ -888,11 +915,11 @@ const SHOP=[
  {n:'Tiefkühlpizza „Salami-Pappe“',p:2.5,d:'Hunger −45',f:()=>fx({hu:-45})},
  {n:'Sixpack',p:4,d:'+6 Bier',f:()=>fx({beer:6})},
  {n:'Zigaretten „Gelbe Lunge“',p:5,d:'+20 Kippen',f:()=>fx({cigs:20})}];
-function shopMenu(){const pf=S.empties;openModal(`<h2>Späti-Shop</h2><p>Kasse: <b>${eur(S.money)}</b> · Bier ${S.beer} · Snacks ${S.snacks} · Kippen ${S.cigs}</p><div class="list">
+function shopMenu(){const pf=S.basket;openModal(`<h2>Späti-Shop</h2><p>Kasse: <b>${eur(S.money)}</b> · Bier ${S.beer} · Snacks ${S.snacks} · Kippen ${S.cigs}</p><div class="list">
  ${SHOP.map((it,i)=>`<div class="row${S.money<it.p?' off':''}"><div class="t"><b>${esc(it.n)}</b><span>${esc(it.d)}</span></div><button class="btn pri" data-b="${i}" ${S.money<it.p?'disabled':''}>${eur(it.p)}</button></div>`).join('')}
- <div class="row${pf?'':' off'}"><div class="t"><b>Pfand abgeben</b><span>${pf} Flaschen × 0,25 €</span></div><button class="btn pri" data-pf ${pf?'':'disabled'}>+${eur(pf*.25)}</button></div></div>${closeBtn}`,()=>bindAll({
+ <div class="row${pf?'':' off'}"><div class="t"><b>Pfand abgeben</b><span>${pf} Flaschen im Korb × 0,25 €${S.empties?' · '+S.empties+' stehen noch auf dem Tisch – erst in den Korb legen':''}</span></div><button class="btn pri" data-pf ${pf?'':'disabled'}>+${eur(pf*.25)}</button></div></div>${closeBtn}`,()=>bindAll({
   '[data-b]':el=>{const it=SHOP[+el.dataset.b];if(S.money<it.p)return;S.money-=it.p;const r=it.f();snd('cash');addXP(1);toast('Gekauft: '+it.n,r);shopMenu()},
-  '[data-pf]':()=>{const n=S.empties;const m=n*.25;S.money+=m;S.st.pfandBottles+=n;S.st.pfandMoney+=m;S.empties=0;S.pfandStock=0;snd('cash');toast('Pfand: +'+eur(m),'Die Kassiererin hält die Luft an.');checkAch();shopMenu()},
+  '[data-pf]':()=>{const n=S.basket;const m=n*.25;S.money+=m;S.st.pfandBottles+=n;S.st.pfandMoney+=m;S.basket=0;S.pfandStock=0;snd('cash');toast('Pfand: +'+eur(m),'Die Kassiererin hält die Luft an.');checkAch();shopMenu()},
   '[data-x]':closeModal}))}
 // ---------- Catalog ----------
 const CAT=[
@@ -942,7 +969,7 @@ const ACH=[
 function checkAch(){for(const[k,n,,c]of ACH)if(!S.ach[k]&&c()){S.ach[k]=S.day;snd('lvl');S.lastToastDelay=2400;setTimeout(()=>toast('Erfolg: '+n,'',2600),900)}}
 function achMenu(back){const got=Object.keys(S.ach).length;openModal(`<h2>Erfolge ${got}/${ACH.length}</h2><div class="list">${ACH.map(([k,n,d])=>`<div class="ach${S.ach[k]?' got':''}"><div class="ic">${S.ach[k]?'★':'?'}</div><div><b>${esc(n)}</b><br><span class="lab">${esc(d)}${S.ach[k]?' · Tag '+S.ach[k]:''}</span></div></div>`).join('')}</div>${closeBtn}`,()=>bindAll({'[data-x]':back}))}
 function homeMenu(back){const F=[['plant','Zimmerpflanze'],['lamp','Stehlampe'],['neon','Neon-Wandlampe'],['fridge','Mini-Kühlschrank'],['massage','Massagesessel'],['vcr','Videorekorder'],['console','Spielkonsole'],['tv43','Plattmacher 43'],['tv55','Glotzmax 55'],['lava','Lavalampe'],['gold','Goldener Sessel']];
-  openModal(`<h2>Wohnung</h2><p>Tag ${S.day} · Level ${S.lvl} · Schimmel ${S.mold}/3 · Chaos ${Math.round(S.chaos)} · Leergut ${S.empties} · Kippen im Ascher ${S.butts}</p><h4>Möbel</h4><div class="grid">${F.map(([k,n])=>`<div class="row${S.furn[k]?'':' off'}"><div class="t"><b>${n}</b><span>${S.furn[k]?'vorhanden':'fehlt'}</span></div></div>`).join('')}</div>
+  openModal(`<h2>Wohnung</h2><p>Tag ${S.day} · Level ${S.lvl} · Schimmel ${S.mold}/3 · Chaos ${Math.round(S.chaos)} · Leergut ${S.empties} auf dem Tisch, ${S.basket} im Korb · Kippen im Ascher ${S.butts}</p><h4>Möbel</h4><div class="grid">${F.map(([k,n])=>`<div class="row${S.furn[k]?'':' off'}"><div class="t"><b>${n}</b><span>${S.furn[k]?'vorhanden':'fehlt'}</span></div></div>`).join('')}</div>
   <h4>Bestwerte Konsole</h4><p>Flaschen-Flug ${S.best.flight} · Assi-Pong ${S.best.pong} · Bierfänger ${S.best.catch}</p>${closeBtn}`,()=>bindAll({'[data-x]':back}))}
 // ---------- Sprite loader ----------
 function imgMenu(back){openModal(`<h2>Bilder laden</h2><p>Lade ein fertiges Sammelbild hoch. Es wird nach dem Raster zerschnitten, der weiße Hintergrund wird durchsichtig, und die Platzhalter im Spiel werden ersetzt. Die Bilder bleiben in diesem Browser gespeichert.</p><div class="list">
@@ -952,7 +979,7 @@ function imgMenu(back){openModal(`<h2>Bilder laden</h2><p>Lade ein fertiges Samm
   bindAll({'[data-x]':back,'[data-clr]':()=>confirmBox('Alle geladenen Bilder entfernen und Platzhalter zeigen?',()=>{for(const k in SP)delete SP[k];dbClear();imgMenu(back)},()=>imgMenu(back))})})}
 // ---------- Admin ----------
 let adminTaps=0,adminT=0;
-function adminMenu(){openModal(`<h2>Admin</h2><div class="list">${[['money','Geld'],['lvl','Level'],['prom','Promille'],['beer','Bier'],['th','Durst'],['hu','Hunger'],['bo','Langeweile'],['chaos','Chaos'],['hour','Uhrzeit']].map(([k,n])=>`<div class="row"><div class="t"><b>${n}</b></div><input type="number" step="0.1" data-k="${k}" value="${Math.round(S[k]*100)/100}"></div>`).join('')}
+function adminMenu(){openModal(`<h2>Admin</h2><div class="list">${[['money','Geld'],['lvl','Level'],['prom','Promille'],['beer','Bier'],['empties','Leergut'],['basket','Korb'],['th','Durst'],['hu','Hunger'],['bo','Langeweile'],['chaos','Chaos'],['hour','Uhrzeit']].map(([k,n])=>`<div class="row"><div class="t"><b>${n}</b></div><input type="number" step="0.1" data-k="${k}" value="${Math.round(S[k]*100)/100}"></div>`).join('')}
  ${['police','neighbor','nice','jc','inkasso','lf','kowNo'].map(k=>`<div class="row"><div class="t"><b>${k}</b></div><input type="number" data-h="${k}" value="${S.h[k]}"></div>`).join('')}
  <button class="btn" data-ev>Ereignis jetzt</button><button class="btn" data-all>Alle Möbel</button></div><button class="btn pri close" data-ok>Übernehmen</button>`,()=>bindAll({
   '[data-ok]':()=>{M.querySelectorAll('[data-k]').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))S[i.dataset.k]=i.dataset.k==='lvl'?Math.max(1,Math.round(v)):v});M.querySelectorAll('[data-h]').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))S.h[i.dataset.h]=v});clampAll();layout();closeModal()},
@@ -1035,7 +1062,7 @@ var warnT={th:0,hu:0,bo:0};
 function hud(){if(S.lvl>=20&&!S.furn.lava)S.furn.lava=true;if(S.lvl>=50&&!S.furn.gold)S.furn.gold=true;$('lvl').textContent='Lv '+S.lvl;$('xpbar').style.width=(S.xp/(S.lvl*40)*100)+'%';$('xplab').textContent=Math.floor(S.xp)+' / '+S.lvl*40+' XP · ×'+xpFactor().toFixed(2).replace('.',',');
   
   setNeed('nTh',S.th);setNeed('nHu',S.hu);setNeed('nBo',S.bo);const b=S.bottle;setNeed('nBe',b?b.sips/3*100:0,b?(b.sips?Math.round(b.sips/3*100)+'%':'leer'):'–');
-  const bits=['<b>'+eur(S.money)+'</b>','Bier <b>'+S.beer+'</b>','Snacks <b>'+S.snacks+'</b>','Kippen <b>'+S.cigs+'</b>','Tag <b>'+S.day+'</b> <b>'+hourStr()+'</b>','<b>'+S.prom.toFixed(2).replace('.',',')+' ‰</b>','Leergut <b>'+S.empties+'</b>','Chaos <b>'+Math.round(S.chaos)+'</b>'];
+  const bits=['<b>'+eur(S.money)+'</b>','Bier <b>'+S.beer+'</b>','Snacks <b>'+S.snacks+'</b>','Kippen <b>'+S.cigs+'</b>','Tag <b>'+S.day+'</b> <b>'+hourStr()+'</b>','<b>'+S.prom.toFixed(2).replace('.',',')+' ‰</b>','Leergut <b>'+S.empties+'</b>','Korb <b>'+S.basket+'</b>','Chaos <b>'+Math.round(S.chaos)+'</b>'];
   if(S.hang>0)bits.push('Kater <b>'+'●'.repeat(S.hang)+'</b>');if(S.mold>0)bits.push('Schimmel <b>'+S.mold+'</b>');if(S.h.police>=3)bits.push('<b style="color:var(--red)">Polizei '+S.h.police+'</b>');if(S.h.cutDays>0)bits.push('Kürzung');
   $('info').innerHTML=bits.join(' · ');$('bSleep').disabled=!canSleep();$('bDiary').textContent=S.diaryNew?'📖•':'📖';
   $('hint').textContent=busyUI?'':hintText()}
