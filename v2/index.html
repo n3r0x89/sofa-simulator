@@ -440,7 +440,7 @@ function drawRoom(t){const wall=L.wall;
   // massage chair / gold chair
   if(S.furn.massage){const m=L.massage;if(!spr('massage',m)){rr(m.x,m.y,m.w,m.h,26,'#1d1d1f');rr(m.x+14,m.y+14,m.w-28,m.h*.55,18,'#2c2c30')}}
   // puddles
-  for(const p of S.puddles){const sh=1-p.taps*.25,pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
+  for(const p of S.puddles){const sh=(1-p.taps*.25)*(p.g===undefined?1:p.g),pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
   drawEmpties(t,'back');
   if(S.furn.gold){const g=L.gold;if(!spr('goldchair',g)){rr(g.x,g.y,g.w,g.h,30,grad(g.y,g.y+g.h,'#ffe27a','#b8860b'));rr(g.x+18,g.y+20,g.w-36,g.h*.5,20,'#a3122a')}}
 }
@@ -580,6 +580,25 @@ function drawEmpties(t,pass){const n=S.empties;if(pass==='back')EH=[];if(n<=0)re
 function toBasket(all){if(S.empties<=0)return;const k=all?S.empties:1;S.empties-=k;S.basket+=k;S.chaos=Math.max(0,S.chaos-.5*k);addXP(.5*k);snd('clink');
   if(all||S.empties===0)toast(all?k+' Flaschen in den Korb geräumt.':'Letzte Flasche im Korb. Fast so ordentlich wie ein Mensch.',S.basket+' im Korb · im Shop abgeben');
   else if(Math.random()<.3)toast(pick(['Ab in den Korb, du Pfandpenner.','Klirr. Uwe wird stolz auf dich sein.','Eine weniger. Noch hundert, du Messie.']),'Noch '+S.empties+' auf dem Tisch');checkAch()}
+function pukeTick(dt){const P=PUKE;if(!P)return;P.t+=dt;const t=P.t,pd=P.pd;
+  // Phase 1 0-.55 würgen, Phase 2 .55-1.9 Strahl, Phase 3 bis 2.6 Nachtropfen
+  if(t>.55&&t<1.9){const n=Math.round(dt*170);for(let i=0;i<n;i++){const sx=W*.5+R(-14,14),sy=H+8,tx=pd.x+R(-22,22),ty=pd.y+R(-6,6);const T=R(.42,.6),vx=(tx-sx)/T,g=900,vy=(ty-sy-.5*g*T*T)/T;
+      P.parts.push({x:sx,y:sy,vx,vy,g,life:0,T,r:R(4,11),c:pick(['#c9c25a','#b5ad45','#d8cf72','#a99a3a','#e2d68a','#8f7f2e']),chunk:Math.random()<.18})}}
+  if(t>1.9&&t<2.6&&Math.random()<dt*14){const sx=W*.5+R(-10,10);P.parts.push({x:sx,y:H+4,vx:R(-20,20),vy:R(-260,-200),g:900,life:0,T:9,r:R(3,6),c:'#c9c25a',drip:1})}
+  for(const p of P.parts){p.life+=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;
+    if(!p.dead&&!p.drip&&p.life>=p.T){p.dead=1;pd.g=Math.min(1,pd.g+.012);if(Math.random()<.35)P.splat.push({x:p.x+R(-8,8),y:p.y+R(-3,3),vx:R(-90,90),vy:R(-160,-60),life:0,r:R(2,5),c:p.c})}
+    if(p.drip&&p.y>H+20)p.dead=1}
+  for(const q of P.splat){q.life+=dt;q.vy+=900*dt;q.x+=q.vx*dt;q.y+=q.vy*dt}
+  P.parts=P.parts.filter(p=>!p.dead);P.splat=P.splat.filter(q=>q.life<.35);
+  if(t>1.9)pd.g=Math.max(pd.g,Math.min(1,pd.g+dt*.6));
+  if(t>2.7){pd.g=1;PUKE=null}}
+function drawPuke(t){const P=PUKE;if(!P)return;const k=P.t;
+  // green nausea vignette + squeeze
+  const a=k<.55?k/.55*.55:k<1.9?.55:Math.max(0,.55-(k-1.9)*.8);
+  const g=cx.createRadialGradient(W/2,H*.55,H*.15,W/2,H*.55,H*.75);g.addColorStop(0,'rgba(90,140,40,0)');g.addColorStop(1,'rgba(70,120,20,'+a+')');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  for(const p of P.parts){cx.fillStyle=p.c;cx.beginPath();if(p.chunk){cx.ellipse(p.x,p.y,p.r*.9,p.r*.6,p.life*7,0,7)}else{const sp=Math.hypot(p.vx,p.vy)*.012;cx.ellipse(p.x,p.y,p.r*(1+sp*.4),p.r*.8,Math.atan2(p.vy,p.vx),0,7)}cx.fill();if(p.chunk){cx.fillStyle='#7a5a20';cx.fillRect(p.x-1.5,p.y-1.5,3,3)}}
+  for(const q of P.splat){cx.globalAlpha=1-q.life/.35;cx.fillStyle=q.c;cx.beginPath();cx.arc(q.x,q.y,q.r,0,7);cx.fill();cx.globalAlpha=1}
+  if(k<.55){cx.fillStyle='rgba(255,255,255,'+(Math.sin(k*40)*.04+.04)+')';cx.fillRect(0,0,W,H)}}
 function hasHands(){const i=SP.lh_full;return !!(i&&i.complete&&i.naturalWidth)}
 function drawHands(t){const lh=L.lh,rh=L.rh,sway=S.prom>=.8?Math.sin(t*1.7)*S.prom*4:0;
   if(hasHands()){
@@ -692,7 +711,7 @@ function promCheck(){
   if(S.prom>=1.1&&!S.taskDone&&!busyUI){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
   if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
   if(S.prom>=S.pukeAt)puke()}
-function puke(){snd('retch');vib([100,60,200]);const z=L.puddleZone;S.puddles.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0});S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(2.1,2.5);S.sickSaid=false;clampAll();
+function puke(){snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};if(S.right==='cig'){S.right='empty';S.butts++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(2.1,2.5);S.sickSaid=false;clampAll();
   if(S.tot-S.lastPuke<150){filmriss()}else toast(T('puke'),'Promille −0,90 · Hunger +40');S.lastPuke=S.tot;checkAch()}
 function filmriss(){const lost=Math.min(S.money,RI(2,5));S.money-=lost;S.st.filmriss++;if(S.hour<6){advance((6-S.hour)*10+.01)}else{advance((30-S.hour)*10+.01)}S.hang=Math.max(S.hang,2);toast(T('filmriss'),'Geld −'+eur(lost)+' · Kater',5000);checkAch()}
 function putDown(){if(S.right!=='empty'){if(S.right==='phone'&&CALL){missCall();}S.right='empty';snd('pop');toast(pick(['Abgelegt. Wahnsinn, du Genie. Nobelpreis kommt per Post.','Weggelegt. Das ist mehr Arbeit, als du letzte Woche gemacht hast.']));doneHint('put');return}
@@ -709,10 +728,10 @@ function doneHint(k){S.hintsDone[k]=1;if(k==='zap')S.hintsDone.remote=1}
 function hintText(){if(S.lvl>4)return'';for(const[k,t]of HINTS)if(!S.hintsDone[k]){if(k==='zap'&&S.right!=='remote')continue;if(k==='drink'&&(!S.bottle||S.bottle.opened===false))continue;if(k==='open'&&!(S.bottle&&S.bottle.opened===false))continue;if(k==='put'&&S.right==='empty')continue;return t}return''}
 
 // ================= INPUT =================
-let PD=null,burpT=0,burpCnt=0,burpNext=RI(1,5),coughCnt=0,coughNext=RI(1,7);
+let PUKE=null,PD=null,burpT=0,burpCnt=0,burpNext=RI(1,5),coughCnt=0,coughNext=RI(1,7);
 function lp(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 function hitAt(p){for(let i=HITS.length-1;i>=0;i--){const h=HITS[i];if(p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h)return h.id}return null}
-cv.addEventListener('pointerdown',e=>{initAudio();if(busyUI)return;const p=lp(e);PD={p,t:performance.now(),id:hitAt(p),last:performance.now(),acted:false};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+cv.addEventListener('pointerdown',e=>{initAudio();if(busyUI||PUKE)return;const p=lp(e);PD={p,t:performance.now(),id:hitAt(p),last:performance.now(),acted:false};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
 cv.addEventListener('pointermove',e=>{if(!PD)return;PD.cur=lp(e)});
 cv.addEventListener('pointerup',e=>{if(!PD)return;const p=lp(e),dt=performance.now()-PD.t,dx=p.x-PD.p.x,dy=p.y-PD.p.y;const id=PD.id;const acted=PD.acted;PD=null;if(busyUI)return;
   if(acted&&id==='bottle'){burpCnt++;if(burpCnt>=burpNext){burpCnt=0;burpNext=RI(1,5);clearTimeout(burpT);burpT=setTimeout(()=>{snd('burp');vib(60);if(Math.random()<.5)toast(T('burp'))},600)}}
@@ -895,7 +914,7 @@ function missCall(){if(!CALL)return;const c=CALL.c;CALL=null;clearInterval(callT
 function answerCall(){const c=CALL.c;CALL=null;clearInterval(callTimer);S.h.calls++;
   showCard(c.n,c.t,c.o.map(([t,f])=>({t,f})));checkAch()}
 // ---------- Scheduler ----------
-function eventTick(dt){if(VISIT||CARD||CALL||busyUI)return;evTimer-=dt;if(evTimer>0)return;
+function eventTick(dt){if(VISIT||CARD||CALL||busyUI||PUKE)return;evTimer-=dt;if(evTimer>0)return;
   const ok=EVENTS.filter(e=>e.id!==lastEv&&e.c());const pr=ok.filter(e=>e.prio);const e=pr.length?pr[0]:pick(ok.filter(e=>!e.prio));if(!e){evTimer=10;return}
   lastEv=e.id;evTimer=R(25,45);e.run()}
 // ================= MENUS =================
@@ -1027,7 +1046,7 @@ function mbtn(label,fn,cls='btn pri'){const b=document.createElement('button');b
 
 // ---------- Drunk tasks ----------
 const TASKS=[['swat','fly','Fliegen klatschen'],['swat','roach','Kakerlaken klatschen'],['swat','mosquito','Mücken klatschen'],['swat','dustbunny','Staubmäuse klatschen'],['count','drop','Tropfen zählen'],['count','pigeon','Tauben zählen']];
-function offerDrunkTask(){if(busyUI||VISIT||CARD)return;const t=TASKS[S.taskIdx%TASKS.length];S.taskIdx++;
+function offerDrunkTask(){if(busyUI||VISIT||CARD||PUKE){S.taskDone=false;return}const t=TASKS[S.taskIdx%TASKS.length];S.taskIdx++;
   showCard('Suff-Aufgabe','Du bist hackedicht, du Schnapsdrossel. Zeit für Großes: '+t[2]+'. Bringt kein Geld, wie alles, was du machst.',[{t:'Los geht’s',f:()=>{setTimeout(()=>t[0]==='swat'?swat(t[1],t[2]):countGame(t[1],t[2]),50);return{}}},{t:'Keinen Bock',f:()=>({say:'Natürlich nicht.'})}])}
 function swat(kind,title){miniOpen();const Wm=mcv.width,Hm=mcv.height,dur=R(12,14);let t0=performance.now(),hits=0;const bugs=[];for(let i=0;i<6;i++)bugs.push(nb());
   function nb(){return{x:R(30,Wm-30),y:R(60,Hm-60),vx:R(-160,160),vy:R(-160,160),dead:0}}
@@ -1110,14 +1129,15 @@ function frame(now){const dtr=Math.min(.1,(now-lastT)/1000);lastT=now;const t=no
     smokeLevel=Math.max(0,smokeLevel-dtr*.03);
     if(handAnim.drink>0)handAnim.drink-=dtr*1.5;if(handAnim.throwT>0)handAnim.throwT-=dtr*2.2;if(handAnim.puff>0)handAnim.puff-=dtr;if(handAnim.snack>0)handAnim.snack-=dtr;if(handAnim.capT>0)handAnim.capT-=dtr*1.6;if(handAnim.cigFly>0)handAnim.cigFly-=dtr*2.5;
     if(S.prom>=S.pukeAt)puke();if(S.prom<.5){S.taskDone=false}
-    if(S.prom>=1.1&&!S.taskDone&&!VISIT&&!CARD){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
+    if(S.prom>=1.1&&!S.taskDone&&!VISIT&&!CARD&&!PUKE){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
     if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
     if(S.pendingDay)showDay();
     saveT+=dtr;if(saveT>10){saveT=0;save()}}
   // draw
   HITS=[];cx.save();
+  if(PUKE){const k=PUKE.t;const sh=k<.55?k*16:k<1.9?7:Math.max(0,7-(k-1.9)*10);cx.translate(R(-sh,sh),R(-sh,sh)+(k>.4&&k<1.9?6:0));const sq=k<.55?1-k*.04:1;cx.translate(W/2,H/2);cx.scale(1,sq);cx.translate(-W/2,-H/2)}
   if(S.prom>=1.1){const k=Math.min(1,(S.prom-1)/1.5);cx.translate(W/2,H/2);cx.rotate(Math.sin(t*.9)*.015*k);cx.translate(-W/2+Math.sin(t*.7)*6*k,-H/2)}
-  drawRoom(t);drawVisitor(t);drawTable(t);drawHands(t);smokeTick(t);drawOverlay(t);cx.restore();
+  pukeTick(Math.min(.05,dtr));drawRoom(t);drawVisitor(t);drawTable(t);drawHands(t);smokeTick(t);drawOverlay(t);drawPuke(t);cx.restore();
   hud()}catch(err){console.error(err)}
   requestAnimationFrame(frame)}
 
