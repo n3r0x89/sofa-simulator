@@ -220,8 +220,13 @@ const TX={
 function T(k){const v=TX[k];return Array.isArray(v)?pick(v):v}
 
 // ---------- UI helpers ----------
-let toastT=0;
-function toast(msg,sub,long){const el=$('toast');el.innerHTML=slur(msg)+(sub?'<small>'+sub+'</small>':'');el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),long||(msg.length>70?4200:2200))}
+let toastT=0,toastQ=[],toastBusy=false,toastPrio=false;
+function toast(msg,sub,long){const item={msg:slur(msg),sub,dur:long||(msg.length>70?4200:2200),prio:!!long||msg.length>70};
+  if(toastBusy&&toastPrio){toastQ.push(item);if(toastQ.length>3)toastQ.shift();return}
+  if(toastBusy&&item.prio){toastQ.unshift(item);showToast(toastQ.shift());return}
+  showToast(item)}
+function showToast(it){const el=$('toast');el.innerHTML=it.msg+(it.sub?'<small>'+it.sub+'</small>':'');el.classList.add('on');toastBusy=true;toastPrio=it.prio;clearTimeout(toastT);
+  toastT=setTimeout(()=>{if(toastQ.length){showToast(toastQ.shift())}else{el.classList.remove('on');toastBusy=false;toastPrio=false}},toastQ.length?Math.min(it.dur,1800):it.dur)}
 function fxStr(o){const N={money:['Geld',v=>(v>0?'+':'−')+eur(Math.abs(v))],beer:['Bier'],snacks:['Snacks'],cigs:['Kippen'],th:['Durst'],hu:['Hunger'],bo:['Langeweile'],chaos:['Chaos'],prom:['Promille',v=>(v>0?'+':'−')+Math.abs(v).toFixed(2)+'‰'],xp:['XP'],nice:['Ruf'],neighbor:['Nachbar'],police:['Polizei'],jc:['Jobcenter'],inkasso:['Inkasso'],lf:['Vermieter'],empties:['Leergut']};
   return Object.entries(o).filter(([k,v])=>v&&N[k]).map(([k,v])=>N[k][0]+' '+(N[k][1]?N[k][1](v):(v>0?'+':'−')+Math.abs(Math.round(v*10)/10))).join(' · ')}
 function fx(o){for(const[k,v]of Object.entries(o)){if(!v)continue;
@@ -484,7 +489,7 @@ function subtitle(s,txt){cx.font='700 10px Nunito,sans-serif';cx.textAlign='cent
   lines=lines.slice(0,3);cx.fillStyle='#000a';cx.fillRect(s.x,s.y+s.h-lines.length*12-4,s.w,lines.length*12+4);cx.fillStyle='#ffd';lines.forEach((l,i)=>cx.fillText(l,s.x+s.w/2,s.y+s.h-lines.length*12+i*12+7))}
 // ---------- Table & hands ----------
 let HITS=[];
-function hit(id,b){HITS.push({id,...b})}
+function hit(id,b){const mn=64;let{x,y,w,h}=b;if(w<mn){x-=(mn-w)/2;w=mn}if(h<mn){y-=(mn-h)/2;h=mn}HITS.push({id,x,y,w,h})}
 const BLV=()=>{const b=S.bottle;if(!b)return null;return b.sips>=3?(b.opened?1:0):b.sips===2?2:b.sips===1?4:5};
 function drawBottle(x,y,w,h,level){if(spr('bottle_'+level,{x,y,w,h}))return;const bw=w*.42,bx=x+(w-bw)/2;
   rr(bx,y+h*.35,bw,h*.65,6,'#5a2f0e');cx.fillStyle='#5a2f0e';cx.fillRect(bx+bw*.3,y+h*.06,bw*.4,h*.32);
@@ -623,7 +628,7 @@ function massage(){if(S.tot<S.massageAt){toast('Der Sessel braucht Pause von dei
   S.massageAt=S.tot+40;advance(10);S.hang=Math.max(0,S.hang-1);snd('buzz');toast('Brrrrr. Eine Stunde durchgeknetet.',fx({bo:-40,prom:-.15,xp:3}))}
 function sleep(){if(!canSleep()){toast('Schlafen erst ab 19 Uhr, du Faultier. Selbst Faultiere haben Regeln.');return}
   let n=0;const target=8;while(!(S.hour>=target&&S.hour<target+.2)&&n<400){advance(1,.75);n++}
-  S.bo-=30;clampAll();stopFilm(true);toast(T('morning').replace('{d}',S.day),'Langeweile −30',3500);showDay()}
+  S.bo-=30;clampAll();stopFilm(true);warnT.th=warnT.hu=warnT.bo=S.tot+15;toast(T('morning').replace('{d}',S.day),'Langeweile −30',3500);showDay()}
 function showDay(){if(S.pendingDay){const l=S.pendingDay;S.pendingDay=null;setTimeout(()=>toast('Neuer Tag '+S.day,l.join(' · '),4500),S.lastToastDelay||0)}}
 // ---------- Hints ----------
 const HINTS=[['remote','Fernbedienung antippen, dann links/rechts wischen zum Zappen.'],['zap','Wischen links/rechts wechselt den Sender.'],['beer','Bierkiste antippen für eine Flasche.'],['drink','Flasche gedrückt halten zum Trinken.'],['cig','Zigarettenschachtel antippen, dann Kippe gedrückt halten.'],['put','Auf den Tisch tippen legt ab, was du in der Hand hast.']];
@@ -991,7 +996,7 @@ function gCatch(){miniOpen();const Wm=mcv.width,Hm=mcv.height;let px=Wm/2,items=
    mui.textContent='Bierfänger · '+score+' · '+'♥'.repeat(Math.max(0,lives));if(lives<=0){MG.step=()=>{};setTimeout(()=>gameOver('catch',score,'Bierfänger'),400)}}}}
 // ================= HUD =================
 function setNeed(id,v,label){const el=$(id);el.classList.toggle('hot',v>=80);el.querySelector('i').style.width=v+'%';el.querySelector('.lab span:last-child').textContent=label!==undefined?label:Math.round(v)}
-let warnT={th:0,hu:0,bo:0};
+var warnT={th:0,hu:0,bo:0};
 function hud(){$('lvl').textContent='Lv '+S.lvl;$('xpbar').style.width=(S.xp/(S.lvl*40)*100)+'%';$('xplab').textContent=Math.floor(S.xp)+' / '+S.lvl*40+' XP · ×'+xpFactor().toFixed(2);
   $('empt').textContent=S.empties;$('chaosbar').style.width=S.chaos+'%';
   setNeed('nTh',S.th);setNeed('nHu',S.hu);setNeed('nBo',S.bo);const b=S.bottle;setNeed('nBe',b?b.sips/3*100:0,b?(b.sips?Math.round(b.sips/3*100)+'%':'leer'):'–');
