@@ -499,13 +499,13 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   EH=[];drawEmpties(t);
   // basket
   const bk=L.basket;if(bk){cx.save();if(S.basket===0)cx.globalAlpha=.55;const okb=spr('basket',bk);cx.restore();if(!okb){rr(bk.x,bk.y+bk.h*.35,bk.w,bk.h*.65,8,'#e8dcc0','#b8a888')}
-    const lb=S.basket?S.basket+' im Korb':'Korb leer';cx.font='800 11px Nunito,sans-serif';cx.textAlign='center';const tw=cx.measureText(lb).width+10;cx.fillStyle='#000a';cx.fillRect(bk.x+bk.w/2-tw/2,bk.y-14,tw,15);cx.fillStyle='#fff';cx.fillText(lb,bk.x+bk.w/2,bk.y-3);hit('basket',bk)}
+    hit('basket',bk)}
   // crate
   const c=L.crate;const sk=S.beer>0?'sixpack_'+Math.min(6,S.beer):(SP.sixpack_trash&&SP.sixpack_trash.naturalWidth?'sixpack_trash':'sixpack_0');const six=SP[sk];if(!(six&&six.naturalWidth&&spr(sk,c))&&!spr('crate',c)){rr(c.x,c.y+16,c.w,c.h-16,5,'#e7b52a');cx.fillStyle='#b88a14';for(let i=0;i<4;i++)cx.fillRect(c.x+8+i*22,c.y+24,14,c.h-34);for(let i=0;i<Math.min(S.beer,8);i++){cx.fillStyle='#5a2f0e';cx.fillRect(c.x+10+(i%4)*22,c.y+4+(i>3?8:0),8,22)}}
   if(S.beer>6){cx.font='800 13px Nunito,sans-serif';cx.textAlign='center';const tx='×'+S.beer;cx.fillStyle='#0009';cx.fillRect(c.x+c.w-34,c.y+4,32,18);cx.fillStyle='#fff';cx.fillText(tx,c.x+c.w-18,c.y+18)}hit('crate',c);
   // cig pack
   const p=L.cigpack;if(!spr('cigpack',p)){rr(p.x,p.y,p.w,p.h,3,'#d8c02a');cx.fillStyle='#fff';for(let i=0;i<Math.min(3,S.cigs);i++)cx.fillRect(p.x+8+i*9,p.y-8,6,12)}
-  cx.fillStyle='#2a1a08';cx.font='800 11px Nunito,sans-serif';cx.fillText(S.cigs,p.x+p.w/2,p.y+p.h-6);hit('cigpack',p);
+  cx.font='800 11px Nunito,sans-serif';cx.textAlign='center';{const tx=String(S.cigs),tw=cx.measureText(tx).width+8;cx.fillStyle='#000a';cx.fillRect(p.x+p.w-tw/2-2,p.y-6,tw,14);cx.fillStyle='#fff';cx.fillText(tx,p.x+p.w-2,p.y+5)}hit('cigpack',p);
   // ashtray
   const a=L.ash,al=S.butts>=12?2:S.butts>=4?1:0;if(!spr('ash_'+al,a)){ell(a.x+a.w/2,a.y+a.h/2,a.w/2,a.h/2,'#9fb7c4aa');ell(a.x+a.w/2,a.y+a.h/2-2,a.w/2-7,a.h/2-6,'#555');for(let i=0;i<Math.min(S.butts,18);i++){cx.fillStyle=i%2?'#e9d8b0':'#d0a060';cx.fillRect(a.x+10+(i*13)%40,a.y+6+(i*7)%10,9,3)}}
   // remote
