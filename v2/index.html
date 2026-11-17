@@ -174,6 +174,7 @@ const SND={
   puff:()=>noise(.5,.12,1200,1,'bandpass',500),
   retch:()=>{wob(110,.5,.35,12);setTimeout(()=>noise(.7,.35,600,1,'lowpass',200),400)},
   whoosh:()=>noise(.3,.25,400,1,'bandpass',3000),
+  smash:()=>{tone(2400,.25,'triangle',.2);tone(3100,.3,'triangle',.15);noise(.2,.2,5000,1,'highpass')},
   clink:()=>{tone(2400,.25,'triangle',.2);tone(3100,.3,'triangle',.15);noise(.2,.2,5000,1,'highpass')},
   slap:()=>noise(.08,.5,2000,1,'lowpass'),
   buzz:()=>tone(220,.4,'sawtooth',.05,240),
@@ -186,7 +187,7 @@ const SND={
   bad:()=>tone(200,.4,'sawtooth',.12,90),
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
@@ -676,7 +677,7 @@ function sip(){const b=S.bottle;if(!b)return;if(b.opened===false){toast('Erst au
   if(b.sips===2){S.st.beers++;}
   clampAll();doneHint('drink');checkAch();promCheck()}
 function throwBottle(){if(!S.bottle)return;if(S.prom<.8){toast('Nüchtern traust du dich nicht mal, ne Flasche zu schmeißen. Eierlose Lusche.');return}
-  handAnim.throwT=1;snd('whoosh');setTimeout(()=>{snd('clink');vib(80);{const z=L.stainZone||{x:150,y:H*.15,w:270,h:L.wall-60-H*.15};S.stains.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h)})};if(S.stains.length>14)S.stains.shift()},420);
+  handAnim.throwT=1;snd('whoosh');setTimeout(()=>{snd('smash');vib(80);{const z=L.stainZone||{x:150,y:H*.15,w:270,h:L.wall-60-H*.15};S.stains.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h)})};if(S.stains.length>14)S.stains.shift()},420);
   S.bottle=null;S.st.throws++;toast(pick(['KLIRR! Mehr Treffer als du je bei Frauen hattest.','Volltreffer, du asoziales Stück. Die Tapete weint.','Herr Brandt hat das gehört und sich vor Angst eingeschissen.']),fx({bo:-20,chaos:6,neighbor:1}));checkAch()}
 function takeCig(){if(!needRightFree('cig'))return;if(S.right==='cig')return;if(S.cigs<=0){toast('Schachtel leer. Wie dein Konto, deine Zukunft und deine Eier.');return}S.cigs--;S.packClosed=false;handAnim.cigFly=1;S.right='cig';S.cigPuffs=0;snd('lighter');doneHint('cig')}
 function puff(){if(S.right!=='cig')return;S.cigPuffs++;S.bo-=1.2;smokeLevel=Math.min(2,smokeLevel+.25);handAnim.puff=.5;snd('puff');setTimeout(exhale,700);addXP(.5);
