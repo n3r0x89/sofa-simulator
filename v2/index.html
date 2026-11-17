@@ -188,7 +188,7 @@ const SND={
 };
 const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3']};
 const BUF={},ORD={},LAST={};let bankLoading=false;
-function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>AC.decodeAudioData(b,res,rej))).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
+function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
 function playBank(k){if(!AC||!soundOn||!BUF[k])return false;const ok=BUF[k].map((b,i)=>b?i:-1).filter(i=>i>=0);if(!ok.length)return false;
   if(!ORD[k].length){ORD[k]=ok.slice().sort(()=>Math.random()-.5);if(ORD[k][0]===LAST[k]&&ORD[k].length>1)ORD[k].push(ORD[k].shift())}
   const i=ORD[k].shift();LAST[k]=i;try{const s=AC.createBufferSource();s.buffer=BUF[k][i];const g=AC.createGain();g.gain.value=.9;s.connect(g).connect(AC.destination);s.start();return true}catch(e){return false}}
@@ -557,21 +557,23 @@ function smokeTick(t){const dt=Math.min(.1,t-(smkLast||t));smkLast=t;
   for(const p of SMK){const al=p.a*(1-p.life/p.max);const g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,'rgba(225,228,235,'+al+')');g.addColorStop(1,'rgba(225,228,235,0)');cx.fillStyle=g;cx.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2)}}
 function exhale(){for(let k=0;k<14;k++)SMK.push({x:W*.5+R(-30,30),y:H*.98,vx:R(-30,30),vy:R(-110,-70),r:R(8,16),a:.38,life:0,max:R(2.5,4)})}
 function emptySlots(){if(L.slots&&L.slotsW===W&&L.slotsH===H)return L.slots;const out=[];const m=L.mm;if(!m)return out;
-  const rows=[[1045,150,870,40],[1088,170,850,40],[1012,320,560,40]];
-  for(const[y,x0,x1,st]of rows){for(let x=x0;x<=x1;x+=st)out.push([x,y])}
-  // deterministic shuffle within rows for a messy look
-  let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
-  let res=out.map(([x,y])=>{const p=m(x+(rnd()-.5)*14,y+(rnd()-.5)*8);return{x:p.x,y:p.y,r:(rnd()-.5)*.12}});
-  const tbl=res.slice(0,42);for(let i=tbl.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[tbl[i],tbl[j]]=[tbl[j],tbl[i]]}res=tbl.concat(res.slice(42));
+  let seed=97;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+  // keep-out boxes in image coords (sixpack, pack+lighter, ashtray, remote, phone, catalog, basket)
+  const ko=[[110,960,290,1080],[325,1010,410,1090],[405,1045,515,1105],[540,1060,660,1125],[665,1000,730,1090],[735,1030,860,1140],[585,880,735,990]];
+  const zones=[[120,1060,880,1150,.7],[250,905,850,985,.3]];
+  const pts=[];let tries=0;
+  while(pts.length<60&&tries<6000){tries++;const z=rnd()<zones[0][4]?zones[0]:zones[1];const x=z[0]+rnd()*(z[2]-z[0]),y=z[1]+rnd()*(z[3]-z[1]);
+    if(ko.some(k=>x>k[0]-14&&x<k[2]+14&&y>k[1]&&y<k[3]+12))continue;if(pts.some(p=>Math.hypot(p[0]-x,(p[1]-y)*2)<(pts.length<30?62:42)))continue;pts.push([x,y])}
+  const res=pts.map(([x,y],i)=>{const p=m(x,y);const lying=rnd()<.42;return{x:p.x,y:p.y,lying,r:lying?(rnd()-.5)*1.2:(rnd()-.5)*.14,flip:rnd()<.5}});
   L.slots=res;L.slotsW=W;L.slotsH=H;return res}
 function drawEmpties(t){const n=S.empties;if(n<=0)return;
   if(!L.roomMode){const E=L.empties;for(let i=0;i<Math.min(n,22);i++){const col=i%11,row=Math.floor(i/11);drawBottle(E.x+col*E.w/11.5+(row?E.w/23:0),E.y-row*E.h*.25,E.w/12,E.h*.75,5)}return}
   const sl=emptySlots(),bh=L.bottleH||40,bw=bh*.34;const cnt=Math.min(n,sl.length);
   // draw back-to-front
   const idx=[...Array(cnt).keys()].sort((a,b)=>sl[a].y-sl[b].y);
-  for(const i of idx){const p=sl[i];const lying=i%5===3&&SP.bottle_lying&&SP.bottle_lying.naturalWidth;cx.save();cx.translate(p.x,p.y);
-    if(lying){const lw=bh*1.15,lh2=lw*.36;spr('bottle_lying',{x:-lw/2,y:-lh2,w:lw,h:lh2});cx.restore();EH.push({x:p.x-lw/2,y:p.y-lh2-6,w:lw,h:lh2+6});continue}
-    cx.rotate(p.r);if(!spr('bottle_5',{x:-bw/2,y:-bh,w:bw,h:bh}))drawBottle(-bw/2,-bh,bw,bh,5);cx.restore();EH.push({x:p.x-bw/2,y:p.y-bh,w:bw,h:bh*.55})}}
+  for(const i of idx){const p=sl[i];cx.save();cx.translate(p.x,p.y);
+    if(p.lying&&SP.bottle_lying&&SP.bottle_lying.naturalWidth){const lw=bh*1.05,lh2=lw*.4;cx.rotate(p.r*.35);if(p.flip)cx.scale(-1,1);spr('bottle_lying',{x:-lw/2,y:-lh2,w:lw,h:lh2});cx.restore();EH.push({x:p.x-lw/2,y:p.y-lh2-6,w:lw,h:lh2+6});continue}
+    cx.rotate(p.r);if(!spr('bottle_5',{x:-bw/2,y:-bh,w:bw,h:bh}))drawBottle(-bw/2,-bh,bw,bh,5);cx.restore();EH.push({x:p.x-bw/2,y:p.y-bh,w:bw,h:bh*.6})}}
 let EH=[];
 function toBasket(all){if(S.empties<=0)return;const k=all?S.empties:1;S.empties-=k;S.basket+=k;S.chaos=Math.max(0,S.chaos-.5*k);addXP(.5*k);snd('clink');
   if(all||S.empties===0)toast(all?k+' Flaschen in den Korb geräumt.':'Letzte Flasche im Korb. Fast so ordentlich wie ein Mensch.',S.basket+' im Korb · im Shop abgeben');
@@ -677,7 +679,7 @@ function throwBottle(){if(!S.bottle)return;if(S.prom<.8){toast('Nüchtern traust
   S.bottle=null;S.st.throws++;toast(pick(['KLIRR! Mehr Treffer als du je bei Frauen hattest.','Volltreffer, du asoziales Stück. Die Tapete weint.','Herr Brandt hat das gehört und sich vor Angst eingeschissen.']),fx({bo:-20,chaos:6,neighbor:1}));checkAch()}
 function takeCig(){if(!needRightFree('cig'))return;if(S.right==='cig')return;if(S.cigs<=0){toast('Schachtel leer. Wie dein Konto, deine Zukunft und deine Eier.');return}S.cigs--;S.packClosed=false;handAnim.cigFly=1;S.right='cig';S.cigPuffs=0;snd('lighter');doneHint('cig')}
 function puff(){if(S.right!=='cig')return;S.cigPuffs++;S.bo-=1.2;smokeLevel=Math.min(2,smokeLevel+.25);handAnim.puff=.5;snd('puff');setTimeout(exhale,700);addXP(.5);
-  coughCnt++;if(coughCnt>=coughNext){coughCnt=0;coughNext=RI(6,9);setTimeout(()=>{snd('cough');vib([40,40,40]);toast(T('cough'))},500)}
+  coughCnt++;if(coughCnt>=coughNext){coughCnt=0;coughNext=RI(1,7);setTimeout(()=>{snd('cough');vib([40,40,40]);toast(T('cough'))},500)}
   if(S.cigPuffs>=5){S.right='empty';S.butts++;S.smolderUntil=S.tot+30;toast(pick(['Kippe aus. Deine Lunge hat gerade den Notarzt gerufen.','Aus. Noch ein Sargnagel, du Teerfresse.','Fertig gequalmt. Riechst jetzt wie ein Kneipenklo von innen.']));checkAch()}clampAll()}
 function eatSnack(){if(S.snacks<=0){toast('Keine Snacks mehr, du verfressenes Schwabbelschwein. Ab in den Shop.');snd('bad');return}S.snacks--;S.hang=Math.max(0,S.hang-1);snd('pop');handAnim.snack=1.2;toast(pick(['Mampf. Die Krümel in deinem Brusthaar sind dein Notvorrat.','Lecker Fett. Deine Arterien machen schon die Schotten dicht.','Du frisst wie ein Schwein. Schweine finden das beleidigend.']),fx({hu:-30,prom:-.15,xp:1}))}
 function zap(dir){if(S.right!=='remote')return;if(S.prom>=1.4&&Math.random()<.35){dir=-dir;toast('Falsche Richtung, du besoffener Daumenlutscher.')}
@@ -705,7 +707,7 @@ function doneHint(k){S.hintsDone[k]=1;if(k==='zap')S.hintsDone.remote=1}
 function hintText(){if(S.lvl>4)return'';for(const[k,t]of HINTS)if(!S.hintsDone[k]){if(k==='zap'&&S.right!=='remote')continue;if(k==='drink'&&(!S.bottle||S.bottle.opened===false))continue;if(k==='open'&&!(S.bottle&&S.bottle.opened===false))continue;if(k==='put'&&S.right==='empty')continue;return t}return''}
 
 // ================= INPUT =================
-let PD=null,burpT=0,burpCnt=0,burpNext=RI(1,5),coughCnt=0,coughNext=RI(6,9);
+let PD=null,burpT=0,burpCnt=0,burpNext=RI(1,5),coughCnt=0,coughNext=RI(1,7);
 function lp(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 function hitAt(p){for(let i=HITS.length-1;i>=0;i--){const h=HITS[i];if(p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h)return h.id}return null}
 cv.addEventListener('pointerdown',e=>{initAudio();if(busyUI)return;const p=lp(e);PD={p,t:performance.now(),id:hitAt(p),last:performance.now(),acted:false};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
