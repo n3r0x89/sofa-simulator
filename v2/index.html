@@ -159,7 +159,7 @@ S=load()||fresh();
 let AC=null,soundOn=true;
 try{soundOn=localStorage.getItem('sofasim_snd')!=='0'}catch(e){}
 function initAudio(){if(AC)return;try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
-  try{AC=new (window.AudioContext||window.webkitAudioContext)();const b=AC.createBuffer(1,1,22050);const s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){AC=null}}
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();const b=AC.createBuffer(1,1,22050);const s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){AC=null}loadFarts()}
 function env(g,t,a,d,v){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+d)}
 function tone(f,d,type='sine',v=.2,f2){if(!AC||!soundOn)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);env(g,t,.01,d,v);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05)}
 function noise(d,v=.2,fl=800,q=1,type='lowpass',sweep){if(!AC||!soundOn)return;const t=AC.currentTime,n=AC.sampleRate*d,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=AC.createBufferSource();s.buffer=b;const f=AC.createBiquadFilter();f.type=type;f.frequency.setValueAtTime(fl,t);if(sweep)f.frequency.exponentialRampToValueAtTime(sweep,t+d);f.Q.value=q;const g=AC.createGain();env(g,t,.01,d,v);s.connect(f).connect(g).connect(AC.destination);s.start(t)}
@@ -186,7 +186,12 @@ const SND={
   bad:()=>tone(200,.4,'sawtooth',.12,90),
   pop:()=>tone(700,.06,'square',.08)
 };
-function snd(n){try{SND[n]&&SND[n]()}catch(e){}}
+const FARTS=['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3'];let fartBuf=[],fartOrder=[],fartLoading=false;
+function loadFarts(){if(!AC||fartLoading)return;fartLoading=true;FARTS.forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>AC.decodeAudioData(b,res,rej))).then(buf=>{fartBuf[i]=buf}).catch(()=>{})})}
+function playFart(){if(!AC||!soundOn)return false;const ok=fartBuf.map((b,i)=>b?i:-1).filter(i=>i>=0);if(!ok.length)return false;
+  if(!fartOrder.length){fartOrder=ok.slice().sort(()=>Math.random()-.5);if(fartOrder[0]===playFart.last&&fartOrder.length>1)fartOrder.push(fartOrder.shift())}
+  const i=fartOrder.shift();playFart.last=i;try{const s=AC.createBufferSource();s.buffer=fartBuf[i];const g=AC.createGain();g.gain.value=.9;s.connect(g).connect(AC.destination);s.start();return true}catch(e){return false}}
+function snd(n){try{if(n==='fart'&&playFart())return;SND[n]&&SND[n]()}catch(e){}}
 function vib(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 
 // ---------- Texte ----------
