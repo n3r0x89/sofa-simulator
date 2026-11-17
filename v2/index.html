@@ -294,7 +294,7 @@ function dbAll(){return new Promise(res=>{if(!DB)return res({});try{const out={}
 function dbPut(k,v){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').put(v,k)}catch(e){}}
 function dbClear(){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').clear()}catch(e){}}
 function mkImg(src){const i=new Image();i.src=src;return i}
-const SPKEYS=["tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5", "crate", "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "vhs_1", "vhs_2", "vhs_3", "vhs_4", "vhs_5", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying"];
+const SPKEYS=["tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5", "crate", "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "vhs_1", "vhs_2", "vhs_3", "vhs_4", "vhs_5", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying", "lh_open"];
 async function loadSprites(){const base='sprites/';const mk=(k,src)=>{const i=new Image();i.onload=()=>{layout();if(k==='splash'&&mainOpen)mainMenu()};i.onerror=()=>{if(SP[k]===i)delete SP[k]};i.src=src;SP[k]=i};
   mk('room',base+'room.jpg');for(const k of SPKEYS)mk(k,base+k+'.webp');
   await dbOpen();const all=await dbAll();for(const k in all){const i=mkImg(all[k]);i.onload=()=>layout();SP[k]=i}}
@@ -520,7 +520,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   if(S.furn.console&&S.right!=='ctrl'){const g=L.ctrl;if(!spr('controller',g)){rr(g.x,g.y,g.w,g.h,12,'#1a1a1a');ell(g.x+14,g.y+12,4,4,'#555');ell(g.x+g.w-14,g.y+12,4,4,'#555')}hit('ctrl',g)}
   for(const h of EH)hit('empty',h);
 }
-let handAnim={drink:0,throwT:0,throwFrom:null,puff:0,snack:0};
+let handAnim={drink:0,throwT:0,throwFrom:null,puff:0,snack:0,capT:0};
 function skinHand(x,y,w,h,flip){cx.save();cx.translate(x,y);if(flip){cx.scale(-1,1)}rr(-w*.5,h*.25,w,h,18,'#6b6f73');ell(0,h*.18,w*.42,h*.26,'#e8b892');for(let i=0;i<4;i++)ell(-w*.3+i*w*.2,h*.0,w*.09,h*.12,'#e2ae86');cx.restore()}
 const CIG={e:[.0145,.172],f:[.208,.248],th:.04};let cigOC=null,cigTip=null;
 function drawCig(b,t){const i=SP.rh_cig;if(!(i&&i.naturalWidth))return;const nw=i.naturalWidth,nh=i.naturalHeight;
@@ -567,9 +567,10 @@ function drawHands(t){const lh=L.lh,rh=L.rh,sway=S.prom>=.8?Math.sin(t*1.7)*S.pr
     let lk;const d=handAnim.drink;
     if(handAnim.throwT>0)lk=handAnim.throwT>.6?'throw_1':'throw_2';
     else if(S.bottle&&d>0)lk=d>.9?'drink_1':(S.bottle.sips===0&&d<.5?'drink_3':'drink_2');
-    else if(S.bottle)lk=S.bottle.sips>0?'lh_full':'lh_empty';else lk='lh_none';
+    else if(S.bottle)lk=S.bottle.sips<=0?'lh_empty':(S.bottle.opened===false||!(SP.lh_open&&SP.lh_open.naturalWidth)?'lh_full':'lh_open');else lk='lh_none';
     const big=lk.startsWith('drink')||lk.startsWith('throw');const lb={x:lh.x+sway,y:lh.y-(big?lh.h*.12:0),w:lh.w*(big?1.12:1),h:lh.h*(big?1.12:1)};
     spr(lk,lb);
+    if(handAnim.capT>0){const k=1-handAnim.capT,cxp=lb.x+lb.w*.75+k*lb.w*.6,cyp=lb.y+lb.h*.03-Math.sin(k*Math.PI)*lb.h*.35+k*lb.h*.2;cx.save();cx.translate(cxp,cyp);cx.rotate(k*12);cx.fillStyle='#d6a82a';cx.beginPath();cx.ellipse(0,0,lb.w*.07,lb.w*.035,0,0,7);cx.fill();cx.strokeStyle='#8a6a14';cx.lineWidth=1.5;cx.stroke();cx.restore()}
     if(S.bottle)hit('bottle',{x:lh.x,y:lh.y-30,w:lh.w,h:lh.h+30});else hit('lefthand',lh);
     const r=S.right;const rk=handAnim.snack>0&&r==='empty'?'rh_snack':{empty:'rh_empty',remote:'rh_remote',phone:'rh_phone',cig:'rh_cig',ctrl:'rh_ctrl'}[r];
     const up=handAnim.puff>0?18:0;const rb={x:rh.x-sway,y:rh.y-up,w:rh.w,h:rh.h};if(rk==='rh_cig')drawCig(rb,t);else spr(rk,rb);hit('right',rh);
@@ -643,14 +644,15 @@ let busyUI=false; // modal/minigame open
 function needRightFree(want){if(S.right!=='empty'&&S.right!==want){toast(T('busy'));snd('bad');return false}return true}
 function takeBeer(cold){if(S.bottle&&S.bottle.sips>0){toast(pick(['Du hast doch noch Bier in der Hand, du Gierschlund.','Erst austrinken. Gibt keine zweite Hand für Bier.']));return}
   if(S.bottle){S.empties++;S.pfandStock++;S.bottle=null}
-  if(cold){if(S.fridge<=0){return fridgeTap(true)}if(S.tot<S.fridgeColdAt){toast('Noch warm. Gedulde dich, du Durststrecke.');return}S.fridge--;S.bottle={sips:3,cold:true,opened:true};addXP(2)}
-  else{if(S.beer<=0){toast(T('noBeer'));snd('bad');return}S.beer--;S.bottle={sips:3,cold:false,opened:true};addXP(1)}
+  if(cold){if(S.fridge<=0){return fridgeTap(true)}if(S.tot<S.fridgeColdAt){toast('Noch warm. Gedulde dich, du Durststrecke.');return}S.fridge--;S.bottle={sips:3,cold:true,opened:false};addXP(2)}
+  else{if(S.beer<=0){toast(T('noBeer'));snd('bad');return}S.beer--;S.bottle={sips:3,cold:false,opened:false};addXP(1)}
   snd('plop');doneHint('beer');checkAch()}
 function fridgeTap(){FX.fridgeOpen=S.tot+1.2;if(S.fridge>0&&S.tot>=S.fridgeColdAt)return takeBeer(true);
   if(S.fridge>0){toast('Wird noch kalt. Noch '+Math.ceil(S.fridgeColdAt-S.tot)+' Sekunden, du Ungeduld.');return}
   if(S.beer<=0){toast('Kühlschrank leer, Kiste leer. Respekt.');return}
   const n=Math.min(6,S.beer);S.beer-=n;S.fridge=n;S.fridgeColdAt=S.tot+10;toast(n+' Flaschen in den Kühlschrank gestellt.','In einer Stunde kalt')}
-function sip(){const b=S.bottle;if(!b)return;if(b.sips<=0){toast(pick(['Die Flasche ist leer, du Lutscher.','Da ist nix mehr drin. Neue aus der Kiste.']));return}
+function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=true;snd('plop');vib(30);handAnim.capT=1;toast(pick(['Plopp. Der schönste Ton des Tages.','Kronkorken ab. Jetzt geht’s los.','Zisch. Feierabend, obwohl du nie angefangen hast.']));doneHint('open')}
+function sip(){const b=S.bottle;if(!b)return;if(b.opened===false){toast('Erst aufmachen, du Durstkanone. Flasche antippen.');snd('bad');return}if(b.sips<=0){toast(pick(['Die Flasche ist leer, du Lutscher.','Da ist nix mehr drin. Neue aus der Kiste.']));return}
   b.sips--;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=.19*pl;S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
   if(b.sips===2){S.st.beers++;}
   if(Math.random()<.25)setTimeout(()=>{snd('burp');toast(T('burp'))},700);
@@ -683,9 +685,9 @@ function sleep(){if(!canSleep()){toast('Schlafen erst ab 19 Uhr, du Faultier. Se
   S.bo-=30;clampAll();stopFilm(true);warnT.th=warnT.hu=warnT.bo=S.tot+15;toast(T('morning').replace('{d}',S.day),'Langeweile −30',3500);evTimer=Math.max(evTimer,R(15,25));showDay()}
 function showDay(){if(S.pendingDay){const l=S.pendingDay;S.pendingDay=null;setTimeout(()=>toast('Neuer Tag '+S.day,l.join(' · '),4500),S.lastToastDelay||0)}}
 // ---------- Hints ----------
-const HINTS=[['remote','Fernbedienung antippen, dann links/rechts wischen zum Zappen.'],['zap','Wischen links/rechts wechselt den Sender.'],['beer','Bierkiste antippen für eine Flasche.'],['drink','Flasche gedrückt halten zum Trinken.'],['cig','Zigarettenschachtel antippen, dann Kippe gedrückt halten.'],['put','Auf den Tisch tippen legt ab, was du in der Hand hast.']];
+const HINTS=[['remote','Fernbedienung antippen, dann links/rechts wischen zum Zappen.'],['zap','Wischen links/rechts wechselt den Sender.'],['beer','Sixpack antippen für eine Flasche.'],['open','Flasche antippen: Kronkorken öffnen.'],['drink','Flasche gedrückt halten zum Trinken.'],['cig','Zigarettenschachtel antippen, dann Kippe gedrückt halten.'],['put','Auf den Tisch tippen legt ab, was du in der Hand hast.']];
 function doneHint(k){S.hintsDone[k]=1;if(k==='zap')S.hintsDone.remote=1}
-function hintText(){if(S.lvl>4)return'';for(const[k,t]of HINTS)if(!S.hintsDone[k]){if(k==='zap'&&S.right!=='remote')continue;if(k==='drink'&&!S.bottle)continue;if(k==='put'&&S.right==='empty')continue;return t}return''}
+function hintText(){if(S.lvl>4)return'';for(const[k,t]of HINTS)if(!S.hintsDone[k]){if(k==='zap'&&S.right!=='remote')continue;if(k==='drink'&&(!S.bottle||S.bottle.opened===false))continue;if(k==='open'&&!(S.bottle&&S.bottle.opened===false))continue;if(k==='put'&&S.right==='empty')continue;return t}return''}
 
 // ================= INPUT =================
 let PD=null;
@@ -720,7 +722,7 @@ function tap(id,p){
    case'basket':if(S.empties>0)return toBasket(true);return toast(S.basket?S.basket+' Flaschen im Korb. Im Shop gibt’s Pfand dafür.':'Der Korb ist leer. Wie dein Kühlschrank.');
    case'table':return putDown();
    case'right':if(S.right==='phone')return openPhone();if(S.right==='ctrl')return openGames();return;
-   case'bottle':if(S.bottle&&S.bottle.sips<=0)return putDown();return toast('Gedrückt halten zum Trinken, du Anfänger.');
+   case'bottle':if(S.bottle&&S.bottle.opened===false)return openBottle();if(S.bottle&&S.bottle.sips<=0)return putDown();return toast('Gedrückt halten zum Trinken, du Anfänger.');
   }
   if(S.furn.fridge&&inB(L.fridge))return fridgeTap();
   if(S.furn.massage&&inB(L.massage))return massage();
@@ -901,7 +903,7 @@ function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
   if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>{S=fresh();S.started=true;layout();save();closeModal();toast('Neues Spiel. Gleiches Sofa.')},pauseMenu)}}))}
 function confirmBox(q,yes,no){openModal(`<h2>Sicher?</h2><p>${esc(q)}</p><div class="list"><button class="btn red" data-y>Ja, weg damit</button><button class="btn" data-n>Nein</button></div>`,()=>bindAll({'[data-y]':yes,'[data-n]':no}))}
 function howMenu(back){openModal(`<h2>So geht’s</h2>
- <p><b>Fernbedienung</b> antippen, dann links/rechts wischen: Sender wechseln.</p><p><b>Bierkiste</b> antippen: neue Flasche. <b>Flasche gedrückt halten</b>: trinken. Ab 0,8 ‰ Flasche schnell <b>nach oben wischen</b>: gegen die Wand.</p>
+ <p><b>Fernbedienung</b> antippen, dann links/rechts wischen: Sender wechseln.</p><p><b>Sixpack</b> antippen: neue Flasche. <b>Flasche antippen</b>: Kronkorken ab. <b>Flasche gedrückt halten</b>: trinken. Ab 0,8 ‰ Flasche schnell <b>nach oben wischen</b>: gegen die Wand.</p>
  <p><b>Zigaretten</b> antippen, dann die Kippe in der rechten Hand gedrückt halten: 5 Züge.</p><p><b>Tisch</b> antippen: Gegenstand aus der Hand ablegen. Die rechte Hand hält immer nur eins.</p>
  <p><b>Leergut</b>: Jede leere Flasche bleibt auf dem Tisch stehen. Flasche antippen legt sie in den Korb, den Korb antippen räumt alle ein. Pfand gibt es im Shop nur für Flaschen im Korb.</p><p><b>Handy</b>: Jobs und Anrufe. <b>Katalog</b>: Möbel. <b>Kotze</b> 3× antippen zum Wegwischen. Möbel antippen zum Benutzen.</p>
  <p>Unten: 🥨 Snack, 🛒 Shop, 📖 Tagebuch, 🛏 Schlafen (19 bis 6 Uhr). 1 Spielstunde = 10 Sekunden.</p>
@@ -1086,7 +1088,7 @@ function frame(now){const dtr=Math.min(.1,(now-lastT)/1000);lastT=now;const t=no
     // need warnings
     for(const k of['th','hu','bo']){if(S[k]>=80&&S.tot-warnT[k]>30){warnT[k]=S.tot;toast(TX[k]);snd('bad')}}
     smokeLevel=Math.max(0,smokeLevel-dtr*.03);
-    if(handAnim.drink>0)handAnim.drink-=dtr*1.5;if(handAnim.throwT>0)handAnim.throwT-=dtr*2.2;if(handAnim.puff>0)handAnim.puff-=dtr;if(handAnim.snack>0)handAnim.snack-=dtr;
+    if(handAnim.drink>0)handAnim.drink-=dtr*1.5;if(handAnim.throwT>0)handAnim.throwT-=dtr*2.2;if(handAnim.puff>0)handAnim.puff-=dtr;if(handAnim.snack>0)handAnim.snack-=dtr;if(handAnim.capT>0)handAnim.capT-=dtr*1.6;
     if(S.prom>=S.pukeAt)puke();if(S.prom<.5){S.taskDone=false}
     if(S.prom>=1.1&&!S.taskDone&&!VISIT&&!CARD){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
     if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
