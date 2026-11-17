@@ -186,7 +186,7 @@ const SND={
   bad:()=>tone(200,.4,'sawtooth',.12,90),
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
@@ -665,7 +665,7 @@ function takeBeer(cold){if(S.bottle&&S.bottle.sips>0){toast(pick(['Du hast doch 
   if(S.bottle){S.empties++;S.pfandStock++;S.bottle=null}
   if(cold){if(S.fridge<=0){return fridgeTap(true)}if(S.tot<S.fridgeColdAt){toast('Noch warm, du ungeduldiger Lappen. Wie deine Leistung im Bett: lauwarm und zu früh.');return}S.fridge--;S.bottle={sips:3,cold:true,opened:false};addXP(2)}
   else{if(S.beer<=0){toast(T('noBeer'));snd('bad');return}S.beer--;S.bottle={sips:3,cold:false,opened:false};addXP(1)}
-  snd('plop');doneHint('beer');checkAch()}
+  snd('pop');doneHint('beer');checkAch()}
 function fridgeTap(){FX.fridgeOpen=S.tot+1.2;if(S.fridge>0&&S.tot>=S.fridgeColdAt)return takeBeer(true);
   if(S.fridge>0){toast('Wird noch kalt. Noch '+Math.ceil(S.fridgeColdAt-S.tot)+' Sekunden, du zappelige Sackratte.');return}
   if(S.beer<=0){toast('Kühlschrank leer, Sixpack leer, Leben leer. Respekt, du Nullnummer.');return}
