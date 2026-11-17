@@ -1,6 +1,6 @@
 // Sofa Simulator v2 – Offline-Speicher. Bei jeder neuen Version die Nummer hochzählen.
-const C='sofa-v2-14';
-const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./sounds/fart1.mp3','./sounds/fart2.mp3','./sounds/fart3.mp3','./sounds/fart4.mp3'];
+const C='sofa-v2-15';
+const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./sounds/fart1.mp3','./sounds/fart2.mp3','./sounds/fart3.mp3','./sounds/fart4.mp3','./sounds/burp1.mp3','./sounds/burp2.mp3','./sounds/burp3.mp3','./sounds/burp4.mp3'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x.startsWith('sofa-v2-')&&x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);

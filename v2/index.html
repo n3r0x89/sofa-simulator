@@ -159,7 +159,7 @@ S=load()||fresh();
 let AC=null,soundOn=true;
 try{soundOn=localStorage.getItem('sofasim_snd')!=='0'}catch(e){}
 function initAudio(){if(AC)return;try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
-  try{AC=new (window.AudioContext||window.webkitAudioContext)();const b=AC.createBuffer(1,1,22050);const s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){AC=null}loadFarts()}
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();const b=AC.createBuffer(1,1,22050);const s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){AC=null}loadBanks()}
 function env(g,t,a,d,v){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+d)}
 function tone(f,d,type='sine',v=.2,f2){if(!AC||!soundOn)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);env(g,t,.01,d,v);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05)}
 function noise(d,v=.2,fl=800,q=1,type='lowpass',sweep){if(!AC||!soundOn)return;const t=AC.currentTime,n=AC.sampleRate*d,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=AC.createBufferSource();s.buffer=b;const f=AC.createBiquadFilter();f.type=type;f.frequency.setValueAtTime(fl,t);if(sweep)f.frequency.exponentialRampToValueAtTime(sweep,t+d);f.Q.value=q;const g=AC.createGain();env(g,t,.01,d,v);s.connect(f).connect(g).connect(AC.destination);s.start(t)}
@@ -186,12 +186,13 @@ const SND={
   bad:()=>tone(200,.4,'sawtooth',.12,90),
   pop:()=>tone(700,.06,'square',.08)
 };
-const FARTS=['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3'];let fartBuf=[],fartOrder=[],fartLoading=false;
-function loadFarts(){if(!AC||fartLoading)return;fartLoading=true;FARTS.forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>AC.decodeAudioData(b,res,rej))).then(buf=>{fartBuf[i]=buf}).catch(()=>{})})}
-function playFart(){if(!AC||!soundOn)return false;const ok=fartBuf.map((b,i)=>b?i:-1).filter(i=>i>=0);if(!ok.length)return false;
-  if(!fartOrder.length){fartOrder=ok.slice().sort(()=>Math.random()-.5);if(fartOrder[0]===playFart.last&&fartOrder.length>1)fartOrder.push(fartOrder.shift())}
-  const i=fartOrder.shift();playFart.last=i;try{const s=AC.createBufferSource();s.buffer=fartBuf[i];const g=AC.createGain();g.gain.value=.9;s.connect(g).connect(AC.destination);s.start();return true}catch(e){return false}}
-function snd(n){try{if(n==='fart'&&playFart())return;SND[n]&&SND[n]()}catch(e){}}
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3']};
+const BUF={},ORD={},LAST={};let bankLoading=false;
+function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>AC.decodeAudioData(b,res,rej))).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
+function playBank(k){if(!AC||!soundOn||!BUF[k])return false;const ok=BUF[k].map((b,i)=>b?i:-1).filter(i=>i>=0);if(!ok.length)return false;
+  if(!ORD[k].length){ORD[k]=ok.slice().sort(()=>Math.random()-.5);if(ORD[k][0]===LAST[k]&&ORD[k].length>1)ORD[k].push(ORD[k].shift())}
+  const i=ORD[k].shift();LAST[k]=i;try{const s=AC.createBufferSource();s.buffer=BUF[k][i];const g=AC.createGain();g.gain.value=.9;s.connect(g).connect(AC.destination);s.start();return true}catch(e){return false}}
+function snd(n){try{if(BANKS[n]&&playBank(n))return;SND[n]&&SND[n]()}catch(e){}}
 function vib(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 
 // ---------- Texte ----------
@@ -670,7 +671,6 @@ function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=t
 function sip(){const b=S.bottle;if(!b)return;if(b.opened===false){toast('Erst aufmachen, du hirnloser Nuckelbubi. Flasche antippen.');snd('bad');return}if(b.sips<=0){toast(pick(['Die Flasche ist leer, du Flaschenlutscher. Saugen bringt nix.','Da ist nix mehr drin. Wie in deinem Kopf und deiner Hose.']));return}
   b.sips--;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=.19*pl;S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
   if(b.sips===2){S.st.beers++;}
-  if(Math.random()<.25)setTimeout(()=>{snd('burp');toast(T('burp'))},700);
   clampAll();doneHint('drink');checkAch();promCheck()}
 function throwBottle(){if(!S.bottle)return;if(S.prom<.8){toast('Nüchtern traust du dich nicht mal, ne Flasche zu schmeißen. Eierlose Lusche.');return}
   handAnim.throwT=1;snd('whoosh');setTimeout(()=>{snd('clink');vib(80);{const z=L.stainZone||{x:150,y:H*.15,w:270,h:L.wall-60-H*.15};S.stains.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h)})};if(S.stains.length>14)S.stains.shift()},420);
@@ -705,12 +705,13 @@ function doneHint(k){S.hintsDone[k]=1;if(k==='zap')S.hintsDone.remote=1}
 function hintText(){if(S.lvl>4)return'';for(const[k,t]of HINTS)if(!S.hintsDone[k]){if(k==='zap'&&S.right!=='remote')continue;if(k==='drink'&&(!S.bottle||S.bottle.opened===false))continue;if(k==='open'&&!(S.bottle&&S.bottle.opened===false))continue;if(k==='put'&&S.right==='empty')continue;return t}return''}
 
 // ================= INPUT =================
-let PD=null;
+let PD=null,burpT=0;
 function lp(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
 function hitAt(p){for(let i=HITS.length-1;i>=0;i--){const h=HITS[i];if(p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h)return h.id}return null}
 cv.addEventListener('pointerdown',e=>{initAudio();if(busyUI)return;const p=lp(e);PD={p,t:performance.now(),id:hitAt(p),last:performance.now(),acted:false};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
 cv.addEventListener('pointermove',e=>{if(!PD)return;PD.cur=lp(e)});
 cv.addEventListener('pointerup',e=>{if(!PD)return;const p=lp(e),dt=performance.now()-PD.t,dx=p.x-PD.p.x,dy=p.y-PD.p.y;const id=PD.id;const acted=PD.acted;PD=null;if(busyUI)return;
+  if(acted&&id==='bottle'){clearTimeout(burpT);burpT=setTimeout(()=>{snd('burp');vib(60);if(Math.random()<.5)toast(T('burp'))},600)}
   if(id==='bottle'&&dy<-70&&dt<450&&Math.abs(dy)>Math.abs(dx)){throwBottle();return}
   if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)&&dt<700){if(S.right==='remote'){zap(dx<0?1:-1);return}}
   if(acted||dt>450&&(id==='bottle'||id==='right'))return;
