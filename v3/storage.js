@@ -1,6 +1,5 @@
 /* Sofa Simulator V3 persistence layer.
- * Browser-native IndexedDB storage. This module is intentionally standalone:
- * integrate it into the game only after its migration and recovery paths are tested.
+ * Browser-native IndexedDB storage for the standalone V3 game.
  */
 const DB_NAME = "sofa-simulator-v3";
 let activeDatabaseName = DB_NAME;
