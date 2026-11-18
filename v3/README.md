@@ -14,7 +14,8 @@ Eigenständiger, mobiloptimierter Neuaufbau. V2-Dateien und der veröffentlichte
 ## Aktueller Funktionsumfang
 
 - Wohnzimmeransicht mit interaktiven Gegenständen
-- Spielzeit, Tagwechsel, Stimmung, Energie, Chaos, Geld und Vorräte
+- Spielzeit, Tagwechsel, Stimmung, Energie, Hunger, Hygiene, Chaos, Geld und Vorräte
+- Tagesziel mit Job-Bonus und Fortschrittsanzeige
 - Jobs, Einkaufen, Aufräumen, Fernsehen, Schlafen und Tagebuch
 - Automatisches Speichern und lokale IndexedDB-Sicherung
 - Spielstand exportieren/importieren und Sicherungen wiederherstellen
