@@ -2,6 +2,7 @@ import {
   loadCurrentSave, saveCurrent, migrateV2, listBackups, restoreBackup,
   exportSave, importSave, requestPersistentStorage
 } from "./storage.js";
+import { playSound, soundEnabled, toggleSound, unlockAudio } from "./sound.js";
 
 const $ = selector => document.querySelector(selector);
 const fresh = () => ({
@@ -74,7 +75,8 @@ function render() {
   $("#daily-goal").textContent = state.dailyGoalDone ? "Job erledigt – stark gemacht!" : "Erledige einen Job";
   $("#tv-content").textContent = state.tvOn ? channels[state.tvChannel % channels.length][0] : "AUS";
   $("#room-tip").textContent = state.tvOn ? channels[state.tvChannel % channels.length][1] : "Stille. Unheimlich.";
-  document.querySelector(".bottle").textContent = state.beer > 0 ? "🍺" : "🫙";
+  document.querySelector(".bottle").style.backgroundImage = state.beer > 0 ? 'url("./assets/sprites/bottle_0.webp")' : 'url("./assets/sprites/bottle_lying.webp")';
+  $("#sound-toggle").textContent = soundEnabled() ? "🔊 TON" : "🔇 TON";
   document.querySelector(".bottle").disabled = state.beer <= 0;
 }
 
@@ -129,28 +131,29 @@ function act(action) {
   switch (action) {
     case "tv":
       state.tvOn = !state.tvOn;
+      playSound("pop");
       if (state.tvOn) state.tvChannel = (state.tvChannel + 1) % channels.length;
       log(state.tvOn ? channels[state.tvChannel][1] : "Fernseher aus. Du hörst plötzlich deine Gedanken.");
       advance(1); break;
     case "drink":
       if (state.beer <= 0) return log("Der Kühlschrank ist leer. Tragisch, aber vorhersehbar.");
-      state.beer--; state.mood = Math.min(100, state.mood + 8); state.chaos += 1;
+      state.beer--; playSound("gulp"); state.mood = Math.min(100, state.mood + 8); state.chaos += 1;
       state.st.beers = (state.st.beers || 0) + 1;
       log("Du gönnst dir ein Bier. Der Tag wird nicht besser, aber anders.");
       advance(1); break;
     case "clean":
       if (state.energy < 8) return log("Du bist zu platt zum Aufräumen. Erst mal sitzen bleiben.");
-      state.chaos = Math.max(0, state.chaos - 18);
+      state.chaos = Math.max(0, state.chaos - 18); playSound("plop");
       state.energy -= 8; state.mood = Math.min(100, state.mood + 3);
       state.st.clean = (state.st.clean || 0) + 1;
       log("Du räumst ein bisschen auf. Es sieht fast nach Wohnung aus.");
       advance(1); break;
     case "eat":
       if (state.snacks <= 0) return log("Nichts mehr zu essen. Der Späti ruft.");
-      state.snacks--; state.hunger = Math.max(0, state.hunger - 28); state.mood = Math.min(100, state.mood + 4);
+      state.snacks--; playSound("plop"); state.hunger = Math.max(0, state.hunger - 28); state.mood = Math.min(100, state.mood + 4);
       log("Du isst einen Snack. Sterneküche ist es nicht, aber der Magen ist ruhig."); advance(1); break;
     case "shower":
-      state.hygiene = Math.min(100, state.hygiene + 35); state.energy = Math.max(0, state.energy - 6);
+      state.hygiene = Math.min(100, state.hygiene + 35); playSound("plop", 0.35); state.energy = Math.max(0, state.energy - 6);
       log("Geduscht. Du riechst wieder wie ein Mensch mit Perspektive."); advance(1); break;
     case "jobs": openJobs(); break;
     case "shop": openShop(); break;
@@ -210,6 +213,7 @@ function escapeHtml(value) {
 
 function sleep() {
   state.day++;
+  playSound("bell");
   state.hour = 8;
   state.energy = 100;
   state.mood = Math.min(100, state.mood + 12);
@@ -232,7 +236,7 @@ async function handleChoice(action) {
     };
     const [money, hours, text] = jobs[action];
     if (state.energy < hours * 6) return;
-    state.energy -= hours * 6; reward(money);
+    state.energy -= hours * 6; playSound("cash"); reward(money);
     if (!state.dailyGoalDone) { state.dailyGoalDone = true; reward(5, 4); log("Tagesziel geschafft: Bonus +5 €!"); }
     log(text); advance(hours); $("#modal").close(); await persist(true); return;
   }
@@ -245,7 +249,7 @@ async function handleChoice(action) {
     };
     const [price, grant, text] = items[action];
     if (state.money < price) return;
-    state.money -= price; grant(); log(text); $("#modal").close(); render(); await persist(true); return;
+    state.money -= price; playSound("clink"); grant(); log(text); $("#modal").close(); render(); await persist(true); return;
   }
   if (action === "export") {
     const blob = await exportSave();
@@ -305,6 +309,8 @@ function downloadBlob(blob, filename) {
 }
 
 document.addEventListener("click", event => {
+  unlockAudio();
+  if (event.target.closest("#sound-toggle")) { toggleSound(); render(); return; }
   const actionButton = event.target.closest("[data-action]");
   if (actionButton) act(actionButton.dataset.action);
   const choiceButton = event.target.closest("[data-choice]");
