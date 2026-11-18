@@ -13,7 +13,7 @@
   <main id="app" class="app">
     <header class="topbar">
       <div><span class="eyebrow">DEIN LEBEN. DEIN SOFA.</span><h1>SOFA <em>SIMULATOR</em></h1></div>
-      <button id="sleep" class="day-pill" title="Schlafen">🌙 <span id="clock">TAG 1 · 08:00</span></button>
+      <div class="top-actions"><button id="sound-toggle" class="sound-pill" aria-label="Ton ein oder ausschalten">🔊 TON</button><button id="sleep" class="day-pill" title="Schlafen">🌙 <span id="clock">TAG 1 · 08:00</span></button></div>
     </header>
     <section class="status-grid" aria-label="Status">
       <div class="stat"><span>💸 GELD</span><b id="money">5 €</b></div>
@@ -28,12 +28,12 @@
     </section>
     <section class="room-wrap">
       <div class="room" id="room">
-        <div class="window"><div class="night"></div><div class="city"></div></div>
-        <div class="wall-poster">HEUTE<br><strong>NICHT.</strong></div>
-        <div class="shelf"><span>📺</span><span>📼</span><span>🪴</span></div>
-        <div class="tv" id="tv"><div class="tv-screen"><span id="tv-content">TESTBILD</span><small>ASSI VISION</small></div><div class="tv-foot"></div></div>
-        <div class="sofa"><div class="sofa-back"></div><div class="cushions"><i></i><i></i><i></i></div><div class="sofa-seat"></div><div class="sofa-arm left"></div><div class="sofa-arm right"></div></div>
-        <div class="table"><div class="table-top"><button class="room-item remote" data-action="tv" aria-label="Fernseher">🎛️</button><button class="room-item bottle" data-action="drink" aria-label="Trinken">🍺</button><button class="room-item phone" data-action="jobs" aria-label="Handy">📱</button></div><div class="table-leg"></div></div>
+        <div class="scene-glow"></div>
+        
+        
+        <div class="tv-overlay" id="tv"><span id="tv-content">ASSI VISION</span></div>
+        
+        <button class="room-item remote" data-action="tv" aria-label="Fernseher"></button><button class="room-item bottle" data-action="drink" aria-label="Trinken"></button><button class="room-item phone" data-action="jobs" aria-label="Handy"></button>
         <div class="floor-label">WOHNZIMMER · 42 m² GEFÜHLT</div>
       </div>
       <div class="room-caption"><span>DEINE WOHNUNG</span><span id="room-tip">Tippe auf Gegenstände.</span></div>
