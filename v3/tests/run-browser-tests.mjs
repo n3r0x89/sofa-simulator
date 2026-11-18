@@ -42,7 +42,19 @@ try {
   if (await game.locator("#money").textContent() !== "28 €" || await game.locator("#clock").textContent() !== "TAG 2 · 08:00") {
     throw new Error("Spielstand hat Job/Schlaf oder Reload nicht überlebt.");
   }
-  console.log("Game smoke test: fresh start, job, daily goal, sleep and reload persistence passed.");
+  await game.evaluate(() => navigator.serviceWorker.ready);
+  await game.context().setOffline(true);
+  await game.reload();
+  const offlineAssets = await game.evaluate(async () => {
+    const room = await fetch("./assets/sprites/room.jpg");
+    const sound = await fetch("./assets/audio/gulp1.mp3");
+    return { room: room.ok, sound: sound.ok, controlled: !!navigator.serviceWorker.controller };
+  });
+  await game.context().setOffline(false);
+  if (!offlineAssets.room || !offlineAssets.sound || !offlineAssets.controlled) {
+    throw new Error("V3-Art oder Sound ist offline nicht verfügbar: " + JSON.stringify(offlineAssets));
+  }
+  console.log("Game smoke test: fresh start, job, daily goal, sound toggle, sleep, reload and offline artwork/audio passed.");
 
   if (failures.length) throw new Error("Browserfehler: " + failures.join(" | "));
 } finally {
