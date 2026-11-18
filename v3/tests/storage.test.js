@@ -20,7 +20,8 @@ function sample(day = 1) {
   return {
     day, hour: 8, tot: 0, lvl: 1, xp: 0, money: 5, beer: 6, snacks: 2, cigs: 10,
     h: {}, st: { zaps: [] }, furn: {}, best: {}, ach: {}, jobCd: {}, hintsDone: {},
-    vhs: [], puddles: [], stains: [], splats: [], started: true,\n    legacyCustomFlag: "must-survive", furn: { sofa: { condition: 4 } }
+    vhs: [], puddles: [], stains: [], splats: [], started: true,
+    legacyCustomFlag: "must-survive", furn: { sofa: { condition: 4 } }
   };
 }
 function deleteDatabase(name) {
@@ -59,7 +60,9 @@ runButton.addEventListener("click", async () => {
       const result = await migrateV2({ storage });
       assert(result.migrated && result.originalPreserved, "Migration nicht bestätigt");
       const current = await loadCurrentSave();
-      assert(current.day === 4, "Tag 4 nicht übernommen");\n      assert(current.legacyCustomFlag === "must-survive", "Unbekanntes V2-Feld ging verloren");\n      assert(current.furn.sofa.condition === 4, "Verschachteltes V2-Feld ging verloren");
+      assert(current.day === 4, "Tag 4 nicht übernommen");
+      assert(current.legacyCustomFlag === "must-survive", "Unbekanntes V2-Feld ging verloren");
+      assert(current.furn.sofa.condition === 4, "Verschachteltes V2-Feld ging verloren");
     });
     await execute("V2-Original bleibt bytegenau erhalten", async () => {
       const db = await openSaveDatabase();
