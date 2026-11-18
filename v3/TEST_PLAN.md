@@ -58,3 +58,11 @@ V3 is now connected to the persistence module. The browser test lab at `v3/tests
 
 ## Release gate
 Do not merge or deploy until the checks above have been executed against representative copied V2 saves and the results have been reviewed. Never test destructive restore/import flows against the user's only live save.
+
+
+## Media and offline checks
+- [ ] V3 scene background and object sprites load from `v3/assets/sprites/`.
+- [ ] Sound toggle persists across reloads and sound effects play after a user gesture.
+- [ ] Service worker caches all 197 local media assets.
+- [ ] Scene artwork and MP3 sound effects remain available after going offline.
+- [ ] iOS Safari and Android Chrome audio autoplay restrictions are respected.
