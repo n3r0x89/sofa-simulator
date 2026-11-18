@@ -6,7 +6,11 @@ Eigenständiger, mobiloptimierter Neuaufbau. V2-Dateien und der veröffentlichte
 
 - `index.html`, `style.css`, `app.js`: eigenständige V3-Oberfläche, Spielschleife und Interaktionen
 - `storage.js`: IndexedDB, V2-Migration, Sicherungen, Import/Export
-- `assets/sprites/`: kopierte Szenen- und Gegenstandsgrafiken aus dem V2-Projekt, als eigenständige V3-Dateien\n- `assets/audio/`: lokale MP3-Soundeffekte\n- `assets/asset-manifest.json`: vollständige Offline-Assetliste\n- `sound.js`: Lautstärkeschalter und Soundeffekt-Player\n- `sw.js`, `manifest.webmanifest`, `icon.svg`: installierbare Offline-Shell
+- `assets/sprites/`: kopierte Szenen- und Gegenstandsgrafiken aus dem V2-Projekt, als eigenständige V3-Dateien
+- `assets/audio/`: lokale MP3-Soundeffekte
+- `assets/asset-manifest.json`: vollständige Offline-Assetliste
+- `sound.js`: Lautstärkeschalter und Soundeffekt-Player
+- `sw.js`, `manifest.webmanifest`, `icon.svg`: installierbare Offline-Shell
 - `tests/storage.test.html`, `tests/storage.test.js`: isoliertes Browser-Testlabor
 - `tests/run-browser-tests.mjs`: Playwright-Lauf für Speichertests und Spielstart
 - `TEST_PLAN.md`: manuelle Geräte- und Release-Prüfungen
