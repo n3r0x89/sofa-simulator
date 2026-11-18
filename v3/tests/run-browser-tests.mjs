@@ -27,7 +27,18 @@ try {
   await game.locator('[data-action="jobs"]').first().click();
   await game.locator('[data-choice="job-delivery"]').click();
   await game.waitForFunction(() => document.querySelector("#money")?.textContent === "28 €");
-  console.log("Game smoke test: fresh start and delivery job passed.");
+  await game.waitForFunction(() => document.querySelector("#goal-status")?.textContent.includes("1 / 1"));
+  await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"));
+  await game.locator("#sleep").click();
+  await game.waitForFunction(() => document.querySelector("#clock")?.textContent === "TAG 2 · 08:00");
+  await game.waitForFunction(() => document.querySelector("#goal-status")?.textContent.includes("0 / 1"));
+  await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"));
+  await game.reload();
+  await game.waitForFunction(() => /GESPEICHERT|GELADEN/.test(document.querySelector("#save-state")?.textContent || ""));
+  if (await game.locator("#money").textContent() !== "28 €" || await game.locator("#clock").textContent() !== "TAG 2 · 08:00") {
+    throw new Error("Spielstand hat Job/Schlaf oder Reload nicht überlebt.");
+  }
+  console.log("Game smoke test: fresh start, job, daily goal, sleep and reload persistence passed.");
 
   if (failures.length) throw new Error("Browserfehler: " + failures.join(" | "));
 } finally {
