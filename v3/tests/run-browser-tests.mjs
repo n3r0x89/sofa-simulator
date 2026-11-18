@@ -30,11 +30,16 @@ try {
   await game.waitForFunction(() => document.querySelector("#goal-status")?.textContent.includes("1 / 1"));
   await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"));
 
+  // A second job on the same day must not pay the daily-goal bonus twice.
+  await game.locator('[data-action="jobs"]').first().click();
+  await game.locator('[data-choice="job-game"]').click();
+  await game.waitForFunction(() => document.querySelector("#money")?.textContent === "38 €");
+
   // Exercise the remaining everyday actions and their visible state changes.
   await game.locator('[data-action="shop"]').first().click();
   await game.locator('[data-choice="buy-snacks"]').click();
   await game.waitForFunction(() => document.querySelector("#snacks")?.textContent === "5");
-  if (await game.locator("#money").textContent() !== "22 €") throw new Error("Späti-Kauf hat Geld/Vorrat nicht korrekt aktualisiert.");
+  if (await game.locator("#money").textContent() !== "32 €") throw new Error("Späti-Kauf hat Geld/Vorrat nicht korrekt aktualisiert.");
 
   const energyBeforeClean = Number((await game.locator("#energy-value").textContent()).replace("%", ""));
   await game.locator('[data-action="clean"]').first().click();
