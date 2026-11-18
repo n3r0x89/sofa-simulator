@@ -1,19 +1,19 @@
 # V3 persistence – verification checklist
 
-V3 is now connected to the persistence module. The browser test lab at `v3/tests/storage.test.html` uses a dedicated test database and should be run before any release.
+V3 is connected to the persistence module. The browser test lab at `v3/tests/storage.test.html` uses a dedicated test database and should be run before any release.
 
 ## Automated checks
-- [x] Playwright runs the isolated IndexedDB tests and fresh-game/job/sleep/reload smoke test in Chromium (10 storage checks).
+- [x] Playwright runs the 12 isolated IndexedDB tests and fresh-game/job/daily-goal/sound-toggle/sleep/reload smoke test in Chromium.
 - [x] GitHub Actions JavaScript module syntax check passes.
 - [x] Manifest JSON and required V3 files pass the workflow.
 
 ## Browser test lab
 - [x] Open `/v3/tests/storage.test.html` over HTTP(S) in headless Chromium.
-- [x] Confirm all isolated storage tests pass in headless Chromium.
+- [x] Confirm all 12 isolated storage tests pass in headless Chromium.
 - [x] Confirm the test code targets only `sofa-simulator-v3-test-browser` (the production DB is not opened by the test module).
 
 ## Static/API checks
-- [x] Module parses as an ES module in Chromium (iOS/Android device coverage remains open).
+- [x] Module parses as an ES module in Chromium.
 - [ ] All exported functions are present and documented.
 - [ ] V2 defaults match the current `fresh()` structure in `v2/index.html`.
 - [ ] Runtime-only UI/animation state is excluded from persisted data.
@@ -52,17 +52,18 @@ V3 is now connected to the persistence module. The browser test lab at `v3/tests
 - [ ] iOS Safari (current supported iOS release).
 - [ ] Android Chrome.
 - [ ] Desktop Chrome/Edge and Firefox.
-- [ ] Offline reload after the first successful load.
+- [x] Offline reload is controlled by the service worker; one scene image and one MP3 effect remain fetchable in the Chromium workflow.
+- [ ] Full offline availability of all 197 assets is verified.
 - [ ] Multiple open tabs and blocked database upgrades.
 - [ ] Browser storage cleared: recovery guidance is clear and no cloud-backup claim is made.
 
+## Media checks
+- [x] V3 room background image is available offline in headless Chromium.
+- [x] A local MP3 sound effect is available offline in headless Chromium.
+- [x] Sound toggle responds to on/off interaction in the game smoke test.
+- [ ] Sound preference persistence across reload is verified.
+- [ ] All 162 sprites and 35 audio files are verified in the offline cache.
+- [ ] iOS Safari and Android Chrome audio autoplay restrictions are verified on devices.
+
 ## Release gate
-Do not merge or deploy until the checks above have been executed against representative copied V2 saves and the results have been reviewed. Never test destructive restore/import flows against the user's only live save.
-
-
-## Media and offline checks
-- [ ] V3 scene background and object sprites load from `v3/assets/sprites/`.
-- [ ] Sound toggle persists across reloads and sound effects play after a user gesture.
-- [ ] Service worker caches all 197 local media assets.
-- [ ] Scene artwork and MP3 sound effects remain available after going offline.
-- [ ] iOS Safari and Android Chrome audio autoplay restrictions are respected.
+Do not merge or deploy until the open checks above have been executed against representative copied V2 saves and the results have been reviewed. Never test destructive restore/import flows against the user's only live save.
