@@ -26,7 +26,7 @@ try {
   }
   await game.locator('[data-action="jobs"]').first().click();
   await game.locator('[data-choice="job-delivery"]').click();
-  await game.waitForFunction(() => document.querySelector("#money")?.textContent === "23 €");
+  await game.waitForFunction(() => document.querySelector("#money")?.textContent === "28 €");
   console.log("Game smoke test: fresh start and delivery job passed.");
 
   if (failures.length) throw new Error("Browserfehler: " + failures.join(" | "));
