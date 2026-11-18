@@ -92,12 +92,25 @@ async function persist(force = false) {
     newGamePending = false;
     if (!dirty) setSaveLabel("● GESPEICHERT");
   } catch (error) {
+    // Do not automatically retry a persistent storage failure in a tight loop.
+    // Keep the in-memory state dirty so the next user action or visibility
+    // transition can retry, and explain how to protect the current session.
     dirty = true;
     setSaveLabel("● SPEICHERFEHLER", true);
-    log("Speichern fehlgeschlagen: " + error.message + " – bitte exportiere deinen Spielstand.");
+    const message = "Speichern fehlgeschlagen: " + error.message + " – bitte exportiere deinen Spielstand.";
+    if (!state.diaryEntries?.some(entry => entry.text === message)) {
+      state.diaryEntries ||= [];
+      state.diaryEntries.unshift({ day: state.day, hour: state.hour, text: message });
+      state.diaryEntries = state.diaryEntries.slice(0, 60);
+      $("#feed").replaceChildren();
+      for (const entry of state.diaryEntries.slice(0, 3)) {
+        const p = document.createElement("p");
+        p.textContent = entry.text;
+        $("#feed").append(p);
+      }
+    }
   } finally {
     saving = false;
-    if (dirty) queueMicrotask(() => persist());
   }
 }
 
