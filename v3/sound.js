@@ -12,7 +12,9 @@ const BANKS = {
   smash: ["smash1.mp3","smash2.mp3","smash3.mp3","smash4.mp3"],
   bell: ["bell1.mp3"]
 };
-let enabled = localStorage.getItem("sofasim_v3_sound") !== "off";
+function readSoundPreference() { try { return localStorage.getItem("sofasim_v3_sound") !== "off"; } catch { return true; } }
+function writeSoundPreference(value) { try { localStorage.setItem("sofasim_v3_sound", value ? "on" : "off"); } catch { /* Session-only preference when storage is blocked. */ } }
+let enabled = readSoundPreference();
 let unlocked = false;
 let last = {};
 const pools = new Map();
@@ -36,7 +38,7 @@ function choose(bank) {
 export function soundEnabled() { return enabled; }
 export function toggleSound() {
   enabled = !enabled;
-  localStorage.setItem("sofasim_v3_sound", enabled ? "on" : "off");
+  writeSoundPreference(enabled);
   return enabled;
 }
 export function playSound(bank, volume = 0.78) {
