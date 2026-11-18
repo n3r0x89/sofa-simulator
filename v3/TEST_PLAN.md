@@ -22,7 +22,7 @@ V3 is connected to the persistence module. The browser test lab at `v3/tests/sto
 - [ ] V3 game loads with a fresh save and with a migrated V2 save.
 - [x] Jobs, shop, clean, eat, shower, TV, sleep, diary and menu actions respond in the headless Chromium smoke test.
 - [x] Hunger, hygiene and energy meters update after eat, shower and clean in the headless Chromium smoke test.
-- [ ] Daily job goal grants its bonus once and resets after sleeping.
+- [x] Daily job goal grants its bonus only once per day; Chromium smoke test now verifies a second job does not repeat the bonus and sleeping resets the goal.
 
 ## Migration checks (use a copied V2 save only)
 - [ ] Valid V2 save migrates and preserves all known and unknown payload fields.
