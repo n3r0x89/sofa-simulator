@@ -1,0 +1,35 @@
+name: V3 static checks
+on:
+  pull_request:
+    paths:
+      - "v3/**"
+      - ".github/workflows/v3-checks.yml"
+  push:
+    branches: ["feature/v3-technical"]
+    paths:
+      - "v3/**"
+      - ".github/workflows/v3-checks.yml"
+jobs:
+  syntax-and-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript module syntax
+        run: |
+          node --input-type=module --check < v3/storage.js
+          node --input-type=module --check < v3/app.js
+          node --input-type=module --check < v3/tests/storage.test.js
+      - name: Validate web app manifest
+        run: python -m json.tool v3/manifest.webmanifest > /dev/null
+      - name: Check required standalone V3 files
+        run: |
+          test -s v3/index.html
+          test -s v3/style.css
+          test -s v3/app.js
+          test -s v3/storage.js
+          test -s v3/sw.js
+          test -s v3/tests/storage.test.html
+          test -s v3/tests/storage.test.js
