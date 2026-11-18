@@ -75,9 +75,10 @@ function validatePayload(payload) {
     }
   }
   if (!isRecord(payload.h) || !isRecord(payload.st) || !isRecord(payload.furn) ||
-      !isRecord(payload.best) || !Array.isArray(payload.vhs) ||
+      !isRecord(payload.best) || !isRecord(payload.ach) || !isRecord(payload.jobCd) ||
+      !isRecord(payload.hintsDone) || !Array.isArray(payload.vhs) ||
       !Array.isArray(payload.puddles) || !Array.isArray(payload.stains) ||
-      !Array.isArray(payload.splats)) {
+      !Array.isArray(payload.splats) || !Array.isArray(payload.st.zaps)) {
     throw new Error("Spielstand enthält ungültige Datenstrukturen.");
   }
   return true;
@@ -182,6 +183,18 @@ export async function saveCurrent(payload, { dailyBackup = true } = {}) {
 }
 
 export async function migrateV2({ storage = globalThis.localStorage } = {}) {
+  const existingDb = await openSaveDatabase();
+  try {
+    const tx = existingDb.transaction("migration", "readonly");
+    const prior = await requestResult(tx.objectStore("migration").get("v2-original"));
+    await transactionDone(tx);
+    if (prior?.status === "completed") {
+      return { migrated: false, reason: "already-migrated", originalPreserved: true };
+    }
+  } finally {
+    existingDb.close();
+  }
+
   let raw;
   try { raw = storage?.getItem(V2_STORAGE_KEY); }
   catch { throw new Error("Der V2-Spielstand ist wegen einer Browser-Speicherbeschränkung nicht lesbar."); }
@@ -301,8 +314,18 @@ export async function importSave(file) {
   const clean = await withChecksum({ ...envelope(record.payload, "import"), id: "current" });
   const db = await openSaveDatabase();
   try {
-    const tx = db.transaction("currentSave", "readwrite");
+    const read = db.transaction("currentSave", "readonly");
+    const previous = await requestResult(read.objectStore("currentSave").get("current"));
+    await transactionDone(read);
+    const recovery = previous ? await withChecksum({
+      ...envelope(previous.payload, "pre-import-recovery"),
+      id: "backup-pre-import-" + Date.now(),
+      reason: "pre-import",
+      gameDay: previous.payload.day
+    }) : null;
+    const tx = db.transaction(["currentSave", "backups"], "readwrite");
     tx.objectStore("currentSave").put(clean);
+    if (recovery) tx.objectStore("backups").put(recovery);
     await transactionDone(tx);
     return true;
   } finally { db.close(); }
