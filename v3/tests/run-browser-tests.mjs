@@ -20,7 +20,7 @@ try {
   const game = await browser.newPage();
   game.on("pageerror", error => failures.push(error.message));
   await game.goto("http://127.0.0.1:4173/v3/");
-  await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"), null, { timeout: 15000 });
+  await game.waitForFunction(() => /GESPEICHERT|GELADEN/.test(document.querySelector("#save-state")?.textContent || ""), null, { timeout: 15000 });
   if (await game.locator("#clock").textContent() !== "TAG 1 · 08:00") {
     throw new Error("Neues V3-Spiel wurde nicht korrekt initialisiert.");
   }
