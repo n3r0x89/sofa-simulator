@@ -28,11 +28,15 @@ This folder is the isolated V3 development area. V2 is not modified.
 - The V2 migration checkpoint is excluded from normal backup rotation.
 - Normal saves update the current record. A daily checkpoint is created only when the in-game day advances.
 - Automatic/recovery checkpoints are limited to five; the protected V2 migration checkpoint is additional.
-- Export/import uses JSON and validates format, schema and payload structure. SHA-256 is checked when the browser supports Web Crypto.
+- Export/import and restore validate format, schema, payload structure and SHA-256 when the browser supports Web Crypto. Migration is marked complete only after its saved copy and preserved V2 original have been read back and verified.
 
 ## Important integration notes
 
 The V2 state defaults were transcribed from `v2/index.html`'s `fresh()` function. V2 also creates some fields at runtime (for example `pendingDay` and `lastToastDelay`); those need a deliberate persistence decision during integration. Temporary UI, animation, timer and modal state must not be serialized.
+
+## Current verification status
+
+The persistence layer has received code-level hardening for new-game day resets, bounded backup rotation, restore/export checksum checks, and migration read-back verification. These are implementation changes, not proof of successful browser/device execution. The checklist in `TEST_PLAN.md` remains open until those tests are run.
 
 Before connecting this module to the game:
 1. Test in a real browser with a copy of a V2 save.
