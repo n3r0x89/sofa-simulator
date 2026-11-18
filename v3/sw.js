@@ -1,5 +1,5 @@
 const CACHE = "sofa-v3-shell-1";
-const FILES = ["./", "./index.html", "./style.css", "./app.js", "./storage.js", "./manifest.webmanifest"];
+const FILES = ["./", "./index.html", "./style.css", "./app.js", "./storage.js", "./manifest.webmanifest", "./icon.svg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
 });
