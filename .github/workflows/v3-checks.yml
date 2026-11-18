@@ -1,0 +1,56 @@
+name: V3 static checks
+concurrency:
+  group: v3-checks-${{ github.ref }}
+  cancel-in-progress: true
+on:
+  pull_request:
+    paths:
+      - "v3/**"
+      - ".github/workflows/v3-checks.yml"
+  push:
+    branches: ["feature/v3-technical"]
+    paths:
+      - "v3/**"
+      - ".github/workflows/v3-checks.yml"
+jobs:
+  syntax-and-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript module syntax
+        run: |
+          node --input-type=module --check < v3/storage.js
+          node --input-type=module --check < v3/app.js
+          node --input-type=module --check < v3/sound.js
+          node --input-type=module --check < v3/tests/storage.test.js
+          node --check v3/tests/run-browser-tests.mjs
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Run isolated IndexedDB and game smoke tests
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/sofa-v3-http.log 2>&1 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID" EXIT
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:4173/v3/ > /dev/null && break; sleep 1; done
+          node v3/tests/run-browser-tests.mjs
+      - name: Validate web app manifest
+        run: python -m json.tool v3/manifest.webmanifest > /dev/null
+      - name: Check required standalone V3 files
+        run: |
+          test -s v3/index.html
+          test -s v3/style.css
+          test -s v3/app.js
+          test -s v3/sound.js
+          test -s v3/assets/asset-manifest.json
+          test -s v3/assets/sprites/room.jpg
+          test -s v3/assets/audio/gulp1.mp3
+          test -s v3/storage.js
+          test -s v3/sw.js
+          test -s v3/tests/storage.test.html
+          test -s v3/tests/storage.test.js
+          test -s v3/tests/run-browser-tests.mjs

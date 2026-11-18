@@ -1,0 +1,35 @@
+name: V3 browser preview (GitHub Pages)
+on:
+  push:
+    branches: ["feature/v3-technical"]
+    paths:
+      - "v3/**"
+      - ".github/workflows/v3-preview-pages.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: v3-pages-preview
+  cancel-in-progress: true
+jobs:
+  deploy-preview:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V3 branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v3-technical
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload V3 only
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: v3
+      - name: Publish V3 preview
+        id: deployment
+        uses: actions/deploy-pages@v4

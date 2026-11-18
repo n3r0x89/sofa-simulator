@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#171613">
+  <meta name="description" content="Sofa Simulator V3 – ein eigenständiges Handy-Lebenssimulationsspiel.">
+  <title>Sofa Simulator V3</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main id="app" class="app">
+    <header class="topbar">
+      <div><span class="eyebrow">DEIN LEBEN. DEIN SOFA.</span><h1>SOFA <em>SIMULATOR</em></h1></div>
+      <div class="top-actions"><button id="sound-toggle" class="sound-pill" aria-label="Ton ein oder ausschalten">🔊 TON</button><button id="sleep" class="day-pill" title="Schlafen">🌙 <span id="clock">TAG 1 · 08:00</span></button></div>
+    </header>
+    <section class="status-grid" aria-label="Status">
+      <div class="stat"><span>💸 GELD</span><b id="money">5 €</b></div>
+      <div class="stat"><span>🍺 VORRAT</span><b id="beer">6</b></div>
+      <div class="stat"><span>🧠 STIMMUNG</span><b id="mood">Okay</b></div>
+      <div class="stat"><span>🧹 CHAOS</span><b id="chaos">0%</b></div>
+    </section>
+    <section class="needs-panel" aria-label="Bedürfnisse">
+      <div class="need"><span>⚡ ENERGIE</span><div><i id="energy-bar"></i></div><b id="energy-value">78%</b></div>
+      <div class="need"><span>🍔 HUNGER</span><div><i id="hunger-bar"></i></div><b id="hunger-value">42%</b></div>
+      <div class="need"><span>🚿 HYGIENE</span><div><i id="hygiene-bar"></i></div><b id="hygiene-value">65%</b></div>
+    </section>
+    <section class="room-wrap">
+      <div class="room" id="room">
+        <div class="scene-glow"></div>
+        
+        
+        <div class="tv-overlay" id="tv"><span id="tv-content">ASSI VISION</span></div>
+        
+        <button class="room-item remote" data-action="tv" aria-label="Fernseher"></button><button class="room-item bottle" data-action="drink" aria-label="Trinken"></button><button class="room-item phone" data-action="jobs" aria-label="Handy"></button>
+        <div class="floor-label">WOHNZIMMER · 42 m² GEFÜHLT</div>
+      </div>
+      <div class="room-caption"><span>DEINE WOHNUNG</span><span id="room-tip">Tippe auf Gegenstände.</span></div>
+    </section>
+    <section class="action-grid">
+      <button class="action primary" data-action="jobs"><span>📱</span><b>Jobs</b><small>Geld verdienen</small></button>
+      <button class="action" data-action="shop"><span>🛒</span><b>Späti</b><small>Vorräte kaufen</small></button>
+      <button class="action" data-action="clean"><span>🧽</span><b>Aufräumen</b><small>Chaos beseitigen</small></button>
+      <button class="action" data-action="eat"><span>🥪</span><b>Essen</b><small>Snacks: <span id="snacks">2</span></small></button>
+      <button class="action" data-action="shower"><span>🚿</span><b>Duschen</b><small>Frisch werden</small></button>
+      <button class="action" data-action="diary"><span>📖</span><b>Tagebuch</b><small>Dein Verlauf</small></button>
+    </section>
+    <section class="goal-panel"><div><span class="eyebrow">TAGESZIEL</span><b id="daily-goal">Erledige einen Job</b></div><span id="goal-status">0 / 1</span></section>
+    <section class="feed-panel">
+      <div class="section-heading"><h2>WAS GEHT AB?</h2><span id="save-state">● STARTET …</span></div>
+      <div id="feed" class="feed" aria-live="polite"><p>Du sitzt auf dem Sofa. Der Tag kann eigentlich nur schlechter werden.</p></div>
+    </section>
+    <nav class="bottom-nav">
+      <button class="selected" data-tab="home">⌂<small>Wohnung</small></button>
+      <button data-tab="phone" data-action="jobs">▣<small>Handy</small></button>
+      <button data-tab="shop" data-action="shop">＋<small>Shop</small></button>
+      <button data-tab="menu" data-action="menu">☰<small>Menü</small></button>
+    </nav>
+  </main>
+  <dialog id="modal" class="modal"><div class="modal-head"><span class="eyebrow">SOFA SIMULATOR V3</span><button id="close-modal" aria-label="Schließen">✕</button></div><div id="modal-content"></div></dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
