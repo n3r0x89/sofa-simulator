@@ -158,6 +158,7 @@ runButton.addEventListener("click", async () => {
       assert(target, "Kein Tages-Backup vorhanden");
       await restoreBackup(target.id);
       assert((await loadCurrentSave()).day === target.gameDay, "Falscher Tag wiederhergestellt");
+      assert((await listBackups()).some(item => item.reason === "pre-restore"), "Vorheriger Spielstand wurde nicht gesichert");
     });
   } finally {
     const summary = document.createElement("h2");
