@@ -20,7 +20,7 @@ function sample(day = 1) {
   return {
     day, hour: 8, tot: 0, lvl: 1, xp: 0, money: 5, beer: 6, snacks: 2, cigs: 10,
     h: {}, st: { zaps: [] }, furn: {}, best: {}, ach: {}, jobCd: {}, hintsDone: {},
-    vhs: [], puddles: [], stains: [], splats: [], started: true
+    vhs: [], puddles: [], stains: [], splats: [], started: true,\n    legacyCustomFlag: "must-survive", furn: { sofa: { condition: 4 } }
   };
 }
 function deleteDatabase(name) {
@@ -59,7 +59,7 @@ runButton.addEventListener("click", async () => {
       const result = await migrateV2({ storage });
       assert(result.migrated && result.originalPreserved, "Migration nicht bestätigt");
       const current = await loadCurrentSave();
-      assert(current.day === 4, "Tag 4 nicht übernommen");
+      assert(current.day === 4, "Tag 4 nicht übernommen");\n      assert(current.legacyCustomFlag === "must-survive", "Unbekanntes V2-Feld ging verloren");\n      assert(current.furn.sofa.condition === 4, "Verschachteltes V2-Feld ging verloren");
     });
     await execute("V2-Original bleibt bytegenau erhalten", async () => {
       const db = await openSaveDatabase();
@@ -80,12 +80,33 @@ runButton.addEventListener("click", async () => {
       assert(result.reason === "already-migrated", "Migration war nicht idempotent");
       assert((await loadCurrentSave()).day === 9, "V3-Spielstand wurde überschrieben");
     });
+    await execute("Fehlender und beschädigter V2-Spielstand bleiben ohne V3-Schreibvorgang", async () => {
+      const invalidDb = "sofa-simulator-v3-test-invalid";
+      await deleteDatabase(invalidDb);
+      setDatabaseNameForTesting(invalidDb);
+      const missing = await migrateV2({ storage: { getItem: () => null } });
+      assert(missing.reason === "no-v2-save", "Fehlender Spielstand falsch behandelt");
+      let rejected = false;
+      try { await migrateV2({ storage: { getItem: () => "{kaputt" } }); }
+      catch { rejected = true; }
+      assert(rejected, "Beschädigtes JSON wurde akzeptiert");
+      assert((await loadCurrentSave()) === null, "Ungültige Migration hat einen Spielstand geschrieben");
+      setDatabaseNameForTesting(DB);
+    });
     await execute("Tages-Sicherungen rotieren auf maximal fünf", async () => {
       for (let day = 10; day <= 16; day++) await saveCurrent(sample(day));
       const backups = await listBackups();
       const rotating = backups.filter(item => item.reason !== "v2-migration");
       assert(rotating.length <= 5, "Mehr als fünf rotierende Sicherungen: " + rotating.length);
       assert(backups.some(item => item.reason === "v2-migration"), "V2-Originalsicherung fehlt");
+    });
+    await execute("Autosaves am selben Tag erzeugen keine zusätzlichen Sicherungen", async () => {
+      const before = (await listBackups()).filter(item => item.reason !== "v2-migration").length;
+      await saveCurrent(sample(16));
+      await saveCurrent(sample(16));
+      await saveCurrent(sample(16));
+      const after = (await listBackups()).filter(item => item.reason !== "v2-migration").length;
+      assert(after === before, "Autosaves haben unnötige Sicherungen erzeugt");
     });
     await execute("Neustart auf Tag 1 erzeugt eine neue Sicherung", async () => {
       await saveCurrent(sample(1), { newGame: true });
