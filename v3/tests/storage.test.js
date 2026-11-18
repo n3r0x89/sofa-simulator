@@ -83,18 +83,25 @@ runButton.addEventListener("click", async () => {
       assert(result.reason === "already-migrated", "Migration war nicht idempotent");
       assert((await loadCurrentSave()).day === 9, "V3-Spielstand wurde überschrieben");
     });
-    await execute("Fehlender und beschädigter V2-Spielstand bleiben ohne V3-Schreibvorgang", async () => {
+    await execute("Fehlende, beschädigte und falsch strukturierte V2-Daten bleiben unangetastet", async () => {
       const invalidDb = "sofa-simulator-v3-test-invalid";
       await deleteDatabase(invalidDb);
       setDatabaseNameForTesting(invalidDb);
       try {
         const missing = await migrateV2({ storage: { getItem: () => null } });
         assert(missing.reason === "no-v2-save", "Fehlender Spielstand falsch behandelt");
-        let rejected = false;
-        try { await migrateV2({ storage: { getItem: () => "{kaputt" } }); }
-        catch { rejected = true; }
-        assert(rejected, "Beschädigtes JSON wurde akzeptiert");
-        assert((await loadCurrentSave()) === null, "Ungültige Migration hat einen Spielstand geschrieben");
+        for (const invalidRaw of ["{kaputt", "null", "[]", '"text"']) {
+          const storageStub = {
+            value: invalidRaw,
+            getItem() { return this.value; }
+          };
+          let rejected = false;
+          try { await migrateV2({ storage: storageStub }); }
+          catch { rejected = true; }
+          assert(rejected, "Ungültige V2-Daten wurden akzeptiert: " + invalidRaw);
+          assert(storageStub.value === invalidRaw, "V2-Original wurde verändert: " + invalidRaw);
+          assert((await loadCurrentSave()) === null, "Ungültige Migration hat einen V3-Spielstand geschrieben");
+        }
       } finally {
         setDatabaseNameForTesting(DB);
         await deleteDatabase(invalidDb);
