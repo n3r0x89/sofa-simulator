@@ -131,7 +131,7 @@ function act(action) {
   switch (action) {
     case "tv":
       state.tvOn = !state.tvOn;
-      playSound("pop");
+      playSound("plop", 0.4);
       if (state.tvOn) state.tvChannel = (state.tvChannel + 1) % channels.length;
       log(state.tvOn ? channels[state.tvChannel][1] : "Fernseher aus. Du hörst plötzlich deine Gedanken.");
       advance(1); break;
