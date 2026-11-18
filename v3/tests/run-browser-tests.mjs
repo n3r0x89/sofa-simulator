@@ -85,7 +85,7 @@ try {
   await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"));
   await game.reload();
   await game.waitForFunction(() => /GESPEICHERT|GELADEN/.test(document.querySelector("#save-state")?.textContent || ""));
-  if (await game.locator("#money").textContent() !== "22 €" || await game.locator("#clock").textContent() !== "TAG 2 · 08:00") {
+  if (await game.locator("#money").textContent() !== "32 €" || await game.locator("#clock").textContent() !== "TAG 2 · 08:00") {
     throw new Error("Spielstand hat Job/Schlaf oder Reload nicht überlebt.");
   }
   await game.evaluate(() => navigator.serviceWorker.ready);
