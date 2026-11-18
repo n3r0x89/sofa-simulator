@@ -48,7 +48,7 @@ Das Testlabor nutzt ausschließlich die separate Datenbank `sofa-simulator-v3-te
 
 ## Status und Grenzen
 
-Die neue V3-Spieloberfläche ist mit der V3-Speicher-API verbunden. Ein GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien und führt die zehn isolierten Speicherprüfungen sowie den Spielstart-/Job-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Der aktuelle Workflow-Lauf ist erfolgreich. Die Tests ersetzen keine zusätzlichen iOS-/Android-Gerätetests. iOS Safari/Android Chrome, Offline-Start, Quota-Verhalten und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
+Die neue V3-Spieloberfläche ist mit der V3-Speicher-API verbunden. Ein GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien und führt die zwölf isolierten Speicherprüfungen sowie den Spielstart-/Job-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Der aktuelle Workflow-Lauf ist erfolgreich. Die Tests ersetzen keine zusätzlichen iOS-/Android-Gerätetests. iOS Safari/Android Chrome, Offline-Start, Quota-Verhalten und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
 
 IndexedDB ist lokaler Gerätespeicher und keine Cloud-Sicherung. Browserdaten können gelöscht werden; wichtige Spielstände daher regelmäßig exportieren.
 
