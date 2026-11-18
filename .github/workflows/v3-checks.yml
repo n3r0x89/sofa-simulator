@@ -47,6 +47,8 @@ jobs:
           test -s v3/app.js
           test -s v3/sound.js
           test -s v3/assets/asset-manifest.json
+          test -s v3/assets/sprites/room.jpg
+          test -s v3/assets/audio/gulp1.mp3
           test -s v3/storage.js
           test -s v3/sw.js
           test -s v3/tests/storage.test.html
