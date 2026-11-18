@@ -53,6 +53,16 @@ function transactionDone(tx) {
   });
 }
 
+function trimBackupStore(store) {
+  const request = store.getAll();
+  request.onsuccess = () => {
+    const rows = request.result
+      .filter(item => item.reason !== "v2-migration")
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    for (const old of rows.slice(BACKUP_LIMIT)) store.delete(old.id);
+  };
+}
+
 function mergeDefaults(value, defaults) {
   if (!isRecord(value)) return clone(defaults);
   const result = clone(value);
@@ -281,7 +291,9 @@ export async function restoreBackup(id) {
     const current = await withChecksum({ ...envelope(backup.payload, "backup-restore"), id: "current" });
     const write = db.transaction(["currentSave", "backups"], "readwrite");
     write.objectStore("currentSave").put(current);
-    if (recovery) write.objectStore("backups").put(recovery);
+    const backupStore = write.objectStore("backups");
+    if (recovery) backupStore.put(recovery);
+    trimBackupStore(backupStore);
     await transactionDone(write);
     return true;
   } finally { db.close(); }
@@ -325,7 +337,9 @@ export async function importSave(file) {
     }) : null;
     const tx = db.transaction(["currentSave", "backups"], "readwrite");
     tx.objectStore("currentSave").put(clean);
-    if (recovery) tx.objectStore("backups").put(recovery);
+    const backupStore = tx.objectStore("backups");
+    if (recovery) backupStore.put(recovery);
+    trimBackupStore(backupStore);
     await transactionDone(tx);
     return true;
   } finally { db.close(); }
