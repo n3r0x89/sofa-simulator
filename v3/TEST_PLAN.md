@@ -24,19 +24,19 @@ V3 is now connected to the persistence module. The browser test lab at `v3/tests
 
 ## Migration checks (use a copied V2 save only)
 - [ ] Valid V2 save migrates and preserves all known and unknown payload fields.
-- [ ] The exact original `localStorage["sofasim_v2"]` string remains unchanged.
+- [x] The exact original `localStorage["sofasim_v2"]` string remains unchanged (isolated migration test).
 - [ ] Migration record contains the exact original string and its SHA-256 when Web Crypto is available.
-- [ ] Migration backup is separate from the five rotating backup slots.
-- [ ] Running migration a second time returns `already-migrated` and does not overwrite the V3 current save.
-- [ ] Missing V2 save returns `no-v2-save`.
+- [x] Migration backup is separate from the five rotating backup slots (isolated rotation test).
+- [x] Running migration a second time returns `already-migrated` and does not overwrite the V3 current save.
+- [x] Missing V2 save returns `no-v2-save`.
 - [ ] Malformed JSON and invalid structures fail without writing a V3 save or modifying V2.
 
 ## Save and backup checks
 - [x] Current save survives reload in the Chromium smoke test.
-- [ ] A daily backup is created once when the in-game day advances.
+- [x] A daily backup is created when the in-game day advances (isolated storage test).
 - [x] A new game starting on the same day number triggers a checkpoint via `{ newGame: true }` (isolated storage test).
 - [ ] A day-counter reset is detected as a new run even if the explicit signal is missed.
-- [ ] Regular autosaves do not create extra backups.
+- [x] Regular autosaves do not create extra backups (same-day repeat-save test).
 - [x] At most five rotating backups remain; the V2 migration checkpoint is retained separately (isolated storage test).
 - [x] Restore validates the selected snapshot and creates a pre-restore recovery point (isolated storage test).
 - [ ] Import validates the file and creates a pre-import recovery point.
