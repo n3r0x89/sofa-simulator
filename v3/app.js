@@ -311,16 +311,22 @@ function downloadBlob(blob, filename) {
 document.addEventListener("click", event => {
   unlockAudio();
   if (event.target.closest("#sound-toggle")) { toggleSound(); render(); return; }
-  const actionButton = event.target.closest("[data-action]");
-  if (actionButton) act(actionButton.dataset.action);
-  const choiceButton = event.target.closest("[data-choice]");
-  if (choiceButton && !choiceButton.disabled) {
-    handleChoice(choiceButton.dataset.choice).catch(error => showModal("FEHLER", `<p>${escapeHtml(error.message)}</p>`));
-  }
+
+  // Navigation buttons also carry data-action. Handle them here and return,
+  // otherwise the generic action handler would execute the same action twice.
   const tab = event.target.closest("[data-tab]");
   if (tab) {
     document.querySelectorAll("[data-tab]").forEach(button => button.classList.toggle("selected", button === tab));
     if (tab.dataset.action) act(tab.dataset.action);
+    return;
+  }
+
+  const actionButton = event.target.closest("[data-action]");
+  if (actionButton) { act(actionButton.dataset.action); return; }
+
+  const choiceButton = event.target.closest("[data-choice]");
+  if (choiceButton && !choiceButton.disabled) {
+    handleChoice(choiceButton.dataset.choice).catch(error => showModal("FEHLER", `<p>${escapeHtml(error.message)}</p>`));
   }
 });
 $("#sleep").addEventListener("click", sleep);
