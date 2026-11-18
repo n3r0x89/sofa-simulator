@@ -75,6 +75,12 @@ runButton.addEventListener("click", async () => {
       await new Promise((resolve, reject) => { tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); });
       db.close();
       assert(record.raw === raw, "Original-JSON unterscheidet sich");
+      if (crypto?.subtle) {
+        const bytes = new TextEncoder().encode(raw);
+        const hash = await crypto.subtle.digest("SHA-256", bytes);
+        const expected = [...new Uint8Array(hash)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+        assert(record.checksum === expected, "SHA-256 der V2-Originaldaten stimmt nicht");
+      }
     });
     await execute("Wiederholte Migration überschreibt keinen V3-Spielstand", async () => {
       const changed = sample(9);
