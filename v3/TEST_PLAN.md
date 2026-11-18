@@ -3,6 +3,7 @@
 V3 is now connected to the persistence module. The browser test lab at `v3/tests/storage.test.html` uses a dedicated test database and should be run before any release.
 
 ## Automated checks
+- [ ] Playwright runs the isolated IndexedDB tests and fresh-game/job smoke test in Chromium.
 - [ ] GitHub Actions JavaScript module syntax check passes.
 - [ ] Manifest JSON and required V3 files pass the workflow.
 
