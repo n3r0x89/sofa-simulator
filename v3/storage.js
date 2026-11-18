@@ -3,6 +3,7 @@
  * integrate it into the game only after its migration and recovery paths are tested.
  */
 const DB_NAME = "sofa-simulator-v3";
+let activeDatabaseName = DB_NAME;
 const DB_VERSION = 1;
 const SAVE_FORMAT = "sofa-simulator-save";
 const SCHEMA_VERSION = 1;
@@ -123,10 +124,17 @@ async function withChecksum(record) {
   return { ...record, checksum };
 }
 
+export function setDatabaseNameForTesting(name) {
+  if (typeof name !== "string" || !name.startsWith("sofa-simulator-v3-test")) {
+    throw new Error("Testdatenbanken müssen mit sofa-simulator-v3-test beginnen.");
+  }
+  activeDatabaseName = name;
+}
+
 export function openSaveDatabase() {
   if (!globalThis.indexedDB) return Promise.reject(new Error("IndexedDB ist in diesem Browser nicht verfügbar."));
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    const request = indexedDB.open(activeDatabaseName, DB_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains("currentSave")) db.createObjectStore("currentSave", { keyPath: "id" });
