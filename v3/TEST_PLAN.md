@@ -3,17 +3,17 @@
 V3 is now connected to the persistence module. The browser test lab at `v3/tests/storage.test.html` uses a dedicated test database and should be run before any release.
 
 ## Automated checks
-- [ ] Playwright runs the isolated IndexedDB tests and fresh-game/job smoke test in Chromium.
-- [ ] GitHub Actions JavaScript module syntax check passes.
-- [ ] Manifest JSON and required V3 files pass the workflow.
+- [x] Playwright runs the isolated IndexedDB tests and fresh-game/job/sleep/reload smoke test in Chromium (10 storage checks).
+- [x] GitHub Actions JavaScript module syntax check passes.
+- [x] Manifest JSON and required V3 files pass the workflow.
 
 ## Browser test lab
-- [ ] Open `/v3/tests/storage.test.html` over HTTP(S).
-- [ ] Confirm all isolated storage tests pass.
-- [ ] Confirm only `sofa-simulator-v3-test-browser` is created/cleared.
+- [x] Open `/v3/tests/storage.test.html` over HTTP(S) in headless Chromium.
+- [x] Confirm all isolated storage tests pass in headless Chromium.
+- [x] Confirm the test code targets only `sofa-simulator-v3-test-browser` (the production DB is not opened by the test module).
 
 ## Static/API checks
-- [ ] Module parses as an ES module in supported browsers.
+- [x] Module parses as an ES module in Chromium (iOS/Android device coverage remains open).
 - [ ] All exported functions are present and documented.
 - [ ] V2 defaults match the current `fresh()` structure in `v2/index.html`.
 - [ ] Runtime-only UI/animation state is excluded from persisted data.
@@ -32,20 +32,20 @@ V3 is now connected to the persistence module. The browser test lab at `v3/tests
 - [ ] Malformed JSON and invalid structures fail without writing a V3 save or modifying V2.
 
 ## Save and backup checks
-- [ ] Current save survives reload.
+- [x] Current save survives reload in the Chromium smoke test.
 - [ ] A daily backup is created once when the in-game day advances.
-- [ ] A new game starting on the same day number triggers a checkpoint via `{ newGame: true }`.
+- [x] A new game starting on the same day number triggers a checkpoint via `{ newGame: true }` (isolated storage test).
 - [ ] A day-counter reset is detected as a new run even if the explicit signal is missed.
 - [ ] Regular autosaves do not create extra backups.
-- [ ] At most five rotating backups remain; the V2 migration checkpoint is retained separately.
-- [ ] Restore validates the selected snapshot and creates a pre-restore recovery point.
+- [x] At most five rotating backups remain; the V2 migration checkpoint is retained separately (isolated storage test).
+- [x] Restore validates the selected snapshot and creates a pre-restore recovery point (isolated storage test).
 - [ ] Import validates the file and creates a pre-import recovery point.
 - [ ] Invalid or oversized imports do not change the current save.
 - [ ] Storage quota and IndexedDB failures are surfaced to the caller (never silently reported as success).
 
 ## Export/import checks
 - [ ] Exported JSON can be imported into a clean V3 database.
-- [ ] Corrupted payloads and mismatched SHA-256 checksums are rejected.
+- [x] Corrupted payloads and mismatched SHA-256 checksums are rejected (isolated Chromium test).
 - [ ] A browser without Web Crypto still performs structural validation; checksum protection is unavailable there.
 
 ## Browser/device checks
