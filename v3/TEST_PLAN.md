@@ -3,17 +3,19 @@
 V3 is connected to the persistence module. The browser test lab at `v3/tests/storage.test.html` uses a dedicated test database and should be run before any release.
 
 ## Automated checks
-- [x] Playwright runs the 12 isolated IndexedDB tests and fresh-game/job/daily-goal/sound-toggle/sleep/reload smoke test in Chromium.
+- [x] Playwright runs the isolated IndexedDB tests and fresh-game/job/daily-goal/sound-toggle/sleep/reload smoke test in Chromium.
 - [x] GitHub Actions JavaScript module syntax check passes.
 - [x] Manifest JSON and required V3 files pass the workflow.
+- [x] All 197 manifest-listed media files (162 sprites and 35 audio files) can be fetched after offline reload in headless Chromium.
+- [x] Sound preference remains off after reload and can be switched on again.
 
 ## Browser test lab
 - [x] Open `/v3/tests/storage.test.html` over HTTP(S) in headless Chromium.
-- [x] Confirm all 12 isolated storage tests pass in headless Chromium.
+- [x] Confirm all isolated storage tests pass in headless Chromium.
 - [x] Confirm the test code targets only `sofa-simulator-v3-test-browser` (the production DB is not opened by the test module).
 
 ## Static/API checks
-- [x] Module parses as an ES module in Chromium.
+- [x] Core persistence module parses as an ES module in Chromium.
 - [ ] All exported functions are present and documented.
 - [ ] V2 defaults match the current `fresh()` structure in `v2/index.html`.
 - [ ] Runtime-only UI/animation state is excluded from persisted data.
@@ -29,13 +31,13 @@ V3 is connected to the persistence module. The browser test lab at `v3/tests/sto
 - [x] Migration backup is separate from the five rotating backup slots (isolated rotation test).
 - [x] Running migration a second time returns `already-migrated` and does not overwrite the V3 current save.
 - [x] Missing V2 save returns `no-v2-save`.
-- [ ] Malformed JSON and invalid structures fail without writing a V3 save or modifying V2.
+- [x] Malformed JSON and non-object V2 structures are rejected without writing a V3 save or modifying V2.
 
 ## Save and backup checks
 - [x] Current save survives reload in the Chromium smoke test.
 - [x] A daily backup is created when the in-game day advances (isolated storage test).
 - [x] A new game starting on the same day number triggers a checkpoint via `{ newGame: true }` (isolated storage test).
-- [ ] A day-counter reset is detected as a new run even if the explicit signal is missed.
+- [x] A day-counter reset is detected as a new run even if the explicit signal is missed.
 - [x] Regular autosaves do not create extra backups (same-day repeat-save test).
 - [x] At most five rotating backups remain; the V2 migration checkpoint is retained separately (isolated storage test).
 - [x] Restore validates the selected snapshot and creates a pre-restore recovery point (isolated storage test).
@@ -52,8 +54,7 @@ V3 is connected to the persistence module. The browser test lab at `v3/tests/sto
 - [ ] iOS Safari (current supported iOS release).
 - [ ] Android Chrome.
 - [ ] Desktop Chrome/Edge and Firefox.
-- [x] Offline reload is controlled by the service worker; one scene image and one MP3 effect remain fetchable in the Chromium workflow.
-- [ ] Full offline availability of all 197 assets is verified.
+- [x] Offline reload is controlled by the service worker; all 197 manifest-listed media files remain fetchable in the Chromium workflow.
 - [ ] Multiple open tabs and blocked database upgrades.
 - [ ] Browser storage cleared: recovery guidance is clear and no cloud-backup claim is made.
 
@@ -61,8 +62,8 @@ V3 is connected to the persistence module. The browser test lab at `v3/tests/sto
 - [x] V3 room background image is available offline in headless Chromium.
 - [x] A local MP3 sound effect is available offline in headless Chromium.
 - [x] Sound toggle responds to on/off interaction in the game smoke test.
-- [ ] Sound preference persistence across reload is verified.
-- [ ] All 162 sprites and 35 audio files are verified in the offline cache.
+- [x] Sound preference persistence across reload is verified in headless Chromium.
+- [x] All 162 sprites and 35 audio files are verified in the offline cache.
 - [ ] iOS Safari and Android Chrome audio autoplay restrictions are verified on devices.
 
 ## Release gate
