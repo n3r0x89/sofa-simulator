@@ -106,6 +106,24 @@ runButton.addEventListener("click", async () => {
       catch { rejected = true; }
       assert(rejected, "Manipulierte Prüfsumme wurde akzeptiert");
     });
+    await execute("Import repariert einen strukturell beschädigten aktuellen Spielstand", async () => {
+      const validExport = await exportSave();
+      const db = await openSaveDatabase();
+      const tx = db.transaction("currentSave", "readwrite");
+      const store = tx.objectStore("currentSave");
+      const current = await new Promise((resolve, reject) => {
+        const request = store.get("current");
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      store.put({ ...current, payload: { damaged: true } });
+      await new Promise((resolve, reject) => { tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); });
+      db.close();
+      await importSave(validExport);
+      assert((await loadCurrentSave()).day > 0, "Import hat den beschädigten Stand nicht ersetzt");
+      const backups = await listBackups();
+      assert(backups.some(item => item.reason === "pre-import-corrupt"), "Beschädigter Rohstand wurde nicht gesichert");
+    });
     await execute("Wiederherstellung setzt einen vorhandenen Snapshot zurück", async () => {
       const backups = await listBackups();
       const target = backups.find(item => item.reason === "daily");
