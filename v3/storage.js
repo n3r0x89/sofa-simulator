@@ -34,7 +34,10 @@ const V2_DEFAULTS = Object.freeze({
   sound: true, hintsDone: {}, started: false
 });
 
-const clone = value => structuredClone(value);
+const clone = value => {
+  if (typeof structuredClone === "function") return structuredClone(value);
+  return JSON.parse(JSON.stringify(value));
+};
 const isRecord = value => value !== null && typeof value === "object" && !Array.isArray(value);
 const now = () => new Date().toISOString();
 
@@ -165,13 +168,18 @@ export async function saveCurrent(payload, { dailyBackup = true } = {}) {
     const readTx = db.transaction(["meta", "backups"], "readonly");
     const metaStore = readTx.objectStore("meta");
     const backupStore = readTx.objectStore("backups");
-    const [lastDay, backups] = await Promise.all([
+    const [lastDay, previousRecord] = await Promise.all([
       requestResult(metaStore.get("lastBackupDay")),
-      requestResult(backupStore.getAll())
+      requestResult(db.transaction("currentSave", "readonly").objectStore("currentSave").get("current"))
     ]);
     await transactionDone(readTx);
 
-    const shouldBackup = dailyBackup && Number(normalized.day) > Number(lastDay?.value ?? -1);
+    // A lower day than the previous save signals a fresh game run. This resets
+    // the daily checkpoint baseline without requiring game UI integration.
+    const previousDay = Number(previousRecord?.payload?.day);
+    const currentDay = Number(normalized.day);
+    const newRun = Number.isFinite(previousDay) && currentDay < previousDay;
+    const shouldBackup = dailyBackup && (newRun || currentDay > Number(lastDay?.value ?? -1));
     const record = await withChecksum({ ...envelope(normalized), id: "current" });
     const backup = shouldBackup ? await withChecksum({
       ...envelope(normalized), id: "backup-" + Date.now(), reason: "daily", gameDay: normalized.day
@@ -180,9 +188,7 @@ export async function saveCurrent(payload, { dailyBackup = true } = {}) {
     tx.objectStore("currentSave").put(record);
     if (backup) {
       tx.objectStore("backups").put(backup);
-      const dailyBackups = backups.filter(item => item.reason !== "v2-migration");
-      const ordered = [...dailyBackups, backup].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-      for (const old of ordered.slice(BACKUP_LIMIT)) tx.objectStore("backups").delete(old.id);
+      trimBackupStore(tx.objectStore("backups"));
       tx.objectStore("meta").put({ key: "lastBackupDay", value: normalized.day });
     }
     await transactionDone(tx);
@@ -281,6 +287,11 @@ export async function restoreBackup(id) {
       throw new Error("Diese Sicherung hat ein nicht unterstütztes Format.");
     }
     validatePayload(backup.payload);
+    const { checksum: backupChecksum, ...backupUnsigned } = backup;
+    const backupActual = await digest(JSON.stringify(backupUnsigned));
+    if (backupChecksum && backupActual && backupChecksum !== backupActual) {
+      throw new Error("Die Sicherung ist beschädigt (Prüfsumme stimmt nicht).");
+    }
     const currentRead = db.transaction("currentSave", "readonly");
     const previous = await requestResult(currentRead.objectStore("currentSave").get("current"));
     await transactionDone(currentRead);
@@ -306,6 +317,13 @@ export async function exportSave() {
     const record = await requestResult(tx.objectStore("currentSave").get("current"));
     await transactionDone(tx);
     if (!record) throw new Error("Es gibt noch keinen Spielstand zum Exportieren.");
+    if (record.format !== SAVE_FORMAT || record.schemaVersion !== SCHEMA_VERSION) {
+      throw new Error("Der Spielstand hat ein nicht unterstütztes Format.");
+    }
+    validatePayload(record.payload);
+    const { checksum, ...unsigned } = record;
+    const actual = await digest(JSON.stringify(unsigned));
+    if (checksum && actual && checksum !== actual) throw new Error("Der Spielstand ist beschädigt und kann nicht exportiert werden.");
     return new Blob([JSON.stringify(record, null, 2)], { type: "application/json" });
   } finally { db.close(); }
 }
@@ -346,7 +364,7 @@ export async function importSave(file) {
 }
 
 export async function requestPersistentStorage() {
-  if (!navigator.storage?.persist) return false;
-  try { return await navigator.storage.persist(); }
+  if (!globalThis.navigator?.storage?.persist) return false;
+  try { return await globalThis.navigator.storage.persist(); }
   catch { return false; }
 }
