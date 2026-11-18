@@ -29,6 +29,10 @@ try {
   await game.waitForFunction(() => document.querySelector("#money")?.textContent === "28 €");
   await game.waitForFunction(() => document.querySelector("#goal-status")?.textContent.includes("1 / 1"));
   await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"));
+  await game.locator("#sound-toggle").click();
+  if (await game.locator("#sound-toggle").textContent() !== "🔇 TON") throw new Error("Ton-Einstellung ließ sich nicht ausschalten.");
+  await game.locator("#sound-toggle").click();
+  if (await game.locator("#sound-toggle").textContent() !== "🔊 TON") throw new Error("Ton-Einstellung ließ sich nicht einschalten.");
   await game.locator("#sleep").click();
   await game.waitForFunction(() => document.querySelector("#clock")?.textContent === "TAG 2 · 08:00");
   await game.waitForFunction(() => document.querySelector("#goal-status")?.textContent.includes("0 / 1"));
