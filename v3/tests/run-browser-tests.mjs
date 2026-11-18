@@ -29,6 +29,40 @@ try {
   await game.waitForFunction(() => document.querySelector("#money")?.textContent === "28 €");
   await game.waitForFunction(() => document.querySelector("#goal-status")?.textContent.includes("1 / 1"));
   await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"));
+
+  // Exercise the remaining everyday actions and their visible state changes.
+  await game.locator('[data-action="shop"]').first().click();
+  await game.locator('[data-choice="buy-snacks"]').click();
+  await game.waitForFunction(() => document.querySelector("#snacks")?.textContent === "5");
+  if (await game.locator("#money").textContent() !== "22 €") throw new Error("Späti-Kauf hat Geld/Vorrat nicht korrekt aktualisiert.");
+
+  const energyBeforeClean = Number((await game.locator("#energy-value").textContent()).replace("%", ""));
+  await game.locator('[data-action="clean"]').first().click();
+  const energyAfterClean = Number((await game.locator("#energy-value").textContent()).replace("%", ""));
+  if (!(energyAfterClean < energyBeforeClean)) throw new Error("Aufräumen hat Energie nicht reduziert.");
+
+  const hungerBeforeEat = Number((await game.locator("#hunger-value").textContent()).replace("%", ""));
+  await game.locator('[data-action="eat"]').click();
+  const hungerAfterEat = Number((await game.locator("#hunger-value").textContent()).replace("%", ""));
+  if (!(hungerAfterEat < hungerBeforeEat)) throw new Error("Essen hat den Hunger nicht reduziert.");
+
+  const hygieneBeforeShower = Number((await game.locator("#hygiene-value").textContent()).replace("%", ""));
+  await game.locator('[data-action="shower"]').click();
+  const hygieneAfterShower = Number((await game.locator("#hygiene-value").textContent()).replace("%", ""));
+  if (!(hygieneAfterShower > hygieneBeforeShower)) throw new Error("Duschen hat Hygiene nicht erhöht.");
+
+  const tvBefore = await game.locator("#tv-content").textContent();
+  await game.locator('[data-action="tv"]').first().click();
+  if (await game.locator("#tv-content").textContent() === tvBefore) throw new Error("TV-Aktion hat den Bildschirm nicht verändert.");
+
+  await game.locator('[data-action="diary"]').click();
+  if (!(await game.locator("#modal-content").textContent()).includes("TAGEBUCH")) throw new Error("Tagebuch öffnet sich nicht.");
+  await game.locator("#close-modal").click();
+  await game.locator('[data-action="menu"]').click();
+  if (!(await game.locator("#modal-content").textContent()).includes("SPIELMENÜ")) throw new Error("Spielmenü öffnet sich nicht.");
+  await game.locator("#close-modal").click();
+  await game.waitForFunction(() => document.querySelector("#save-state")?.textContent.includes("GESPEICHERT"));
+
   await game.locator("#sound-toggle").click();
   if (await game.locator("#sound-toggle").textContent() !== "🔇 TON") throw new Error("Ton-Einstellung ließ sich nicht ausschalten.");
   await game.locator("#sound-toggle").click();
