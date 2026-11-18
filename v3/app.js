@@ -83,17 +83,21 @@ function render() {
 async function persist(force = false) {
   if (saving || (!dirty && !force) || !state) return;
   saving = true;
+  // Mark only the current change batch as in-flight. Any action during the
+  // asynchronous write sets dirty again and must survive this save finishing.
+  dirty = false;
   setSaveLabel("● SPEICHERT …");
   try {
     await saveCurrent(state, { dailyBackup: true, newGame: newGamePending });
     newGamePending = false;
-    dirty = false;
-    setSaveLabel("● GESPEICHERT");
+    if (!dirty) setSaveLabel("● GESPEICHERT");
   } catch (error) {
+    dirty = true;
     setSaveLabel("● SPEICHERFEHLER", true);
     log("Speichern fehlgeschlagen: " + error.message + " – bitte exportiere deinen Spielstand.");
   } finally {
     saving = false;
+    if (dirty) queueMicrotask(() => persist());
   }
 }
 
