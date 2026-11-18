@@ -169,7 +169,7 @@ export async function saveCurrent(payload, { dailyBackup = true } = {}) {
     tx.objectStore("currentSave").put(record);
     if (backup) {
       tx.objectStore("backups").put(backup);
-      const dailyBackups = backups.filter(item => item.reason === "daily");
+      const dailyBackups = backups.filter(item => item.reason !== "v2-migration");
       const ordered = [...dailyBackups, backup].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       for (const old of ordered.slice(BACKUP_LIMIT)) tx.objectStore("backups").delete(old.id);
       tx.objectStore("meta").put({ key: "lastBackupDay", value: normalized.day });
@@ -281,8 +281,7 @@ export async function exportSave() {
     const record = await requestResult(tx.objectStore("currentSave").get("current"));
     await transactionDone(tx);
     if (!record) throw new Error("Es gibt noch keinen Spielstand zum Exportieren.");
-    const output = { ...record, exportedAt: now() };
-    return new Blob([JSON.stringify(output, null, 2)], { type: "application/json" });
+    return new Blob([JSON.stringify(record, null, 2)], { type: "application/json" });
   } finally { db.close(); }
 }
 
