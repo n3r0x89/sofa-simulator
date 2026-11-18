@@ -40,6 +40,7 @@ const clone = value => {
 };
 const isRecord = value => value !== null && typeof value === "object" && !Array.isArray(value);
 const now = () => new Date().toISOString();
+const uniqueId = prefix => prefix + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
 
 function requestResult(request) {
   return new Promise((resolve, reject) => {
@@ -188,7 +189,7 @@ export async function saveCurrent(payload, { dailyBackup = true, newGame = false
     const shouldBackup = dailyBackup && (newGame || newRun || currentDay > Number(lastDay?.value ?? -1));
     const record = await withChecksum({ ...envelope(normalized), id: "current" });
     const backup = shouldBackup ? await withChecksum({
-      ...envelope(normalized), id: "backup-" + Date.now(), reason: "daily", gameDay: normalized.day
+      ...envelope(normalized), id: uniqueId("backup-"), reason: "daily", gameDay: normalized.day
     }) : null;
     const tx = db.transaction(["currentSave", "backups", "meta"], "readwrite");
     tx.objectStore("currentSave").put(record);
@@ -312,7 +313,7 @@ export async function restoreBackup(id) {
     await transactionDone(currentRead);
     const recovery = previous ? await withChecksum({
       ...envelope(previous.payload, "pre-restore-recovery"),
-      id: "backup-pre-restore-" + Date.now(), reason: "pre-restore", gameDay: previous.payload.day
+      id: uniqueId("backup-pre-restore-"), reason: "pre-restore", gameDay: previous.payload.day
     }) : null;
     const current = await withChecksum({ ...envelope(backup.payload, "backup-restore"), id: "current" });
     const write = db.transaction(["currentSave", "backups"], "readwrite");
@@ -364,7 +365,7 @@ export async function importSave(file) {
     await transactionDone(read);
     const recovery = previous ? await withChecksum({
       ...envelope(previous.payload, "pre-import-recovery"),
-      id: "backup-pre-import-" + Date.now(),
+      id: uniqueId("backup-pre-import-"),
       reason: "pre-import",
       gameDay: previous.payload.day
     }) : null;
