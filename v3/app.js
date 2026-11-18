@@ -28,6 +28,16 @@ const channels = [
   ["SCHWARZBROT TV", "Breaking News: Kühlschrank fast leer."]
 ];
 
+function hydrate(payload) {
+  const defaults = fresh();
+  const merged = { ...defaults, ...payload };
+  merged.h = { ...defaults.h, ...(payload.h || {}) };
+  merged.st = { ...defaults.st, ...(payload.st || {}) };
+  merged.inventory = Array.isArray(payload.inventory) ? payload.inventory : [];
+  merged.diaryEntries = Array.isArray(payload.diaryEntries) ? payload.diaryEntries : [];
+  return merged;
+}
+
 function log(message) {
   state.diaryEntries ||= [];
   state.diaryEntries.unshift({ day: state.day, hour: state.hour, text: message });
@@ -227,7 +237,7 @@ async function handleChoice(action) {
       if (!input.files?.[0]) return;
       try {
         await importSave(input.files[0]);
-        state = await loadCurrentSave();
+        state = hydrate(await loadCurrentSave());
         log("Spielstand importiert. Vorheriger Stand wurde als Wiederherstellungspunkt gesichert.");
         render(); $("#modal").close();
       } catch (error) { showModal("IMPORT NICHT MÖGLICH", `<p>${escapeHtml(error.message)}</p>`); }
@@ -291,10 +301,11 @@ document.addEventListener("visibilitychange", () => { if (document.hidden && dir
 
 async function boot() {
   try {
-    state = await loadCurrentSave();
+    const stored = await loadCurrentSave();
+    state = stored ? hydrate(stored) : null;
     if (!state) {
       const migration = await migrateV2();
-      state = await loadCurrentSave() || fresh();
+      state = hydrate(await loadCurrentSave() || fresh());
       if (migration.migrated) log("Dein V2-Spielstand wurde übernommen. Das Original bleibt unangetastet.");
       else log("Willkommen in V3. Das Sofa hat schon auf dich gewartet.");
       dirty = !migration.migrated;
