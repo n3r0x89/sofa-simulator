@@ -2,11 +2,22 @@
 
 V3 is now connected to the persistence module. The browser test lab at `v3/tests/storage.test.html` uses a dedicated test database and should be run before any release.
 
-## Automated checks\n- [ ] GitHub Actions JavaScript module syntax check passes.\n- [ ] Manifest JSON and required V3 files pass the workflow.\n\n## Browser test lab\n- [ ] Open `/v3/tests/storage.test.html` over HTTP(S).\n- [ ] Confirm all isolated storage tests pass.\n- [ ] Confirm only `sofa-simulator-v3-test-browser` is created/cleared.\n\n## Static/API checks
+## Automated checks
+- [ ] GitHub Actions JavaScript module syntax check passes.
+- [ ] Manifest JSON and required V3 files pass the workflow.
+
+## Browser test lab
+- [ ] Open `/v3/tests/storage.test.html` over HTTP(S).
+- [ ] Confirm all isolated storage tests pass.
+- [ ] Confirm only `sofa-simulator-v3-test-browser` is created/cleared.
+
+## Static/API checks
 - [ ] Module parses as an ES module in supported browsers.
 - [ ] All exported functions are present and documented.
 - [ ] V2 defaults match the current `fresh()` structure in `v2/index.html`.
-- [ ] Runtime-only UI/animation state is excluded from persisted data.\n- [ ] V3 game loads with a fresh save and with a migrated V2 save.\n- [ ] Jobs, shop, clean, TV, sleep, diary and menu actions work.
+- [ ] Runtime-only UI/animation state is excluded from persisted data.
+- [ ] V3 game loads with a fresh save and with a migrated V2 save.
+- [ ] Jobs, shop, clean, TV, sleep, diary and menu actions work.
 
 ## Migration checks (use a copied V2 save only)
 - [ ] Valid V2 save migrates and preserves all known and unknown payload fields.
