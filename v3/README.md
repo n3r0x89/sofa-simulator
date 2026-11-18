@@ -1,48 +1,55 @@
-# Sofa Simulator V3 – persistence layer
+# Sofa Simulator V3
 
-This folder is the isolated V3 development area. V2 is not modified.
+Eigenständiger, mobiloptimierter Neuaufbau. V2-Dateien und der veröffentlichte V2-Pfad bleiben unverändert.
 
-## Current status
+## Aufbau
 
-- `storage.js` provides an IndexedDB persistence layer.
-- The module is not yet connected to the V2 game loop or a V3 interface.
-- No deployment, merge, or change to the published V2 version has been made.
+- `index.html`, `style.css`, `app.js`: eigenständige V3-Oberfläche, Spielschleife und Interaktionen
+- `storage.js`: IndexedDB, V2-Migration, Sicherungen, Import/Export
+- `sw.js`, `manifest.webmanifest`, `icon.svg`: installierbare Offline-Shell
+- `tests/storage.test.html`, `tests/storage.test.js`: isoliertes Browser-Testlabor
+- `TEST_PLAN.md`: manuelle Geräte- und Release-Prüfungen
 
-## API
+## Aktueller Funktionsumfang
 
-- `openSaveDatabase()`
-- `loadCurrentSave()`
-- `saveCurrent(payload, { dailyBackup, newGame })`
+- Wohnzimmeransicht mit interaktiven Gegenständen
+- Spielzeit, Tagwechsel, Stimmung, Energie, Chaos, Geld und Vorräte
+- Jobs, Einkaufen, Aufräumen, Fernsehen, Schlafen und Tagebuch
+- Automatisches Speichern und lokale IndexedDB-Sicherung
+- Spielstand exportieren/importieren und Sicherungen wiederherstellen
+- V2-Übernahme beim ersten V3-Start, ohne den V2-Schlüssel zu löschen oder zu verändern
+
+## Speicher-API
+
+- `loadCurrentSave()`, `saveCurrent(payload, { dailyBackup, newGame })`
 - `migrateV2({ storage })`
-- `listBackups()`
-- `restoreBackup(id)`
-- `exportSave()`
-- `importSave(file)`
+- `listBackups()`, `restoreBackup(id)`
+- `exportSave()`, `importSave(file)`
 - `requestPersistentStorage()`
 
-## Storage rules
+## Speicherregeln
 
-- IndexedDB database: `sofa-simulator-v3`
-- Object stores: `currentSave`, `backups`, `migration`, `meta`
-- The exact V2 LocalStorage value at `sofasim_v2` is copied into a protected migration record. Migration never deletes or overwrites that key.
-- The V2 migration checkpoint is excluded from normal backup rotation.
-- Normal saves update the current record. A daily checkpoint is created only when the in-game day advances.
-- Automatic/recovery checkpoints are limited to five; the protected V2 migration checkpoint is additional.
-- Export/import and restore validate format, schema, payload structure and SHA-256 when the browser supports Web Crypto. Migration is marked complete only after its saved copy and preserved V2 original have been read back and verified.
+- Datenbank: `sofa-simulator-v3` mit `currentSave`, `backups`, `migration` und `meta`
+- Das exakte V2-JSON unter `localStorage["sofasim_v2"]` wird in einem geschützten Migrationsdatensatz bewahrt. V3 löscht und verändert diesen Schlüssel nicht.
+- Die V2-Originalsicherung ist von den fünf rotierenden automatischen/Wiederherstellungs-Sicherungen ausgenommen.
+- Tages-Sicherungen entstehen beim Tageswechsel; ein neuer Lauf kann zusätzlich explizit mit `{ newGame: true }` markiert werden.
+- Wiederherstellung und Import erzeugen vor dem Ersetzen einen Wiederherstellungspunkt.
+- Prüfsummen werden beim Laden, Wiederherstellen, Import und Export geprüft, sofern Web Crypto verfügbar ist.
 
-## Important integration notes
+## Lokal testen
 
-The V2 state defaults were transcribed from `v2/index.html`'s `fresh()` function. V2 also creates some fields at runtime (for example `pendingDay` and `lastToastDelay`); those need a deliberate persistence decision during integration. Temporary UI, animation, timer and modal state must not be serialized.
+1. Repository lokal starten oder den V3-Ordner über einen lokalen HTTP-Server öffnen. ES-Module und IndexedDB funktionieren nicht zuverlässig über `file://`.
+2. Spiel: `/v3/`
+3. Speicher-Testlabor: `/v3/tests/storage.test.html`
 
-## Current verification status
+Das Testlabor nutzt ausschließlich die separate Datenbank `sofa-simulator-v3-test-browser`. Es löscht diese Testdatenbank vor dem Lauf und greift nicht auf den Produktiv-Spielstand zu.
 
-The persistence layer has received code-level hardening for new-game day resets, bounded backup rotation, restore/export checksum checks, and migration read-back verification. These are implementation changes, not proof of successful browser/device execution. The checklist in `TEST_PLAN.md` remains open until those tests are run.
+## Status und Grenzen
 
-Before connecting this module to the game:
-1. Test in a real browser with a copy of a V2 save.
-2. Exercise corrupt JSON, malformed payloads, quota errors and interrupted transactions.
-3. Verify the migration copy and V2 LocalStorage key remain unchanged.
-4. Verify the protected migration checkpoint survives all normal backup rotations.
-5. Test export/import and restore on iOS Safari and desktop/mobile Chromium.
+Die neue V3-Spieloberfläche ist mit der V3-Speicher-API verbunden. Ein GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien. Das Browser-Testlabor ist angelegt, aber muss in einem echten Browser ausgeführt werden. iOS Safari/Android Chrome, Offline-Start, Quota-Verhalten und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
 
-IndexedDB is browser-local storage, not a cloud backup. Browser data deletion can still remove it; users should export important saves.
+IndexedDB ist lokaler Gerätespeicher und keine Cloud-Sicherung. Browserdaten können gelöscht werden; wichtige Spielstände daher regelmäßig exportieren.
+
+## Release-Regel
+
+V3 bleibt auf dem separaten Entwicklungsbranch und im Draft-PR. Kein Merge und keine Veröffentlichung ohne gesonderte Freigabe. V2 wird nicht überschrieben.
