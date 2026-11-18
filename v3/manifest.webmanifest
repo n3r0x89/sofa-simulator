@@ -1,0 +1,12 @@
+{
+  "name": "Sofa Simulator V3",
+  "short_name": "Sofa V3",
+  "description": "Ein eigenständiges Sofa-Lebenssimulationsspiel.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#171613",
+  "theme_color": "#171613",
+  "icons": []
+}
