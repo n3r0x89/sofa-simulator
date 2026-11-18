@@ -18,7 +18,9 @@ V3 is now connected to the persistence module. The browser test lab at `v3/tests
 - [ ] V2 defaults match the current `fresh()` structure in `v2/index.html`.
 - [ ] Runtime-only UI/animation state is excluded from persisted data.
 - [ ] V3 game loads with a fresh save and with a migrated V2 save.
-- [ ] Jobs, shop, clean, TV, sleep, diary and menu actions work.
+- [ ] Jobs, shop, clean, eat, shower, TV, sleep, diary and menu actions work.
+- [ ] Hunger, hygiene and energy meters update after actions.
+- [ ] Daily job goal grants its bonus once and resets after sleeping.
 
 ## Migration checks (use a copied V2 save only)
 - [ ] Valid V2 save migrates and preserves all known and unknown payload fields.
