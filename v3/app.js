@@ -106,6 +106,7 @@ function advance(hours = 1) {
     if (state.hour >= 24) {
       state.hour = 0;
       state.day++;
+      state.dailyGoalDone = false;
       state.energy = Math.min(100, state.energy + 18);
       log("Ein neuer Tag. Die Sonne geht auf. Du bleibst sitzen.");
     }
