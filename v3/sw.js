@@ -1,8 +1,14 @@
 // Increment this cache version whenever a published V3 shell changes.
-const CACHE = "sofa-v3-shell-2";
-const FILES = ["./", "./index.html", "./style.css", "./app.js", "./storage.js", "./manifest.webmanifest", "./icon.svg"];
+const CACHE = "sofa-v3-shell-3";
+const FILES = ["./", "./index.html", "./style.css", "./app.js", "./storage.js", "./sound.js", "./assets/asset-manifest.json", "./manifest.webmanifest", "./icon.svg"];
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES)).then(() => self.skipWaiting()));
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.addAll(FILES);
+    const manifest = await fetch("./assets/asset-manifest.json").then(response => response.json());
+    await cache.addAll(manifest.assets);
+    await self.skipWaiting();
+  })());
 });
 self.addEventListener("activate", event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith("sofa-v3-") && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
