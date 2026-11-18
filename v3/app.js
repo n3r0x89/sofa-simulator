@@ -257,7 +257,7 @@ async function handleChoice(action) {
   if (action.startsWith("restore:")) {
     const id = action.slice(8);
     await restoreBackup(id);
-    state = await loadCurrentSave();
+    state = hydrate(await loadCurrentSave());
     log("Sicherung wiederhergestellt. Der vorherige Stand wurde zusätzlich gesichert.");
     $("#modal").close(); render(); return;
   }
