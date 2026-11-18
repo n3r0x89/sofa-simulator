@@ -323,7 +323,13 @@ async function boot() {
     }
   } catch (error) {
     setSaveLabel("● SPEICHER NICHT VERFÜGBAR", true);
-    showModal("SPEICHERFEHLER", `<p>${escapeHtml(error.message)}</p><p>Bitte lade die Seite neu. Dein V2-Spielstand wird von V3 nicht gelöscht.</p>`);
+    const backups = await listBackups().catch(() => []);
+    const recoveryChoices = backups.map(item => choice(
+      item.reason === "v2-migration" ? "🛡️ V2-Original" : "🕘 " + item.reason,
+      `Tag ${item.gameDay ?? "–"} · ${new Date(item.createdAt).toLocaleString("de-DE")}`,
+      "restore:" + item.id
+    )).join("");
+    showModal("SPIELSTAND NICHT LESBAR", `<p>${escapeHtml(error.message)}</p><p>V3 hat deine Daten nicht absichtlich überschrieben. Du kannst eine vorhandene Sicherung wiederherstellen oder eine Exportdatei importieren.</p><div class="choice-list">${recoveryChoices}${choice("⬆️ Exportdatei importieren", "Vorhandenen Spielstand einspielen", "import")}</div>`);
   }
 }
 
