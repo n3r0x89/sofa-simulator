@@ -236,7 +236,7 @@ async function handleChoice(action) {
     };
     const [money, hours, text] = jobs[action];
     if (state.energy < hours * 6) return;
-    state.energy -= hours * 6; playSound("cash"); reward(money);
+    state.energy -= hours * 6; playSound("clink"); reward(money);
     if (!state.dailyGoalDone) { state.dailyGoalDone = true; reward(5, 4); log("Tagesziel geschafft: Bonus +5 €!"); }
     log(text); advance(hours); $("#modal").close(); await persist(true); return;
   }
