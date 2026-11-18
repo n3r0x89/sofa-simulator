@@ -124,6 +124,32 @@ async function withChecksum(record) {
   return { ...record, checksum };
 }
 
+async function recoverySnapshot(previous, reason) {
+  if (!previous) return null;
+  try {
+    validatePayload(previous.payload);
+    return await withChecksum({
+      ...envelope(previous.payload, reason + "-recovery"),
+      id: uniqueId("backup-" + reason + "-"),
+      reason,
+      gameDay: previous.payload.day
+    });
+  } catch {
+    // Preserve even a structurally damaged current record so an import/restore
+    // can repair the active save without silently discarding the failed bytes.
+    return await withChecksum({
+      id: uniqueId("backup-" + reason + "-corrupt-"),
+      format: "sofa-simulator-corrupt-recovery",
+      schemaVersion: SCHEMA_VERSION,
+      createdAt: now(),
+      updatedAt: now(),
+      sourceVersion: "raw-current",
+      reason: reason + "-corrupt",
+      raw: clone(previous)
+    });
+  }
+}
+
 export function setDatabaseNameForTesting(name) {
   if (typeof name !== "string" || !name.startsWith("sofa-simulator-v3-test")) {
     throw new Error("Testdatenbanken müssen mit sofa-simulator-v3-test beginnen.");
@@ -363,12 +389,7 @@ export async function importSave(file) {
     const read = db.transaction("currentSave", "readonly");
     const previous = await requestResult(read.objectStore("currentSave").get("current"));
     await transactionDone(read);
-    const recovery = previous ? await withChecksum({
-      ...envelope(previous.payload, "pre-import-recovery"),
-      id: uniqueId("backup-pre-import-"),
-      reason: "pre-import",
-      gameDay: previous.payload.day
-    }) : null;
+    const recovery = await recoverySnapshot(previous, "pre-import");
     const tx = db.transaction(["currentSave", "backups"], "readwrite");
     tx.objectStore("currentSave").put(clean);
     const backupStore = tx.objectStore("backups");
