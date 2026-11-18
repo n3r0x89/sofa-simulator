@@ -158,6 +158,7 @@ function act(action) {
     case "sleep": sleep(); break;
   }
   render();
+  persist();
 }
 
 function showModal(title, body) {
@@ -232,7 +233,7 @@ async function handleChoice(action) {
     if (state.energy < hours * 6) return;
     state.energy -= hours * 6; reward(money);
     if (!state.dailyGoalDone) { state.dailyGoalDone = true; reward(5, 4); log("Tagesziel geschafft: Bonus +5 €!"); }
-    log(text); advance(hours); $("#modal").close(); return;
+    log(text); advance(hours); $("#modal").close(); await persist(true); return;
   }
   if (action.startsWith("buy-")) {
     const items = {
@@ -243,7 +244,7 @@ async function handleChoice(action) {
     };
     const [price, grant, text] = items[action];
     if (state.money < price) return;
-    state.money -= price; grant(); log(text); $("#modal").close(); render(); persist(true); return;
+    state.money -= price; grant(); log(text); $("#modal").close(); render(); await persist(true); return;
   }
   if (action === "export") {
     const blob = await exportSave();
