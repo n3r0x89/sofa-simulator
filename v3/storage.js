@@ -137,6 +137,9 @@ export async function loadCurrentSave() {
       throw new Error("Dieses Speicherformat wird von dieser Version nicht unterstützt.");
     }
     validatePayload(record.payload);
+    const { checksum, ...unsigned } = record;
+    const actual = await digest(JSON.stringify(unsigned));
+    if (checksum && actual && checksum !== actual) throw new Error("Die gespeicherten Daten haben eine ungültige Prüfsumme.");
     return clone(record.payload);
   } finally {
     db.close();
@@ -158,18 +161,16 @@ export async function saveCurrent(payload, { dailyBackup = true } = {}) {
     await transactionDone(readTx);
 
     const shouldBackup = dailyBackup && Number(normalized.day) > Number(lastDay?.value ?? -1);
-    const record = await withChecksum(envelope(normalized));
+    const record = await withChecksum({ ...envelope(normalized), id: "current" });
+    const backup = shouldBackup ? await withChecksum({
+      ...envelope(normalized), id: "backup-" + Date.now(), reason: "daily", gameDay: normalized.day
+    }) : null;
     const tx = db.transaction(["currentSave", "backups", "meta"], "readwrite");
-    tx.objectStore("currentSave").put({ ...record, id: "current" });
-    if (shouldBackup) {
-      const backup = await withChecksum({
-        ...envelope(normalized),
-        id: "backup-" + Date.now(),
-        reason: "daily",
-        gameDay: normalized.day
-      });
+    tx.objectStore("currentSave").put(record);
+    if (backup) {
       tx.objectStore("backups").put(backup);
-      const ordered = [...backups, backup].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+      const dailyBackups = backups.filter(item => item.reason === "daily");
+      const ordered = [...dailyBackups, backup].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       for (const old of ordered.slice(BACKUP_LIMIT)) tx.objectStore("backups").delete(old.id);
       tx.objectStore("meta").put({ key: "lastBackupDay", value: normalized.day });
     }
@@ -257,9 +258,17 @@ export async function restoreBackup(id) {
       throw new Error("Diese Sicherung hat ein nicht unterstütztes Format.");
     }
     validatePayload(backup.payload);
+    const currentRead = db.transaction("currentSave", "readonly");
+    const previous = await requestResult(currentRead.objectStore("currentSave").get("current"));
+    await transactionDone(currentRead);
+    const recovery = previous ? await withChecksum({
+      ...envelope(previous.payload, "pre-restore-recovery"),
+      id: "backup-pre-restore-" + Date.now(), reason: "pre-restore", gameDay: previous.payload.day
+    }) : null;
     const current = await withChecksum({ ...envelope(backup.payload, "backup-restore"), id: "current" });
-    const write = db.transaction("currentSave", "readwrite");
+    const write = db.transaction(["currentSave", "backups"], "readwrite");
     write.objectStore("currentSave").put(current);
+    if (recovery) write.objectStore("backups").put(recovery);
     await transactionDone(write);
     return true;
   } finally { db.close(); }
@@ -287,6 +296,9 @@ export async function importSave(file) {
     throw new Error("Die Sicherungsdatei stammt aus einem unbekannten oder nicht unterstützten Format.");
   }
   validatePayload(record.payload);
+  const { checksum, ...unsigned } = record;
+  const actual = await digest(JSON.stringify(unsigned));
+  if (checksum && actual && checksum !== actual) throw new Error("Die Sicherungsdatei ist beschädigt (Prüfsumme stimmt nicht).");
   const clean = await withChecksum({ ...envelope(record.payload, "import"), id: "current" });
   const db = await openSaveDatabase();
   try {
