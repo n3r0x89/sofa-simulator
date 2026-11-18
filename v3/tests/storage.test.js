@@ -95,6 +95,7 @@ runButton.addEventListener("click", async () => {
       assert(rejected, "Beschädigtes JSON wurde akzeptiert");
       assert((await loadCurrentSave()) === null, "Ungültige Migration hat einen Spielstand geschrieben");
       setDatabaseNameForTesting(DB);
+      await deleteDatabase(invalidDb);
     });
     await execute("Tages-Sicherungen rotieren auf maximal fünf", async () => {
       for (let day = 10; day <= 16; day++) await saveCurrent(sample(day));
