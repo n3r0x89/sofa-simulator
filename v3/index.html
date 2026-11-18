@@ -21,6 +21,11 @@
       <div class="stat"><span>🧠 STIMMUNG</span><b id="mood">Okay</b></div>
       <div class="stat"><span>🧹 CHAOS</span><b id="chaos">0%</b></div>
     </section>
+    <section class="needs-panel" aria-label="Bedürfnisse">
+      <div class="need"><span>⚡ ENERGIE</span><div><i id="energy-bar"></i></div><b id="energy-value">78%</b></div>
+      <div class="need"><span>🍔 HUNGER</span><div><i id="hunger-bar"></i></div><b id="hunger-value">42%</b></div>
+      <div class="need"><span>🚿 HYGIENE</span><div><i id="hygiene-bar"></i></div><b id="hygiene-value">65%</b></div>
+    </section>
     <section class="room-wrap">
       <div class="room" id="room">
         <div class="window"><div class="night"></div><div class="city"></div></div>
@@ -37,8 +42,11 @@
       <button class="action primary" data-action="jobs"><span>📱</span><b>Jobs</b><small>Geld verdienen</small></button>
       <button class="action" data-action="shop"><span>🛒</span><b>Späti</b><small>Vorräte kaufen</small></button>
       <button class="action" data-action="clean"><span>🧽</span><b>Aufräumen</b><small>Chaos beseitigen</small></button>
+      <button class="action" data-action="eat"><span>🥪</span><b>Essen</b><small>Snacks: <span id="snacks">2</span></small></button>
+      <button class="action" data-action="shower"><span>🚿</span><b>Duschen</b><small>Frisch werden</small></button>
       <button class="action" data-action="diary"><span>📖</span><b>Tagebuch</b><small>Dein Verlauf</small></button>
     </section>
+    <section class="goal-panel"><div><span class="eyebrow">TAGESZIEL</span><b id="daily-goal">Erledige einen Job</b></div><span id="goal-status">0 / 1</span></section>
     <section class="feed-panel">
       <div class="section-heading"><h2>WAS GEHT AB?</h2><span id="save-state">● GESPEICHERT</span></div>
       <div id="feed" class="feed" aria-live="polite"><p>Du sitzt auf dem Sofa. Der Tag kann eigentlich nur schlechter werden.</p></div>
