@@ -62,7 +62,16 @@ function render() {
   $("#beer").textContent = String(state.beer);
   $("#chaos").textContent = `${Math.min(100, Math.round(state.chaos))}%`;
   const mood = state.mood >= 70 ? "Gut drauf" : state.mood >= 40 ? "Okay" : "Mies";
-  $("#mood").textContent = mood;\n  $("#energy-bar").style.width = Math.round(state.energy) + "%";\n  $("#energy-value").textContent = Math.round(state.energy) + "%";\n  $("#hunger-bar").style.width = Math.round(state.hunger) + "%";\n  $("#hunger-value").textContent = Math.round(state.hunger) + "%";\n  $("#hygiene-bar").style.width = Math.round(state.hygiene) + "%";\n  $("#hygiene-value").textContent = Math.round(state.hygiene) + "%";\n  $("#snacks").textContent = state.snacks;\n  $("#goal-status").textContent = state.dailyGoalDone ? "1 / 1 ✓" : "0 / 1";\n  $("#daily-goal").textContent = state.dailyGoalDone ? "Job erledigt – stark gemacht!" : "Erledige einen Job";
+  $("#mood").textContent = mood;
+  $("#energy-bar").style.width = Math.round(state.energy) + "%";
+  $("#energy-value").textContent = Math.round(state.energy) + "%";
+  $("#hunger-bar").style.width = Math.round(state.hunger) + "%";
+  $("#hunger-value").textContent = Math.round(state.hunger) + "%";
+  $("#hygiene-bar").style.width = Math.round(state.hygiene) + "%";
+  $("#hygiene-value").textContent = Math.round(state.hygiene) + "%";
+  $("#snacks").textContent = state.snacks;
+  $("#goal-status").textContent = state.dailyGoalDone ? "1 / 1 ✓" : "0 / 1";
+  $("#daily-goal").textContent = state.dailyGoalDone ? "Job erledigt – stark gemacht!" : "Erledige einen Job";
   $("#tv-content").textContent = state.tvOn ? channels[state.tvChannel % channels.length][0] : "AUS";
   $("#room-tip").textContent = state.tvOn ? channels[state.tvChannel % channels.length][1] : "Stille. Unheimlich.";
   document.querySelector(".bottle").textContent = state.beer > 0 ? "🍺" : "🫙";
@@ -91,7 +100,9 @@ function advance(hours = 1) {
     state.hour++;
     state.tot++;
     state.energy = Math.max(0, state.energy - 1.7);
-    state.hu = Math.min(100, state.hu + 1.2);\n    state.hunger = Math.min(100, state.hunger + 2.4);\n    state.hygiene = Math.max(0, state.hygiene - 0.8);
+    state.hu = Math.min(100, state.hu + 1.2);
+    state.hunger = Math.min(100, state.hunger + 2.4);
+    state.hygiene = Math.max(0, state.hygiene - 0.8);
     if (state.hour >= 24) {
       state.hour = 0;
       state.day++;
@@ -133,7 +144,14 @@ function act(action) {
       state.st.clean = (state.st.clean || 0) + 1;
       log("Du räumst ein bisschen auf. Es sieht fast nach Wohnung aus.");
       advance(1); break;
-    case "eat":\n      if (state.snacks <= 0) return log("Nichts mehr zu essen. Der Späti ruft.");\n      state.snacks--; state.hunger = Math.max(0, state.hunger - 28); state.mood = Math.min(100, state.mood + 4);\n      log("Du isst einen Snack. Sterneküche ist es nicht, aber der Magen ist ruhig."); advance(1); break;\n    case "shower":\n      state.hygiene = Math.min(100, state.hygiene + 35); state.energy = Math.max(0, state.energy - 6);\n      log("Geduscht. Du riechst wieder wie ein Mensch mit Perspektive."); advance(1); break;\n    case "jobs": openJobs(); break;
+    case "eat":
+      if (state.snacks <= 0) return log("Nichts mehr zu essen. Der Späti ruft.");
+      state.snacks--; state.hunger = Math.max(0, state.hunger - 28); state.mood = Math.min(100, state.mood + 4);
+      log("Du isst einen Snack. Sterneküche ist es nicht, aber der Magen ist ruhig."); advance(1); break;
+    case "shower":
+      state.hygiene = Math.min(100, state.hygiene + 35); state.energy = Math.max(0, state.energy - 6);
+      log("Geduscht. Du riechst wieder wie ein Mensch mit Perspektive."); advance(1); break;
+    case "jobs": openJobs(); break;
     case "shop": openShop(); break;
     case "diary": openDiary(); break;
     case "menu": openMenu(); break;
@@ -194,7 +212,8 @@ function sleep() {
   state.energy = 100;
   state.mood = Math.min(100, state.mood + 12);
   state.hu = Math.max(0, state.hu - 8);
-  state.chaos = Math.min(100, state.chaos + 2);\n  state.dailyGoalDone = false;
+  state.chaos = Math.min(100, state.chaos + 2);
+  state.dailyGoalDone = false;
   log("Du wachst auf. Neuer Tag, gleiche vier Wände.");
   render();
   persist(true);
@@ -211,7 +230,9 @@ async function handleChoice(action) {
     };
     const [money, hours, text] = jobs[action];
     if (state.energy < hours * 6) return;
-    state.energy -= hours * 6; reward(money);\n    if (!state.dailyGoalDone) { state.dailyGoalDone = true; reward(5, 4); log("Tagesziel geschafft: Bonus +5 €!"); }\n    log(text); advance(hours); $("#modal").close(); return;
+    state.energy -= hours * 6; reward(money);
+    if (!state.dailyGoalDone) { state.dailyGoalDone = true; reward(5, 4); log("Tagesziel geschafft: Bonus +5 €!"); }
+    log(text); advance(hours); $("#modal").close(); return;
   }
   if (action.startsWith("buy-")) {
     const items = {
