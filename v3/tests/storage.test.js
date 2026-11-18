@@ -87,15 +87,18 @@ runButton.addEventListener("click", async () => {
       const invalidDb = "sofa-simulator-v3-test-invalid";
       await deleteDatabase(invalidDb);
       setDatabaseNameForTesting(invalidDb);
-      const missing = await migrateV2({ storage: { getItem: () => null } });
-      assert(missing.reason === "no-v2-save", "Fehlender Spielstand falsch behandelt");
-      let rejected = false;
-      try { await migrateV2({ storage: { getItem: () => "{kaputt" } }); }
-      catch { rejected = true; }
-      assert(rejected, "Beschädigtes JSON wurde akzeptiert");
-      assert((await loadCurrentSave()) === null, "Ungültige Migration hat einen Spielstand geschrieben");
-      setDatabaseNameForTesting(DB);
-      await deleteDatabase(invalidDb);
+      try {
+        const missing = await migrateV2({ storage: { getItem: () => null } });
+        assert(missing.reason === "no-v2-save", "Fehlender Spielstand falsch behandelt");
+        let rejected = false;
+        try { await migrateV2({ storage: { getItem: () => "{kaputt" } }); }
+        catch { rejected = true; }
+        assert(rejected, "Beschädigtes JSON wurde akzeptiert");
+        assert((await loadCurrentSave()) === null, "Ungültige Migration hat einen Spielstand geschrieben");
+      } finally {
+        setDatabaseNameForTesting(DB);
+        await deleteDatabase(invalidDb);
+      }
     });
     await execute("Tages-Sicherungen rotieren auf maximal fünf", async () => {
       for (let day = 10; day <= 16; day++) await saveCurrent(sample(day));
