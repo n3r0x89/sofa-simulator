@@ -6,13 +6,13 @@ Eigenständiger, mobiloptimierter Neuaufbau. V2-Dateien und der veröffentlichte
 
 - `index.html`, `style.css`, `app.js`: eigenständige V3-Oberfläche, Spielschleife und Interaktionen
 - `storage.js`: IndexedDB, V2-Migration, Sicherungen, Import/Export
-- `assets/sprites/`: kopierte Szenen- und Gegenstandsgrafiken aus dem V2-Projekt, als eigenständige V3-Dateien
-- `assets/audio/`: lokale MP3-Soundeffekte
-- `assets/asset-manifest.json`: vollständige Offline-Assetliste
+- `assets/sprites/`: 162 kopierte Szenen- und Gegenstandsgrafiken aus dem V2-Projekt, als eigenständige V3-Dateien
+- `assets/audio/`: 35 lokale MP3-Soundeffekte
+- `assets/asset-manifest.json`: Manifest aller 197 Medien-Dateien für die Offline-Vorladung
 - `sound.js`: Lautstärkeschalter und Soundeffekt-Player
 - `sw.js`, `manifest.webmanifest`, `icon.svg`: installierbare Offline-Shell
 - `tests/storage.test.html`, `tests/storage.test.js`: isoliertes Browser-Testlabor
-- `tests/run-browser-tests.mjs`: Playwright-Lauf für Speichertests und Spielstart
+- `tests/run-browser-tests.mjs`: Playwright-Lauf für Speichertests, Spielaktionen und Offline-Medienabruf
 - `TEST_PLAN.md`: manuelle Geräte- und Release-Prüfungen
 
 ## Aktueller Funktionsumfang
@@ -24,6 +24,7 @@ Eigenständiger, mobiloptimierter Neuaufbau. V2-Dateien und der veröffentlichte
 - Automatisches Speichern und lokale IndexedDB-Sicherung
 - Spielstand exportieren/importieren und Sicherungen wiederherstellen
 - V2-Übernahme beim ersten V3-Start, ohne den V2-Schlüssel zu löschen oder zu verändern
+- Lokale Grafiken und Soundeffekte mit Ton-Schalter; keine externen Audio- oder Schrift-Abhängigkeiten
 
 ## Speicher-API
 
@@ -52,7 +53,9 @@ Das Testlabor nutzt ausschließlich die separate Datenbank `sofa-simulator-v3-te
 
 ## Status und Grenzen
 
-Die neue V3-Spieloberfläche ist mit der V3-Speicher-API verbunden. Ein GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien und führt die zwölf isolierten Speicherprüfungen sowie den Spielstart-/Job-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Der aktuelle Workflow-Lauf ist erfolgreich. Die Tests ersetzen keine zusätzlichen iOS-/Android-Gerätetests. iOS Safari/Android Chrome, Offline-Start, Quota-Verhalten und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
+Der GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien. Er führt die zwölf isolierten Speicherprüfungen sowie den Spielstart-/Job-/Tagesziel-/Ton-Schalter-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Außerdem wird nach dem Offline-Schalten geprüft, ob die V3-Seite vom Service Worker kontrolliert wird und ein Szenenbild sowie ein MP3-Soundeffekt weiterhin abrufbar sind. Der aktuelle Workflow-Lauf ist erfolgreich.
+
+Die Offline-Prüfung ruft exemplarisch ein Bild und eine Audiodatei ab; sie ist kein vollständiger Geräte- oder Quota-Test. iOS Safari/Android Chrome, persistenter Ton-Schalter nach Reload, vollständige Verfügbarkeit aller 197 Medien-Dateien im Offline-Modus und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
 
 IndexedDB ist lokaler Gerätespeicher und keine Cloud-Sicherung. Browserdaten können gelöscht werden; wichtige Spielstände daher regelmäßig exportieren.
 
