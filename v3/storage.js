@@ -160,7 +160,7 @@ export async function loadCurrentSave() {
   }
 }
 
-export async function saveCurrent(payload, { dailyBackup = true } = {}) {
+export async function saveCurrent(payload, { dailyBackup = true, newGame = false } = {}) {
   const normalized = mergeDefaults(payload, V2_DEFAULTS);
   validatePayload(normalized);
   const db = await openSaveDatabase();
@@ -178,7 +178,7 @@ export async function saveCurrent(payload, { dailyBackup = true } = {}) {
     const previousDay = Number(previousRecord?.payload?.day);
     const currentDay = Number(normalized.day);
     const newRun = Number.isFinite(previousDay) && currentDay < previousDay;
-    const shouldBackup = dailyBackup && (newRun || currentDay > Number(lastDay?.value ?? -1));
+    const shouldBackup = dailyBackup && (newGame || newRun || currentDay > Number(lastDay?.value ?? -1));
     const record = await withChecksum({ ...envelope(normalized), id: "current" });
     const backup = shouldBackup ? await withChecksum({
       ...envelope(normalized), id: "backup-" + Date.now(), reason: "daily", gameDay: normalized.day
