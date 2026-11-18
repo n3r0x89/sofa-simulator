@@ -27,7 +27,7 @@ V3 is connected to the persistence module. The browser test lab at `v3/tests/sto
 ## Migration checks (use a copied V2 save only)
 - [ ] Valid V2 save migrates and preserves all known and unknown payload fields.
 - [x] The exact original `localStorage["sofasim_v2"]` string remains unchanged (isolated migration test).
-- [ ] Migration record contains the exact original string and its SHA-256 when Web Crypto is available.
+- [x] Migration record contains the exact original string and its SHA-256 when Web Crypto is available (isolated Chromium test).
 - [x] Migration backup is separate from the five rotating backup slots (isolated rotation test).
 - [x] Running migration a second time returns `already-migrated` and does not overwrite the V3 current save.
 - [x] Missing V2 save returns `no-v2-save`.
