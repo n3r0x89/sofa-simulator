@@ -20,6 +20,8 @@ The persistence module is isolated and must pass this checklist before it is con
 ## Save and backup checks
 - [ ] Current save survives reload.
 - [ ] A daily backup is created once when the in-game day advances.
+- [ ] A new game starting on the same day number triggers a checkpoint via `{ newGame: true }`.
+- [ ] A day-counter reset is detected as a new run even if the explicit signal is missed.
 - [ ] Regular autosaves do not create extra backups.
 - [ ] At most five rotating backups remain; the V2 migration checkpoint is retained separately.
 - [ ] Restore validates the selected snapshot and creates a pre-restore recovery point.
