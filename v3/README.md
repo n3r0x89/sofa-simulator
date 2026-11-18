@@ -12,7 +12,7 @@ This folder is the isolated V3 development area. V2 is not modified.
 
 - `openSaveDatabase()`
 - `loadCurrentSave()`
-- `saveCurrent(payload, { dailyBackup })`
+- `saveCurrent(payload, { dailyBackup, newGame })`
 - `migrateV2({ storage })`
 - `listBackups()`
 - `restoreBackup(id)`
