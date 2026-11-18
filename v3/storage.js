@@ -229,7 +229,7 @@ export async function migrateV2({ storage = globalThis.localStorage } = {}) {
     capturedAt: now(),
     raw,
     checksum: rawHash,
-    status: "completed"
+    status: "verifying"
   };
   const initialBackup = await withChecksum({
     ...envelope(payload, "v2"),
@@ -246,7 +246,7 @@ export async function migrateV2({ storage = globalThis.localStorage } = {}) {
     tx.objectStore("backups").put(initialBackup);
     tx.objectStore("currentSave").put(current);
     tx.objectStore("meta").put({ key: "lastBackupDay", value: payload.day });
-    tx.objectStore("meta").put({ key: "migrationStatus", value: "completed" });
+    tx.objectStore("meta").put({ key: "migrationStatus", value: "verifying" });
     await transactionDone(tx);
     const verifyTx = db.transaction(["currentSave", "migration"], "readonly");
     const [saved, original] = await Promise.all([
@@ -254,9 +254,18 @@ export async function migrateV2({ storage = globalThis.localStorage } = {}) {
       requestResult(verifyTx.objectStore("migration").get("v2-original"))
     ]);
     await transactionDone(verifyTx);
-    if (!saved || !original || saved.checksum !== current.checksum || original.raw !== raw) {
+    const { checksum: savedChecksum, ...savedUnsigned } = saved || {};
+    const savedActual = saved ? await digest(JSON.stringify(savedUnsigned)) : null;
+    const originalActual = await digest(original?.raw ?? "");
+    if (!saved || !original || savedChecksum !== current.checksum ||
+        (savedChecksum && savedActual && savedChecksum !== savedActual) ||
+        original.raw !== raw || (original.checksum && originalActual && original.checksum !== originalActual)) {
       throw new Error("Die V2-Migration konnte nicht verifiziert werden.");
     }
+    const complete = db.transaction(["migration", "meta"], "readwrite");
+    complete.objectStore("migration").put({ ...original, status: "completed" });
+    complete.objectStore("meta").put({ key: "migrationStatus", value: "completed" });
+    await transactionDone(complete);
     return { migrated: true, day: payload.day, originalPreserved: true };
   } finally {
     db.close();
