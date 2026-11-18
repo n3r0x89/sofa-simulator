@@ -165,12 +165,11 @@ export async function saveCurrent(payload, { dailyBackup = true } = {}) {
   validatePayload(normalized);
   const db = await openSaveDatabase();
   try {
-    const readTx = db.transaction(["meta", "backups"], "readonly");
+    const readTx = db.transaction(["meta", "currentSave"], "readonly");
     const metaStore = readTx.objectStore("meta");
-    const backupStore = readTx.objectStore("backups");
     const [lastDay, previousRecord] = await Promise.all([
       requestResult(metaStore.get("lastBackupDay")),
-      requestResult(db.transaction("currentSave", "readonly").objectStore("currentSave").get("current"))
+      requestResult(readTx.objectStore("currentSave").get("current"))
     ]);
     await transactionDone(readTx);
 
