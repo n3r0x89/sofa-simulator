@@ -8,6 +8,7 @@ Eigenständiger, mobiloptimierter Neuaufbau. V2-Dateien und der veröffentlichte
 - `storage.js`: IndexedDB, V2-Migration, Sicherungen, Import/Export
 - `sw.js`, `manifest.webmanifest`, `icon.svg`: installierbare Offline-Shell
 - `tests/storage.test.html`, `tests/storage.test.js`: isoliertes Browser-Testlabor
+- `tests/run-browser-tests.mjs`: Playwright-Lauf für Speichertests und Spielstart
 - `TEST_PLAN.md`: manuelle Geräte- und Release-Prüfungen
 
 ## Aktueller Funktionsumfang
@@ -46,7 +47,7 @@ Das Testlabor nutzt ausschließlich die separate Datenbank `sofa-simulator-v3-te
 
 ## Status und Grenzen
 
-Die neue V3-Spieloberfläche ist mit der V3-Speicher-API verbunden. Ein GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien. Das Browser-Testlabor ist angelegt, aber muss in einem echten Browser ausgeführt werden. iOS Safari/Android Chrome, Offline-Start, Quota-Verhalten und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
+Die neue V3-Spieloberfläche ist mit der V3-Speicher-API verbunden. Ein GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien und führt die isolierten Speicher- und Spielstarttests in headless Chromium aus. Die Tests ersetzen keine zusätzlichen iOS-/Android-Gerätetests. iOS Safari/Android Chrome, Offline-Start, Quota-Verhalten und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
 
 IndexedDB ist lokaler Gerätespeicher und keine Cloud-Sicherung. Browserdaten können gelöscht werden; wichtige Spielstände daher regelmäßig exportieren.
 
