@@ -338,6 +338,7 @@ async function boot() {
     render();
     await requestPersistentStorage();
     if (dirty) await persist(true);
+    else setSaveLabel("● GELADEN");
     setInterval(() => persist(), 10000);
     if ("serviceWorker" in navigator && location.protocol !== "file:") {
       navigator.serviceWorker.register("./sw.js").catch(() => setSaveLabel("● OFFLINE-MODUS NICHT AKTIV", true));
