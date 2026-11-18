@@ -53,7 +53,7 @@ Das Testlabor nutzt ausschließlich die separate Datenbank `sofa-simulator-v3-te
 
 ## Status und Grenzen
 
-Der GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien. Er führt die zwölf isolierten Speicherprüfungen sowie den Spielstart-/Job-/Tagesziel-/Ton-Schalter-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Nach dem Offline-Schalten werden sämtliche 197 im Asset-Manifest aufgeführten Medien-Dateien abgerufen. Zusätzlich wird geprüft, dass die Ton-Einstellung einen Seiten-Reload überlebt. Der zuletzt geprüfte Push- und PR-Workflow-Lauf war erfolgreich.
+Der GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien. Er führt die zwölf isolierten Speicherprüfungen sowie den Spielstart-/Job-/Shop-/Bedürfnis-/TV-/Tagebuch-/Menü-/Ton-Schalter-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Nach dem Offline-Schalten werden sämtliche 197 im Asset-Manifest aufgeführten Medien-Dateien abgerufen. Zusätzlich wird geprüft, dass die Ton-Einstellung einen Seiten-Reload überlebt. Der zuletzt geprüfte Push- und PR-Workflow-Lauf war erfolgreich.
 
 Diese automatisierten Prüfungen sind keine vollständigen Geräte- oder Quota-Tests. iOS Safari/Android Chrome, Desktop Firefox, reale Audioausgabe auf Geräten, vollständige V2-Altspielstände sowie Quota-/blockierte-Datenbank-Szenarien sind noch nicht als bestanden bestätigt.
 
