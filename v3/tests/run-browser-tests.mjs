@@ -33,6 +33,13 @@ try {
   if (await game.locator("#sound-toggle").textContent() !== "🔇 TON") throw new Error("Ton-Einstellung ließ sich nicht ausschalten.");
   await game.locator("#sound-toggle").click();
   if (await game.locator("#sound-toggle").textContent() !== "🔊 TON") throw new Error("Ton-Einstellung ließ sich nicht einschalten.");
+  await game.locator("#sound-toggle").click();
+  if (await game.locator("#sound-toggle").textContent() !== "🔇 TON") throw new Error("Ton-Einstellung ließ sich nicht erneut ausschalten.");
+  await game.reload();
+  await game.waitForFunction(() => /GESPEICHERT|GELADEN/.test(document.querySelector("#save-state")?.textContent || ""));
+  if (await game.locator("#sound-toggle").textContent() !== "🔇 TON") throw new Error("Ton-Einstellung blieb nach Reload nicht gespeichert.");
+  await game.locator("#sound-toggle").click();
+  if (await game.locator("#sound-toggle").textContent() !== "🔊 TON") throw new Error("Ton-Einstellung ließ sich nach Reload nicht einschalten.");
   await game.locator("#sleep").click();
   await game.waitForFunction(() => document.querySelector("#clock")?.textContent === "TAG 2 · 08:00");
   await game.waitForFunction(() => document.querySelector("#goal-status")?.textContent.includes("0 / 1"));
@@ -46,15 +53,28 @@ try {
   await game.context().setOffline(true);
   await game.reload();
   const offlineAssets = await game.evaluate(async () => {
-    const room = await fetch("./assets/sprites/room.jpg");
-    const sound = await fetch("./assets/audio/gulp1.mp3");
-    return { room: room.ok, sound: sound.ok, controlled: !!navigator.serviceWorker.controller };
+    const manifestResponse = await fetch("./assets/asset-manifest.json");
+    const manifest = await manifestResponse.json();
+    const checks = await Promise.all(manifest.assets.map(async path => {
+      try {
+        const response = await fetch(path, { cache: "no-store" });
+        return { path, ok: response.ok };
+      } catch {
+        return { path, ok: false };
+      }
+    }));
+    return {
+      total: checks.length,
+      available: checks.filter(item => item.ok).length,
+      missing: checks.filter(item => !item.ok).map(item => item.path),
+      controlled: !!navigator.serviceWorker.controller
+    };
   });
   await game.context().setOffline(false);
-  if (!offlineAssets.room || !offlineAssets.sound || !offlineAssets.controlled) {
-    throw new Error("V3-Art oder Sound ist offline nicht verfügbar: " + JSON.stringify(offlineAssets));
+  if (!offlineAssets.controlled || offlineAssets.missing.length) {
+    throw new Error("Nicht alle V3-Medien sind offline verfügbar: " + JSON.stringify(offlineAssets));
   }
-  console.log("Game smoke test: fresh start, job, daily goal, sound toggle, sleep, reload and offline artwork/audio passed.");
+  console.log(`Game smoke test: fresh start, job, daily goal, sound preference reload, sleep, save reload and all ${offlineAssets.available}/${offlineAssets.total} manifest assets offline passed.`);
 
   if (failures.length) throw new Error("Browserfehler: " + failures.join(" | "));
 } finally {
