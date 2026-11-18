@@ -12,7 +12,7 @@ Eigenständiger, mobiloptimierter Neuaufbau. V2-Dateien und der veröffentlichte
 - `sound.js`: Lautstärkeschalter und Soundeffekt-Player
 - `sw.js`, `manifest.webmanifest`, `icon.svg`: installierbare Offline-Shell
 - `tests/storage.test.html`, `tests/storage.test.js`: isoliertes Browser-Testlabor
-- `tests/run-browser-tests.mjs`: Playwright-Lauf für Speichertests, Spielaktionen und Offline-Medienabruf
+- `tests/run-browser-tests.mjs`: Playwright-Lauf für Speichertests, Spielaktionen und vollständigen Offline-Medienabruf
 - `TEST_PLAN.md`: manuelle Geräte- und Release-Prüfungen
 
 ## Aktueller Funktionsumfang
@@ -53,9 +53,9 @@ Das Testlabor nutzt ausschließlich die separate Datenbank `sofa-simulator-v3-te
 
 ## Status und Grenzen
 
-Der GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien. Er führt die zwölf isolierten Speicherprüfungen sowie den Spielstart-/Job-/Tagesziel-/Ton-Schalter-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Außerdem wird nach dem Offline-Schalten geprüft, ob die V3-Seite vom Service Worker kontrolliert wird und ein Szenenbild sowie ein MP3-Soundeffekt weiterhin abrufbar sind. Der aktuelle Workflow-Lauf ist erfolgreich.
+Der GitHub-Actions-Workflow prüft JavaScript-Modulsyntax, Manifest-JSON und benötigte Dateien. Er führt die zwölf isolierten Speicherprüfungen sowie den Spielstart-/Job-/Tagesziel-/Ton-Schalter-/Schlaf-/Reload-Smoke-Test in headless Chromium aus. Nach dem Offline-Schalten werden sämtliche 197 im Asset-Manifest aufgeführten Medien-Dateien abgerufen. Zusätzlich wird geprüft, dass die Ton-Einstellung einen Seiten-Reload überlebt. Der zuletzt geprüfte Push- und PR-Workflow-Lauf war erfolgreich.
 
-Die Offline-Prüfung ruft exemplarisch ein Bild und eine Audiodatei ab; sie ist kein vollständiger Geräte- oder Quota-Test. iOS Safari/Android Chrome, persistenter Ton-Schalter nach Reload, vollständige Verfügbarkeit aller 197 Medien-Dateien im Offline-Modus und reale kopierte V2-Spielstände sind noch nicht als bestanden bestätigt.
+Diese automatisierten Prüfungen sind keine vollständigen Geräte- oder Quota-Tests. iOS Safari/Android Chrome, Desktop Firefox, reale Audioausgabe auf Geräten, vollständige V2-Altspielstände sowie Quota-/blockierte-Datenbank-Szenarien sind noch nicht als bestanden bestätigt.
 
 IndexedDB ist lokaler Gerätespeicher und keine Cloud-Sicherung. Browserdaten können gelöscht werden; wichtige Spielstände daher regelmäßig exportieren.
 
