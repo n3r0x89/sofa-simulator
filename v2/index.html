@@ -143,7 +143,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=82;
+const APPVER=83;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -260,7 +260,7 @@ function clampAll(){S.th=clamp(S.th,0,100);S.hu=clamp(S.hu,0,100);S.bo=clamp(S.b
 // ---------- XP ----------
 function xpFactor(){let f=1;for(const n of[S.th,S.hu,S.bo])if(n>80)f-=.25;if(S.hang>0)f-=.25;f-=.1*S.mold;if(S.dirt>70)f-=.1;try{f-=.15*withdrawal().v}catch(e){}f=Math.max(.25,f);if(S.furn.neon)f+=.1;return f}
 function addXP(n){S.xp+=n*xpFactor();while(S.xp>=S.lvl*40){S.xp-=S.lvl*40;S.lvl++;levelUp()}}
-function levelUp(){snd('lvl');vib([60,40,60]);let extra='';
+function levelUp(){snd('lvl');try{setTimeout(()=>rankSend(true),500)}catch(e){}vib([60,40,60]);let extra='';
   if(S.lvl===8)extra='Videorekorder jetzt im Katalog.';
   if(S.lvl===15)extra='Größerer Fernseher im Katalog freigeschaltet.';
   if(S.lvl===20){S.furn.lava=true;extra='Geschenk: Lavalampe steht auf dem Schrank.'}
@@ -1006,12 +1006,12 @@ const closeBtn='<button class="btn close" data-x>Zurück</button>';
 function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.naturalWidth?'<img src="sprites/splash.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':''}<div class="menuT">Assi<br>Simulator</div><div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER}</div>
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
- <button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
+ <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay()});S.started=true;closeModal();showDay()}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
-  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='idea')ideaMenu(mainMenu);
+  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
@@ -1073,8 +1073,8 @@ const JOBS=[
  {k:'kabel',n:'Kupferkabel',d:4,r:()=>R(80,120),risk:.4,fine:60,c:()=>S.hour>=21||S.hour<5,cl:'nur 21 bis 5 Uhr'}];
 function jobRisk(j){if(!j.risk)return 0;return Math.min(.95,j.risk+.04*S.h.police+(S.prom>=.8?.15:0)+(S.h.kowNo>=3?.05:0))}
 function openPhone(){if(CALL){busyUI=false;return answerCall()}
-  openModal(`<h2>Handy</h2><p>${eur(S.money)} · ${hourStr()} Uhr · Polizei-Interesse ${S.h.police}</p><h4>Jobs</h4><div class="list">
-  ${JOBS.map((j,i)=>{const cd=(S.jobCd[j.k]||0)>S.tot,bad=j.c&&!j.c();const rk=jobRisk(j);return`<div class="row${cd||bad?' off':''}"><div class="t"><b>${j.n}</b><span>${j.d} Std. · ${j.lbl?j.lbl:j.k==='klau'?'Sixpack + 2 Snacks':j.k==='plasma'?'6,00 €':eur(j.k==='pfand'?2:j.k==='zeitung'?4.5:j.k==='floh'?3.2:j.k==='schwarz'?16:j.k==='rad'?30:80)+' +'}${rk?' · Risiko '+Math.round(rk*100)+' % / '+eur(j.fine):''}${bad?' · '+j.cl:''}${cd?' · Abkühlzeit':''}</span></div><button class="btn pri" data-j="${i}" ${cd||bad?'disabled':''}>Los</button></div>`}).join('')}</div>${closeBtn}`,()=>bindAll({'[data-j]':el=>doJob(JOBS[+el.dataset.j]),'[data-x]':()=>{closeModal()}}))}
+  openModal(`<h2>Handy</h2><p>${eur(S.money)} · ${hourStr()} Uhr · Polizei-Interesse ${S.h.police}</p>${contactsHtml()}<h4>Jobs</h4><div class="list">
+  ${JOBS.map((j,i)=>{const cd=(S.jobCd[j.k]||0)>S.tot,bad=j.c&&!j.c();const rk=jobRisk(j);return`<div class="row${cd||bad?' off':''}"><div class="t"><b>${j.n}</b><span>${j.d} Std. · ${j.lbl?j.lbl:j.k==='klau'?'Sixpack + 2 Snacks':j.k==='plasma'?'6,00 €':eur(j.k==='pfand'?2:j.k==='zeitung'?4.5:j.k==='floh'?3.2:j.k==='schwarz'?16:j.k==='rad'?30:80)+' +'}${rk?' · Risiko '+Math.round(rk*100)+' % / '+eur(j.fine):''}${bad?' · '+j.cl:''}${cd?' · Abkühlzeit':''}</span></div><button class="btn pri" data-j="${i}" ${cd||bad?'disabled':''}>Los</button></div>`}).join('')}</div>${closeBtn}`,()=>bindAll({'[data-j]':el=>doJob(JOBS[+el.dataset.j]),'[data-call]':el=>callContact(CONTACTS[+el.dataset.call]),'[data-x]':()=>{closeModal()}}))}
 function doJob(j){closeModal();S.right='empty';stopFilm(true);for(let i=0;i<j.d*10;i++)advance(1);S.jobCd[j.k]=S.tot+j.d*20+40;
   if(j.k==='bribe'){S.money-=25;if(Math.random()<.3){S.h.police+=2;S.h.caught++;snd('fail');toast('Der Beamte nimmt das Geld – und dich gleich mit aufs Revier. Bestechung, du Vollpfosten!','−25,00 € · Polizei +2',4500)}else{S.h.police=Math.max(0,S.h.police-3);snd('cash');addXP(5);toast(pick(['Ein Kasten Bier und ein Fuffi unterm Tisch – deine Akte ist plötzlich verschwunden.','Der Wachtmeister zwinkert. Deine Akte hat jetzt Kaffeeflecken. Unlesbar.','Geld weg, Akte dünner. So funktioniert Deutschland.']),'−25,00 € · Polizei −3 · XP +5',4500)}checkAch();showDay();return}
   const rk=jobRisk(j);if(j.risk)S.h.crimes++;
@@ -1177,7 +1177,7 @@ function nameMenu(then,prefill){openModal(`<div class="sugg"><h2>Wie heißt dein
     const v=inp.value.replace(/\s+/g,' ').trim();const err=document.getElementById('nameErr');
     if(v.length<2){err.textContent='Mindestens 2 Zeichen, du Analphabet.';snd('bad');return}
     if(!/^[A-Za-zÄÖÜäöüß0-9 ._\-]+$/.test(v)){err.textContent='Nur Buchstaben, Zahlen, Leerzeichen, Punkt, Strich.';snd('bad');return}
-    S.name=v;try{localStorage.setItem('sofasim_name',v)}catch(e){}save();snd('lvl');toast('Willkommen, '+v+'. Das Sofa wartet.','',3000);then&&then()}})})}
+    S.name=v;try{localStorage.setItem('sofasim_name',v)}catch(e){}save();setTimeout(()=>rankSend(true),1500);snd('lvl');toast('Willkommen, '+v+'. Das Sofa wartet.','',3000);then&&then()}})})}
 // ================= MINIGAMES =================
 const MI=$('mini'),mcv=$('minicv'),mc=mcv.getContext('2d'),mui=$('miniui'),mbt=$('minibtns');
 let MG=null;
@@ -1403,6 +1403,70 @@ function drawSwatTool(kind,x,y,since){const base=kind==='roach'?'newspaper':'swa
   const ax=base==='swatter'?(hitNow?.86:.74):(hitNow?.9:.78),ay=base==='swatter'?(hitNow?.3:.24):(hitNow?.22:.2);
   mc.save();mc.translate(x,y);if(!hitNow)mc.rotate(-.05);mc.drawImage(im,-w*ax,-h*ay,w,h);mc.restore()}
 function splatKey(kind,v){const k=(kind==='roach'?'splat_roach_':'splat_fly_')+(v||1);return SP[k]&&SP[k].naturalWidth?k:null}
+// ================= TELEFONIEREN: Kontakte anrufen =================
+const CONTACTS=[
+ {k:'kevin',n:'Kevin',img:'kevin_0',hi:['Ey Digga, was geht? Ich bin grad im Netto. Also… vor dem Netto.','Bruder! Ich wollt dich auch grad anrufen. Wegen Geld. Egal.'],a:[
+  {t:'Komm rüber',f:()=>{callVisit('kevin',20);return{say:'Bin in zehn Minuten da. Oder in drei Stunden. Mal gucken.'}}},
+  {t:'Leih mir 10 €',f:()=>Math.random()<.4?{say:'Hier, aber ich will’s zurück. Mit Zinsen. In Bier.',fx:{money:10,xp:2}}:{say:'Ich? Geld? Ich hab grad 40 Cent und ’ne Packung Kaugummi. Benutzt.',fx:{bo:-5}}},
+  {t:'Bring Bier mit (5 €)',c:()=>S.money>=5,f:()=>{S.money-=5;later(20,()=>{S.beer+=6;snd('clink');toast('Kevin stellt dir ein Sixpack vor die Tür und rennt weg.','Bier +6')});return{say:'Klar. Ich hol’s. Ganz legal. Fast.'}}}]},
+ {k:'uwe',n:'Uwe',img:'uwe_0',hi:['Moin. Uwe hier. Hast du Leergut? Ich hör’s klimpern.','Wer stört? Ich sortier grad Flaschen nach Farbe.'],a:[
+  {t:'Hol mein Leergut ab',c:()=>(S.basket||0)>0,f:()=>{const n=S.basket,m=Math.round(n*.12*100)/100;S.basket=0;S.money+=m;snd('clink');return{say:'Ich nehm alles. Du kriegst die Hälfte vom Pfand. Plus meinen Segen.',fx:{xp:2},extra:'Geld +'+eur(m)+' für '+n+' Flaschen'}}},
+  {t:'Komm vorbei',f:()=>{callVisit('uwe',15);return{say:'Bin unterwegs. Mit Einkaufswagen.'}}}]},
+ {k:'pizza',n:'Pizza Fista',img:'pizza_0',hi:['Pizza Fista, was willst du? Wieder Salami mit extra Fett?','Fista. Wenn’s wieder du bist, kostet’s doppelt. Spaß. Oder nicht.'],a:[
+  {t:'Pizza bestellen',f:()=>{callVisit('pizza',25);return{say:'Kommt in 30 Minuten. Oder kalt in 60.'}}},
+  {t:'30 Pizzen an Herrn Brandt',f:()=>{const caught=Math.random()<.3;return caught?{say:'Moment… DU schon wieder? Ich hab deine Nummer. Ich ruf die Polizei.',fx:{police:1,bo:-10}}:{say:'Dreißig Familienpizzen an Brandt, bar bei Lieferung. Wird gemacht, Chef.',fx:{neighbor:1,bo:-25,xp:3}}}}]},
+ {k:'kowalski',n:'Frau Kowalski',img:'kowalski_0',hi:['Schätzchen! Ich wusste, dass du anrufst. Ich hab schon die Stützstrümpfe aus.','Kowalski. Wer da? Ach DU, mein Hengst.'],a:[
+  {t:'Süßholz raspeln',f:()=>{callVisit('kowflirt',20);return{say:'Ich komm rüber. Ich bring Eierlikör und schlechte Absichten.',fx:{bo:-5}}}},
+  {t:'Kuchen schnorren',f:()=>Math.random()<.6?(S.h.cake=true,{say:'Morgen steht ein Kuchen vor deiner Tür. Mit Liebe gebacken. Und Haaren.',fx:{xp:2}}):{say:'Kuchen gibt’s nur gegen Gegenleistung, Bärchen.',fx:{bo:-3}}},
+  {t:'Beleidigen',f:()=>{S.h.kowNo++;return{say:'DU UNDANKBARES FERKEL! Ich schreib dich in mein Tagebuch. Ganz unten.',fx:{bo:-10}}}}]},
+ {k:'brandt',n:'Herr Brandt',img:'brandt_0',hi:['Brandt. Ich hoffe, es ist wichtig. Ich messe gerade die Ruhe.','WER RUFT HIER UM DIESE ZEIT AN? Ach, Sie.'],a:[
+  {t:'Entschuldigen',f:()=>{S.h.brandtNice=(S.h.brandtNice||0)+1;return{say:'Hm. Na gut. Ich nehme das zu Protokoll. Positiv. Ausnahmsweise.',fx:{neighbor:-1,nice:1}}}},
+  {t:'Telefonstreich',f:()=>({say:'„Ist da die Kläranlage? Sie stinken!“ – Er legt brüllend auf. Du lachst dich schlapp.',fx:{neighbor:1,bo:-15,xp:2}})},
+  {t:'Ins Telefon rülpsen',f:()=>{snd('burp');return{say:'BÖÖÖRPS. Stille. Dann leises Weinen. Dann ein Klick.',fx:{neighbor:1,bo:-10}}}}]},
+ {k:'jessica',n:'Jessica (Ex)',img:'jessica_0',hi:['Was willst du? Ich hab dich doch blockiert. Neues Handy?','Oh nein. Nicht du. Mein Neuer liegt neben mir.'],a:[
+  {t:'Zurückbetteln',f:()=>({say:'HAHAHA. Nein. Aber danke, das schick ich als Sprachnachricht an alle.',fx:{bo:5}})},
+  {t:'Besoffen anrufen',c:()=>S.prom>=1,f:()=>({say:'Du lallst „Ich liebe dich, Kevin“. Sie legt auf. Kevin ruft verwirrt zurück.',fx:{bo:-20,xp:3}})},
+  {t:'Komm vorbei',f:()=>Math.random()<.5?(callVisit('jessica',30),{say:'Na gut. Aber nur um zu gucken, ob du noch lebst.'}):{say:'Lieber lass ich mir die Zähne ziehen.',fx:{bo:3}}}]},
+ {k:'landlord',n:'Vermieter',img:'landlord_0',hi:['Hausverwaltung. Wenn’s um den Schimmel geht: Der gehört zur Wohnung.','Ja? Wenn Sie zahlen wollen, ich hör zu. Sonst nicht.'],a:[
+  {t:'Schimmel melden',c:()=>S.mold>0,f:()=>Math.random()<.5?(S.mold=Math.max(0,S.mold-1),{say:'Ich schick den Hausmeister. Mit ’nem Lappen und viel Fantasie.',fx:{xp:2}}):{say:'Lüften Sie halt mal, Sie Höhlenmensch.',fx:{bo:3}}},
+  {t:'Auf ein Bier einladen',f:()=>{callVisit('lfriend',30);return{say:'Bier? Gratis? Bin gleich da. Erzählen Sie’s keinem.'}}}]},
+ {k:'police',n:'Polizei (110)',img:'police_0',hi:['Polizei, Notruf. Was ist passiert?','Notrufzentrale. Bitte sprechen Sie.'],a:[
+  {t:'Herrn Brandt anzeigen',c:()=>S.h.police>0,f:()=>({say:'Ruhestörung beim Nachbarn? Danke für Ihre Mithilfe, Bürger. Wir vermerken das. Positiv.',fx:{police:-1,neighbor:2,xp:2}})},
+  {t:'Scherzanruf',f:()=>{setTimeout(()=>snd('fail'),400);return{say:'Wir haben Ihre Nummer. Und Ihre Adresse. Bis gleich.',fx:{police:2,bo:-20}}}}]}];
+let CALL_UI=null;
+function later(sec,fn){const due=S.tot+sec;const tk=setInterval(()=>{if(S.tot>=due&&!busyUI){clearInterval(tk);fn()}},500)}
+function callVisit(id,sec){S.callVisit={id,at:S.tot+sec}}
+setInterval(()=>{try{const cv=S.callVisit;if(!cv||!S.started||S.tot<cv.at||VISIT||CARD||CALL||busyUI||PUKE||toastBusy)return;const e=EVENTS.find(x=>x.id===cv.id);S.callVisit=null;if(e){CUR_EV=e.id;noteEvent(e);e.run()}}catch(e){}},1000);
+function contactsHtml(){return`<h4>Anrufen</h4><div class="list">${CONTACTS.map((c,i)=>{const cd=(S.callCd&&S.callCd[c.k]||0)>S.tot;return`<div class="row${cd?' off':''}"><img src="sprites/${c.img}.webp" alt="" style="width:38px;height:44px;object-fit:cover;object-position:top;border-radius:8px;margin-right:8px"><div class="t"><b>${c.n}</b><span>${cd?'hat gerade keinen Bock auf dich':'anrufen'}</span></div><button class="btn pri" data-call="${i}" ${cd?'disabled':''}>📞</button></div>`}).join('')}</div>`}
+function callContact(c){if(!S.callCd)S.callCd={};S.callCd[c.k]=S.tot+30;
+  openModal(`<div style="text-align:center"><img src="sprites/${c.img}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p id="callSt">Klingelt …</p></div>`,()=>{});
+  snd('ring');vib([200,100,200]);setTimeout(()=>snd('ring'),1400);
+  setTimeout(()=>{if(!M||M.style.display==='none')return;
+    const pickUp=c.k==='police'||Math.random()<.85;
+    if(!pickUp){document.getElementById('callSt').textContent='Geht nicht ran. Vermutlich mit Absicht.';setTimeout(()=>{closeModal()},1800);return}
+    const acts=c.a.filter(a=>!a.c||a.c());
+    M.innerHTML=`<div style="text-align:center"><img src="sprites/${c.img}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p>„${esc(pick(c.hi))}“</p></div><div class="list">${acts.map((a,i)=>`<button class="btn pri" data-a2="${i}">${esc(a.t)}</button>`).join('')}<button class="btn" data-hang>Auflegen</button></div>`;
+    bindAll({'[data-a2]':el=>{const r=acts[+el.dataset.a2].f()||{};const sub=[r.fx?fx(r.fx):'',r.extra||''].filter(Boolean).join(' · ');addXP(1);checkAch();
+      M.innerHTML=`<div style="text-align:center"><img src="sprites/${c.img}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p>„${esc(r.say||'…')}“</p>${sub?'<p style="color:#f2c14e;font-weight:800">'+esc(sub)+'</p>':''}</div><div class="list"><button class="btn" data-hang>Auflegen</button></div>`;
+      bindAll({'[data-hang]':()=>{snd('pop');closeModal()}})},'[data-hang]':()=>{snd('pop');closeModal()}})},2400)}
+
+// ================= RANGLISTE (alle, die gerade spielen) =================
+const RANK_TOPIC='assisim-rangliste-n3r0x89-v2',RANK_URL='https://ntfy.sh/'+RANK_TOPIC;
+function playerId(){let id='';try{id=localStorage.getItem('sofasim_pid')||''}catch(e){}if(!id){id=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);try{localStorage.setItem('sofasim_pid',id)}catch(e){}}return id}
+let rankLastSend=0;
+async function rankSend(force){try{if(!S.started||!assiName())return;const now=Date.now();if(!force&&now-rankLastSend<180000)return;rankLastSend=now;
+  const body=JSON.stringify({v:1,id:playerId(),n:assiName().slice(0,20),l:S.lvl,x:Math.floor(S.xp),d:S.day,t:now});await fetch(RANK_URL,{method:'POST',body})}catch(e){}}
+async function rankLoad(){const r=await fetch(RANK_URL+'/json?poll=1&since=12h',{cache:'no-store'});if(!r.ok)throw new Error('http '+r.status);const tx=await r.text();const P={};
+  for(const line of tx.split('\n')){if(!line.trim())continue;let m;try{m=JSON.parse(line)}catch(e){continue}if(m.event!=='message')continue;let p;try{p=JSON.parse(m.message)}catch(e){continue}
+    if(!p||typeof p.id!=='string'||typeof p.n!=='string')continue;p.n=p.n.slice(0,20);p.l=Math.max(1,Math.min(999,+p.l||1));p.x=Math.max(0,+p.x||0);p.d=Math.max(1,+p.d||1);p.seen=(m.time||0)*1000;
+    if(!P[p.id]||P[p.id].seen<p.seen)P[p.id]=p}
+  return Object.values(P).sort((a,b)=>b.l-a.l||b.x-a.x||b.d-a.d)}
+async function rankMenu(back){openModal(`<h2>Rangliste</h2><p>Alle Assis, die in den letzten 12 Stunden gespielt haben. 🟢 = gerade online.</p><div id="rankBox" class="list"><p>Lade …</p></div><p style="font-size:12px;color:var(--dim)">Dein Name, Level und Tag sind dafür öffentlich sichtbar.</p><div class="list"><button class="btn" data-r="back">Zurück</button></div>`,()=>bindAll({'[data-r]':()=>back?back():closeModal()}));
+  await rankSend(true);let list=[];let err=false;try{list=await rankLoad()}catch(e){err=true}
+  const me=playerId();if(!list.some(p=>p.id===me)&&assiName())list.push({id:me,n:assiName(),l:S.lvl,x:Math.floor(S.xp),d:S.day,seen:Date.now()});list.sort((a,b)=>b.l-a.l||b.x-a.x||b.d-a.d);
+  const box=document.getElementById('rankBox');if(!box)return;const now=Date.now();
+  box.innerHTML=(err?'<p style="color:#e88">Rangliste gerade nicht erreichbar. Du siehst nur dich selbst.</p>':'')+list.slice(0,50).map((p,i)=>`<div class="row"${p.id===me?' style="outline:2px solid #f2c14e"':''}><div class="t"><b>${i+1}. ${now-p.seen<10*60000?'🟢 ':''}${esc(p.n)}${p.id===me?' (du)':''}</b><span>Level ${p.l} · ${p.x} XP · Tag ${p.d}</span></div></div>`).join('')}
+setInterval(()=>{if(!document.hidden)rankSend(false)},60000);
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
