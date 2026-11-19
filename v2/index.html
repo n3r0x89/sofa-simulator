@@ -132,7 +132,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=61;
+const APPVER=62;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -193,17 +193,17 @@ const SND={
   cash:()=>{tone(1800,.08,'square',.1);setTimeout(()=>tone(2400,.25,'triangle',.15),90)},
   stat:()=>noise(.25,.15,3000,.5,'highpass'),
   lvl:()=>[523,659,784,1046].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.18),i*110)),
-  bad:()=>tone(200,.4,'sawtooth',.12,90),
+  bad:()=>{noise(.03,.22,2400,2,'bandpass');tone(140,.04,'square',.08)},
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],bad:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
 function playBank(k){if(!AC||!soundOn||!BUF[k])return false;const ok=BUF[k].map((b,i)=>b?i:-1).filter(i=>i>=0);if(!ok.length)return false;
   if(!ORD[k].length){ORD[k]=ok.slice().sort(()=>Math.random()-.5);if(ORD[k][0]===LAST[k]&&ORD[k].length>1)ORD[k].push(ORD[k].shift())}
   if(NOOVER[k]&&AC.currentTime<(BUSY[k]||0))return true;const i=ORD[k].shift();LAST[k]=i;try{const s=AC.createBufferSource();s.buffer=BUF[k][i];if(NOOVER[k])BUSY[k]=AC.currentTime+BUF[k][i].duration-.15;const g=AC.createGain();g.gain.value=.9;s.connect(g).connect(AC.destination);s.start();return true}catch(e){return false}}
-let lastBad=0;function snd(n){try{if(n==='bad'){const nw=performance.now();if(nw-lastBad<3500)return;lastBad=nw}if(BANKS[n]&&playBank(n))return;SND[n]&&SND[n]()}catch(e){}}
+let lastBad=0;function snd(n){try{if(n==='fail'){const nw=performance.now();if(nw-lastBad<3500)return;lastBad=nw}if(BANKS[n]&&playBank(n))return;SND[n]&&SND[n]()}catch(e){}}
 function vib(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 
 // ---------- Texte ----------
@@ -843,7 +843,7 @@ const KEVIN=[
  ()=>({say:'PARTY! Kevin hat fünf Leute dabei, die keiner kennt.',fx:fx({bo:-40,chaos:15,neighbor:2,prom:.4,beer:-Math.min(3,S.beer)}),pose:2}),
  ()=>{const l=Math.min(S.money,RI(3,8));return{say:'Kevin geht aufs Klo. Danach fehlt Geld und das Klo ist verstopft. Doppelschlag, du Opfer.',fx:fx({money:-l}),pose:3}},
  ()=>{const z=L.puddleZone;S.puddles.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0});return{say:'Kevin kotzt dir vor die Füße und wischt sich den Mund an deinem Vorhang ab.',fx:fx({chaos:12}),pose:1}},
- ()=>({say:'Zwei Minuten später klingelt die Polizei: „Wir suchen einen Kevin.“',fx:fx({police:2}),pose:1}),
+ ()=>(snd('fail'),{say:'Zwei Minuten später klingelt die Polizei: „Wir suchen einen Kevin.“',fx:fx({police:2}),pose:1}),
  ()=>({say:'Kevin bringt Döner mit. Er hat sogar an Knoblauchsoße gedacht.',fx:fx({hu:-40}),pose:2}),
  ()=>{S.remoteGone=S.tot+30;if(S.right==='remote')S.right='empty';return{say:'Kevin „leiht“ sich die Fernbedienung. Für ’ne halbe Stunde.',pose:3}},
  ()=>({say:'Kevin erzählt, wie er bei „Hartz & Herzlich“ Statist war. Spannender als dein Leben.',fx:fx({bo:-15}),pose:2}),
@@ -1040,7 +1040,7 @@ function openPhone(){if(CALL){busyUI=false;return answerCall()}
   ${JOBS.map((j,i)=>{const cd=(S.jobCd[j.k]||0)>S.tot,bad=j.c&&!j.c();const rk=jobRisk(j);return`<div class="row${cd||bad?' off':''}"><div class="t"><b>${j.n}</b><span>${j.d} Std. · ${j.k==='klau'?'Sixpack + 2 Snacks':j.k==='plasma'?'6,00 €':eur(j.k==='pfand'?2:j.k==='zeitung'?4.5:j.k==='floh'?3.2:j.k==='schwarz'?16:j.k==='rad'?30:80)+' +'}${rk?' · Risiko '+Math.round(rk*100)+' % / '+eur(j.fine):''}${bad?' · '+j.cl:''}${cd?' · Abkühlzeit':''}</span></div><button class="btn pri" data-j="${i}" ${cd||bad?'disabled':''}>Los</button></div>`}).join('')}</div>${closeBtn}`,()=>bindAll({'[data-j]':el=>doJob(JOBS[+el.dataset.j]),'[data-x]':()=>{closeModal()}}))}
 function doJob(j){closeModal();S.right='empty';stopFilm(true);for(let i=0;i<j.d*10;i++)advance(1);S.jobCd[j.k]=S.tot+j.d*20+40;
   const rk=jobRisk(j);if(j.risk)S.h.crimes++;
-  if(j.risk&&Math.random()<rk){S.h.caught++;const f=Math.min(S.money,j.fine);S.money-=f;S.h.police+=2;if(j.k==='klau')S.h.banUntil=S.tot+480;snd('bad');toast('ERWISCHT bei: '+j.n+'. Du Amateur.','Strafe −'+eur(f)+' · Polizei +2',4000);checkAch();showDay();return}
+  if(j.risk&&Math.random()<rk){S.h.caught++;const f=Math.min(S.money,j.fine);S.money-=f;S.h.police+=2;if(j.k==='klau')S.h.banUntil=S.tot+480;snd('fail');toast('ERWISCHT bei: '+j.n+'. Du Amateur.','Strafe −'+eur(f)+' · Polizei +2',4000);checkAch();showDay();return}
   const m=Math.round(j.r()*100)/100;let extra=j.ex?j.ex():'';if(j.legal)S.h.legal++;else S.h.crimesOk++;if(j.risk)S.h.police+=1;
   S.money+=m;snd('cash');addXP(j.risk?6:4);toast(j.n+' erledigt.',(m?'Geld +'+eur(m):'')+(extra?' · '+extra:'')+(j.risk?' · Polizei +1':''),3500);checkAch();showDay()}
 // ---------- Diary ----------
@@ -1199,7 +1199,7 @@ function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.r
   at(2000,()=>{cv.classList.add('jig');MAGA.pow=1;vib([30,60,30,60,30])});
   at(3200,()=>{MAGA.page=2;cv.classList.remove('jig');cv.classList.add('jig2');MAGA.pow=2;sx(pick(['Hnnngh… nicht klingeln jetzt… bitte nicht klingeln…','Ja… ja… JAAA… nein, Krampf in der Wade!','Schneller, Gerhard, schneller!']));vib([20,30,20,30,20,30,20,30])});
   const interrupt=Math.random()<.22;
-  if(interrupt){at(4300,()=>{cv.classList.remove('jig2');MAGA=null;snd('bell');vib(200);busyUI=false;S.magCd=S.tot+15;
+  if(interrupt){at(4300,()=>{cv.classList.remove('jig2');MAGA=null;snd('bell');setTimeout(()=>snd('fail'),900);vib(200);busyUI=false;S.magCd=S.tot+15;
       toast(pick(['DING DONG. Ausgerechnet jetzt. Der Paketbote. Stimmung im Eimer.','Es klingelt. Hose hoch, Heft unters Kissen, Puls auf 180. Fehlalarm, Kinderstreich.','Kowalski klopft: „Ich hör doch, dass du da bist, Schätzchen!“ Alles erschlafft.']),fx({bo:-10}));
       say('idle',true)});return}
   at(4600,()=>{cv.classList.remove('jig2');MAGA.pop=0.001;snd('plop');snd('groan');vib([250]);
@@ -1226,8 +1226,8 @@ const PUNCHABLE={landlord:1,bailiff:1,police:1,salesman:1,pizza:1};
 let FIST=null;
 const PUNCH_FX={
  landlord:()=>({say:'AUA! Meine Nase! Das gibt eine fristlose Kündigung, Sie Tier!',fx:fx({police:2,inkasso:1,lf:-3,bo:-35,xp:5})}),
- bailiff:()=>({say:'Sie… Sie haben einen Beamten geschlagen! Das kommt in die Akte, mit Foto!',fx:fx({police:3,bo:-35,xp:5})}),
- police:()=>{S.h.caught++;const f=Math.min(S.money,60);return{say:'Widerstand gegen die Staatsgewalt! Das kostet, Freundchen!',fx:fx({money:-f,police:5,bo:-30,xp:6})}},
+ bailiff:()=>(snd('fail'),{say:'Sie… Sie haben einen Beamten geschlagen! Das kommt in die Akte, mit Foto!',fx:fx({police:3,bo:-35,xp:5})}),
+ police:()=>{S.h.caught++;setTimeout(()=>snd('fail'),700);const f=Math.min(S.money,60);return{say:'Widerstand gegen die Staatsgewalt! Das kostet, Freundchen!',fx:fx({money:-f,police:5,bo:-30,xp:6})}},
  salesman:()=>({say:'Mein Staubsauger! Meine Zähne! Ich komm nie wieder!',fx:fx({police:1,bo:-40,xp:5})}),
  pizza:()=>{S.h.pizza++;return{say:'Spinnst du?! Hier, nimm die Scheißpizza, ich hau ab!',fx:fx({police:2,hu:-50,bo:-35,xp:5})}}};
 function punchOpt(who){return{t:'Auf die Fresse hauen',f:()=>{FIST={t:0,who};snd('slap');setTimeout(()=>{snd('knock');vib([80,40,160])},230);S.punches=(S.punches||0)+1;const r=PUNCH_FX[who]();r.pose='hurt';return r}}}
