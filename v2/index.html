@@ -9,6 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
+.sideBtns{position:absolute;bottom:2.5%;display:flex;flex-direction:column;gap:10px;z-index:6;pointer-events:none}
+.sideBtns.l{left:8px}.sideBtns.r{right:8px}
+.sideBtns .btn.sm{pointer-events:auto;width:46px;height:46px;min-width:0;padding:0;border-radius:50%;font-size:22px;line-height:46px;background:rgba(28,19,13,.42);border:1px solid rgba(255,220,170,.18);box-shadow:0 2px 8px rgba(0,0,0,.25);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:.82}
+.sideBtns .btn.sm:active{opacity:1;transform:scale(.94)}
+
 .btn.upd{background:#d33!important;color:#fff!important;font-weight:900;animation:updPulse 1s ease-in-out infinite}
 @keyframes updPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(221,51,51,.7)}50%{transform:scale(1.03);box-shadow:0 0 0 8px rgba(221,51,51,0)}}
 #bMenu.updDot{position:relative}#bMenu.updDot::after{content:'';position:absolute;top:6px;right:6px;width:11px;height:11px;border-radius:50%;background:#e33;box-shadow:0 0 0 2px #2a1d16;animation:updPulse 1s infinite}
@@ -137,7 +142,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=72;
+const APPVER=73;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -1364,6 +1369,8 @@ function drawSwatTool(kind,x,y,since){const base=kind==='roach'?'newspaper':'swa
   const ax=base==='swatter'?(hitNow?.86:.74):(hitNow?.9:.78),ay=base==='swatter'?(hitNow?.3:.24):(hitNow?.22:.2);
   mc.save();mc.translate(x,y);if(!hitNow)mc.rotate(-.05);mc.drawImage(im,-w*ax,-h*ay,w,h);mc.restore()}
 function splatKey(kind,v){const k=(kind==='roach'?'splat_roach_':'splat_fly_')+(v||1);return SP[k]&&SP[k].naturalWidth?k:null}
+// Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
+(()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
 function setNeed(id,v,label){const el=$(id);el.classList.toggle('hot',v>=80);el.querySelector('i').style.width=v+'%';el.querySelector('.lab span:last-child').textContent=label!==undefined?label:Math.round(v)}
 var warnT={th:0,hu:0,bo:0};
