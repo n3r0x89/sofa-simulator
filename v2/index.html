@@ -142,7 +142,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=76;
+const APPVER=77;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -233,7 +233,7 @@ const TX={
   lvl:['Sofa-Level {l}! Dein Arsch ist jetzt offiziell mit dem Polster verwachsen.','Level {l}. Andere machen Karriere, du machst Bremsspuren.','Level {l}. Deine Mutter erzählt Bekannten immer noch, du wärst im Ausland.','Level {l}. Gratuliere, du Versager auf höchstem Niveau.'],
   sick:'Dir wird kotzübel. Der Raum dreht sich schneller als dein Lebensabstieg.',
   puke:['BLÖÖÄRGH. Auf den Boden, du Reiherkönig. Schmeckt nach Döner von vorgestern.','Du kotzt dir die Seele aus dem Leib. Viel war da eh nicht.','Gereihert wie ein Weltmeister. Das Einzige, bei dem du ganz vorne mitspielst.'],
-  filmriss:'FILMRISS. Sechs Stunden weg, Geld weg, Hose feucht. Du willst nicht wissen, wovon.',
+  filmriss:'FILMRISS. Sechs Stunden weg, Hose feucht. Du willst nicht wissen, wovon.',
   zap:['Zapp.','Nächster Scheiß.','Weiter, du Daumenwichser.']
 };
 function T(k){const v=TX[k];return Array.isArray(v)?pick(v):v}
@@ -244,7 +244,8 @@ function toast(msg,sub,long){const item={msg:slur(msg),sub,dur:long||(msg.length
   if(toastBusy&&toastPrio){toastQ.push(item);if(toastQ.length>3)toastQ.shift();return}
   if(toastBusy&&item.prio){toastQ.unshift(item);showToast(toastQ.shift());return}
   showToast(item)}
-function showToast(it){const el=$('toast');el.innerHTML=it.msg+(it.sub?'<small>'+it.sub+'</small>':'');el.classList.add('on');toastBusy=true;toastPrio=it.prio;clearTimeout(toastT);
+function visitOpen(){try{return !!(VISIT||CARD)}catch(e){return false}}
+function showToast(it){if(visitOpen()){toastQ.unshift(it);if(toastQ.length>4)toastQ.length=4;toastBusy=false;toastPrio=false;clearTimeout(toastT);toastT=setTimeout(()=>{if(toastQ.length)showToast(toastQ.shift())},900);return}const el=$('toast');el.innerHTML=it.msg+(it.sub?'<small>'+it.sub+'</small>':'');el.classList.add('on');toastBusy=true;toastPrio=it.prio;clearTimeout(toastT);
   toastT=setTimeout(()=>{if(toastQ.length){showToast(toastQ.shift())}else{el.classList.remove('on');toastBusy=false;toastPrio=false}},toastQ.length?Math.min(it.dur,1800):it.dur)}
 function fxStr(o){const N={money:['Geld',v=>(v>0?'+':'−')+eur(Math.abs(v))],beer:['Bier'],snacks:['Snacks'],cigs:['Kippen'],th:['Durst'],hu:['Hunger'],bo:['Langeweile'],chaos:['Chaos'],prom:['Promille',v=>(v>0?'+':'−')+Math.abs(v).toFixed(2)+'‰'],xp:['XP'],nice:['Ruf'],neighbor:['Nachbar'],police:['Polizei'],jc:['Jobcenter'],inkasso:['Inkasso'],lf:['Vermieter'],empties:['Leergut']};
   return Object.entries(o).filter(([k,v])=>v&&N[k]).map(([k,v])=>N[k][0]+' '+(N[k][1]?N[k][1](v):(v>0?'+':'−')+Math.abs(Math.round(v*10)/10))).join(' · ')}
@@ -750,11 +751,11 @@ function promCheck(){
   if(S.prom>=S.pukeAt&&S.prom<3)puke()}
 function puke(){snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};S.dirt=Math.min(100,S.dirt+12);setTimeout(()=>say('afterPuke',true),3200);if(S.right==='cig'){S.right='empty';S.butts++;S.ash++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(3.3,3.7);S.sickSaid=false;clampAll();
   toast(T('puke'),'Promille −0,90 · Hunger +40');S.lastPuke=S.tot;checkAch()}
-function filmriss(){if(busyUI)return;busyUI=true;PUKE=null;const lost=Math.min(S.money,RI(2,5));S.money-=lost;S.st.filmriss++;stopFilm(true);S.right='empty';
+function filmriss(){if(busyUI)return;busyUI=true;PUKE=null;S.st.filmriss++;stopFilm(true);S.right='empty';
   if(S.bottle&&S.bottle.sips<=0){S.bottle=null;S.empties++;S.pfandStock++}
   snd('groan');vib([200,100,400]);const f=document.createElement('div');f.className='fade';f.innerHTML='<div style="text-align:center">FILMRISS<br><small style="font:600 16px Nunito,sans-serif;opacity:.8">Sechs Stunden später …</small></div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
   setTimeout(()=>{const tot0=S.tot;for(let i=0;i<60;i++)advance(1,.75);const slept=S.tot-tot0;S.lastBeer=(S.lastBeer||0)+slept;S.lastCig=(S.lastCig||0)+slept;S.prom=Math.min(S.prom,.6);S.pukeAt=R(2.1,2.5);S.hang=Math.max(S.hang,2);clampAll();
-    setTimeout(()=>{f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;snd('wake');toast(T('filmriss'),'Geld −'+eur(lost)+' · Kater · 6 Stunden weg',5000);checkAch();showDay()},1800)},900)}
+    setTimeout(()=>{f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;snd('wake');toast(T('filmriss'),'Kater · 6 Stunden weg',5000);checkAch();showDay()},1800)},900)}
 function putDown(){if(S.right!=='empty'){if(S.right==='phone'&&CALL){missCall();}S.right='empty';snd('pop');toast(pick(['Abgelegt. Wahnsinn, du Genie. Nobelpreis kommt per Post.','Weggelegt. Das ist mehr Arbeit, als du letzte Woche gemacht hast.']));doneHint('put');return}
   if(S.bottle&&S.bottle.sips<=0){S.bottle=null;S.empties++;S.pfandStock++;snd('clink');checkAch()}}
 function massage(){if(S.tot<S.massageAt){toast('Der Sessel muss sich von deinem Fettarsch erholen. Noch '+Math.ceil((S.massageAt-S.tot)/10)+' Std.');return}
@@ -987,7 +988,7 @@ function missCall(){if(!CALL)return;const c=CALL.c;CALL=null;clearInterval(callT
 function answerCall(){const c=CALL.c;CALL=null;clearInterval(callTimer);S.h.calls++;
   showCard(c.n,c.t,c.o.map(([t,f])=>({t,f})));checkAch()}
 // ---------- Scheduler ----------
-function eventTick(dt){if(VISIT||CARD||CALL||busyUI||PUKE)return;evTimer-=dt;if(evTimer>0)return;
+function eventTick(dt){if(VISIT||CARD||CALL||busyUI||PUKE||toastBusy||toastQ.length)return;evTimer-=dt;if(evTimer>0)return;
   const ok=EVENTS.filter(e=>e.id!==lastEv&&e.c());const pr=ok.filter(e=>e.prio);const np=ok.filter(e=>!e.prio);const e=pr.length?pr[0]:(np.length?pickEvent(np):null);if(!e){evTimer=10;return}noteEvent(e);CUR_EV=e.id;
   lastEv=e.id;evTimer=R(25,45);e.run()}
 // ================= MENUS =================
@@ -1405,7 +1406,7 @@ function frame(now){const dtr=Math.min(.1,(now-lastT)/1000);lastT=now;const t=no
     // idle body stuff
     idleFart-=dtr;if(idleFart<=0){idleFart=R(50,150);if(!VISIT&&!CARD){snd('fart');vib(80);toast(T('fart'))}}
     // need warnings
-    for(const k of['th','hu','bo']){if(S[k]>=80&&S.tot-warnT[k]>30){warnT[k]=S.tot;toast(TX[k]);snd('bad')}}
+    if(!VISIT&&!CARD&&!toastBusy&&S.tot-(warnT.last||0)>25){for(const k of['th','hu','bo']){if(S[k]>=80&&S.tot-warnT[k]>70){warnT[k]=S.tot;warnT.last=S.tot;toast(TX[k]);snd('bad');break}}}
     smokeLevel=Math.max(0,smokeLevel-dtr*.03);
     if(handAnim.drink>0)handAnim.drink-=dtr*1.5;if(handAnim.throwT>0)handAnim.throwT-=dtr*2.2;if(handAnim.puff>0)handAnim.puff-=dtr;if(handAnim.snack>0)handAnim.snack-=dtr;if(handAnim.capT>0)handAnim.capT-=dtr*1.6;if(handAnim.cigFly>0)handAnim.cigFly-=dtr*2.5;
     if(S.prom>=S.pukeAt)puke();if(S.prom<.5){S.taskDone=false}
