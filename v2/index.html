@@ -9,6 +9,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
+.btn.upd{background:#d33!important;color:#fff!important;font-weight:900;animation:updPulse 1s ease-in-out infinite}
+@keyframes updPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(221,51,51,.7)}50%{transform:scale(1.03);box-shadow:0 0 0 8px rgba(221,51,51,0)}}
+#bMenu.updDot{position:relative}#bMenu.updDot::after{content:'';position:absolute;top:6px;right:6px;width:11px;height:11px;border-radius:50%;background:#e33;box-shadow:0 0 0 2px #2a1d16;animation:updPulse 1s infinite}
+.sugg textarea{width:100%;min-height:140px;border-radius:12px;border:1px solid #6a5546;background:#1d1510;color:#f4e9dc;padding:10px;font:15px Nunito,sans-serif;box-sizing:border-box}
+
 /*
 VOICE: frech, verraucht, Vorabendfernsehen
 IDEA: ein vergilbtes Wohnzimmer aus Sofasicht, HUD wie ein billiger Videotext
@@ -132,7 +137,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=63;
+const APPVER=64;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -970,13 +975,14 @@ function bindAll(map){for(const[sel,fn]of Object.entries(map))M.querySelectorAll
 const closeBtn='<button class="btn close" data-x>Zurück</button>';
 
 function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.naturalWidth?'<img src="sprites/splash.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':''}<div class="menuT">Assi<br>Simulator</div><div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div><div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER}</div>
- <div class="list">${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
+ <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
  <button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="img">Bilder laden</button></div>`,()=>{mainOpen=true;bindAll({'[data-a]':el=>{const a=el.dataset.a;
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button>
+ ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){S.started=true;closeModal();showDay()}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>{const snd0=soundOn;S=fresh();S.started=true;layout();save();closeModal();toast('Tag 1. Du sitzt auf dem Sofa. Für immer.')},mainMenu);
-  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);
+  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='idea')ideaMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
@@ -1080,6 +1086,31 @@ function openVideo(){if(S.lvl<8){toast('Videothek erst ab Level 8. Streng dich a
   '[data-rent]':el=>{const i=+el.dataset.rent,f=FILMS[i];S.money-=f.p+2;S.vhs.push({id:i,due:S.day+2});snd('cash');openVideo()},
   '[data-ret]':el=>{const i=+el.dataset.ret;const v=S.vhs.find(v=>v.id===i);S.vhs=S.vhs.filter(x=>x!==v);S.money+=2;toast('Zurückgegeben, Kaution +2 €');openVideo()},
   '[data-play]':el=>{tvState.film=+el.dataset.play;tvState.filmStart=S.tot;tvState.filmRT=performance.now()/1000;S.tvOn=true;closeModal();toast('Film läuft: '+FILMS[tvState.film].t,'Zappen oder Wischen beendet ihn')},'[data-x]':closeModal}))}
+
+// ---------- Update-Knopf ----------
+let UPD=null;
+async function checkUpdate(){try{const r=await fetch('./index.html?u='+Date.now(),{cache:'no-store'});if(!r.ok)return;const tx=await r.text();const m=tx.match(/const APPVER=(\d+)/);
+  if(m&&+m[1]>APPVER){const neu=UPD!==+m[1];UPD=+m[1];if(mainOpen&&document.getElementById('updLow'))mainMenu();
+    const bm=document.getElementById('bMenu');if(bm)bm.classList.add('updDot');if(neu&&!mainOpen)toast('Neues Update da (Version '+UPD+')','Im Menü auf „Aktualisieren“ tippen',4000)}}catch(e){}}
+async function doUpdate(){const b=document.querySelector('[data-a="upd"]');if(b)b.textContent='Wird aktualisiert …';
+  try{if(window.caches){const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('sofa-v2-')).map(k=>caches.delete(k)))}
+    if(navigator.serviceWorker){const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(r=>r.update().catch(()=>{})))}}catch(e){}
+  save();location.replace(location.pathname+'?v='+Date.now())}
+setTimeout(checkUpdate,8000);setInterval(checkUpdate,5*60*1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
+// ---------- Verbesserungsvorschlag ----------
+function ideaMenu(back){let draft='';try{draft=localStorage.getItem('sofasim_idea')||''}catch(e){}
+  openModal(`<div class="sugg"><h2>Verbesserungsvorschlag</h2><p>Was soll besser, lustiger oder fieser werden? Fehler gefunden? Schreib’s rein.</p><textarea id="ideaTx" placeholder="Zum Beispiel: Der Pizzabote soll öfter kommen …">${esc(draft)}</textarea>
+  <div class="list"><button class="btn pri" data-i="send">Abschicken</button><button class="btn" data-i="copy">Text kopieren</button><button class="btn" data-i="back">Zurück</button></div>
+  <p style="font-size:12px;color:var(--dim)">„Abschicken“ öffnet GitHub mit deinem Text als neuen Eintrag. Dort nur noch auf „Submit“ tippen.</p></div>`,()=>{
+  const tx=document.getElementById('ideaTx');tx.addEventListener('input',()=>{try{localStorage.setItem('sofasim_idea',tx.value)}catch(e){}});
+  bindAll({'[data-i]':el=>{const a=el.dataset.i,v=tx.value.trim();
+    if(a==='back')return back?back():closeModal();
+    if(!v){toast('Erst was reinschreiben, du Schreibfaulpelz.');snd('bad');return}
+    const info='\n\n---\nVersion '+APPVER+' · Level '+S.lvl+' · Tag '+S.day+' · '+navigator.userAgent;
+    if(a==='copy'){try{navigator.clipboard.writeText(v+info);toast('Kopiert. Jetzt einfach irgendwo einfügen.')}catch(e){toast('Kopieren ging nicht. Markier den Text von Hand.')}return}
+    if(a==='send'){const title='Vorschlag: '+v.split('\n')[0].slice(0,60);const url='https://github.com/n3r0x89/sofa-simulator/issues/new?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(v+info);
+      window.open(url,'_blank');try{localStorage.removeItem('sofasim_idea')}catch(e){}toast('Danke! GitHub ist offen, dort noch auf „Submit“ tippen.','',3500);(back?back:closeModal)()}}})})}
 // ================= MINIGAMES =================
 const MI=$('mini'),mcv=$('minicv'),mc=mcv.getContext('2d'),mui=$('miniui'),mbt=$('minibtns');
 let MG=null;
