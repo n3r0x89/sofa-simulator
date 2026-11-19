@@ -91,6 +91,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 #self b{color:#a0521a}
 .fade{position:absolute;inset:0;z-index:18;background:#000;opacity:0;transition:opacity .5s;display:grid;place-items:center;color:#f6e8cf;font:28px 'Lilita One',sans-serif;pointer-events:all}
 .fade.on{opacity:1}
+#cv.jig{animation:jig .12s infinite alternate}@keyframes jig{from{transform:translateY(0)}to{transform:translateY(5px)}}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
@@ -211,10 +212,10 @@ const TX={
   noBeer:['Kein Bier mehr, du Pissbirne. Ab in den Shop, oder verdurste wie die Ratte, die du bist.','Sixpack leer. Wie dein Sack seit Jessica.','Nix mehr da, du Suffkopp. Selbst deine Leber feiert.'],
   morning:['Guten Morgen, du verwichster Schandfleck. Die Sonne hat schon gekotzt, als sie dich gesehen hat.','Aufgewacht, leider. Der liebe Gott hat wieder nicht zugehört.','Tag {d}. Du hast wieder nichts erreicht außer einer Morgenlatte, und selbst die ist wieder weg.','Morgen, Matratzenschimmel. Dein Mundgeruch hat die Tapete gelöst.','Tag {d}. Deine Mutter hat dich heute Nacht wieder aus ihren Träumen abgetrieben.'],
   burp:['BÖÖRPS. Selbst die Kakerlaken haben sich übergeben.','Rülps. Damit hast du mehr Ausdruck gezeigt als in deinem ganzen Lebenslauf.','Das kam aus tiefster Seele. Also aus dem Dreck.','Ein Rülpser wie ein Brunftschrei. Und trotzdem kommt keine Frau.'],
-  fart:['Pfffrrt. Das Sofa hat gerade um Sterbehilfe gebeten.','Furz mit Bremsspur, oder? Du weißt es nicht mal mehr.','PRÖÖT. Die Fliegen fallen tot von der Decke, du Gülletank.','Das roch nach verwestem Döner und gescheiterten Lebensentscheidungen.','Gut, dass dich keiner besucht. Ach ne, das liegt nicht am Furz, das liegt an dir.'],
+  fart:['Pfffrrt. Das Sofa hat gerade um Sterbehilfe gebeten.','Furz mit Bremsspur, oder? Du weißt es nicht mal mehr.','PRÖÖT. Die Fliegen fallen tot von der Decke, du Gülletank.','Das roch nach verwestem Döner und gescheiterten Lebensentscheidungen.','Gut, dass dich keiner besucht. Ach nee, das liegt nicht am Furz, das liegt an dir.'],
   cough:['KCHHH-KCHHH. Deine Lunge sieht aus wie ein Aschenbecher am Hauptbahnhof.','Husten wie ein alter Diesel. Wenigstens irgendwas an dir springt noch an.','Bring den Schleim ruhig raus, ist eh das Einzige, was du produzierst.'],
   th:'Du verdurstest, du ausgetrocknete Pflaume. Trink was, bevor dein Hirn ganz zur Rosine wird.',
-  hu:'Dein Magen knurrt lauter als Herr Brandt beim Kacken. Friss was, du Hungerhaken.',
+  hu:'Dein Magen knurrt lauter als Herr Brandt beim Kacken. Friss was, du Fressmaschine.',
   bo:'Dir ist so scheißlangweilig, dass du schon deine Fußpilzkolonie benennst.',
   lvl:['Sofa-Level {l}! Dein Arsch ist jetzt offiziell mit dem Polster verwachsen.','Level {l}. Andere machen Karriere, du machst Bremsspuren.','Level {l}. Deine Mutter erzählt Bekannten immer noch, du wärst im Ausland.','Level {l}. Gratuliere, du Versager auf höchstem Niveau.'],
   sick:'Dir wird kotzübel. Der Raum dreht sich schneller als dein Lebensabstieg.',
@@ -759,6 +760,7 @@ function tap(id,p){
   for(const pd of S.puddles){if(Math.hypot(p.x-pd.x,(p.y-pd.y)*2)<46){cleanPuddle(pd);return}}
   // furniture
   const inB=b=>b&&p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h;
+  if(S.mag&&L.magR&&inB(L.magR)&&(id==='right'||id==='lefthand')&&S.right!=='cig'&&!S.bottle)return magTap();
   if(VISIT&&inB({x:L.visitor.x+VISIT.x,y:L.visitor.y,w:L.visitor.w,h:L.visitor.h})&&!id)return;
   switch(id){
    case'crate':return takeBeer(false);
@@ -923,7 +925,7 @@ const EVENTS=[
  {id:'bin',c:()=>S.empties>0,run:()=>showCard('Flaschenwurf in den Mülleimer','Der Mülleimer steht zwei Meter weg. Eine leere Flasche in der Hand. Du weißt, was zu tun ist.',[{t:'Werfen',f:()=>{S.empties--;S.pfandStock=Math.max(0,S.pfandStock-1);return Math.random()<.5+(S.prom>1?-.2:0)?{say:'TREFFER! Das Einzige, was du je versenkt hast.',fx:fx({xp:3,bo:-5})}:{say:'Daneben. Wie immer bei dir, du Loser.',fx:fx({chaos:2})}}},{t:'Lass mal',f:()=>({})}])},
  {id:'horo',c:()=>true,run:()=>showCard('Horoskop','Der Videotext sagt: '+pick(HORO),[{t:'Glaub ich sofort',f:()=>({say:'Genau. Das Universum hat dich auf dem Kieker.',fx:fx({bo:-3})})}])},
  {id:'ufo',c:()=>S.prom>=.9,run:()=>{FX.ufo=S.tot+15;showCard('UFO!','Vor dem Fenster schwebt ein UFO. Oder es ist das Bier. Oder beides.',[{t:'Winken',f:()=>({say:'Das UFO winkt zurück und fliegt weg. Selbst Aliens wollen dich nicht.',fx:fx({xp:5})})},{t:'Prost!',f:()=>({say:'Das UFO blinkt grün. Prost, Kollege.',fx:fx({xp:5,bo:-10})})}])}},
- {id:'bet',c:()=>true,run:()=>showCard('Nachricht von Kevin','„Wetten dass du nicht 3 Bier auf Ex schaffst? 5 Euro!“',[{t:'Wette annehmen',f:()=>{if(S.beer<3)return{say:'Keine drei Bier da. Kevin lacht dich aus. Wette verloren.',fx:fx({money:-Math.min(5,S.money)})};S.st.beers+=3;return{say:'Glugg glugg glugg. Gewonnen. Und gleich… oh je.',fx:fx({beer:-3,prom:.57,th:-36,money:5,xp:4})}}},{t:'Ignorieren',f:()=>({say:'Kevin schickt 14 Hühner-Emojis und ein Foto von deinem Schwanz mit Lupe drüber.'})}])},
+ {id:'bet',c:()=>true,run:()=>showCard('Nachricht von Kevin','„Wetten, dass du nicht 3 Bier auf Ex schaffst? 5 Euro!“',[{t:'Wette annehmen',f:()=>{if(S.beer<3)return{say:'Keine drei Bier da. Kevin lacht dich aus. Wette verloren.',fx:fx({money:-Math.min(5,S.money)})};S.st.beers+=3;return{say:'Glugg glugg glugg. Gewonnen. Und gleich… oh je.',fx:fx({beer:-3,prom:.57,th:-36,money:5,xp:4})}}},{t:'Ignorieren',f:()=>({say:'Kevin schickt 14 Hühner-Emojis und ein Foto von deinem Schwanz mit Lupe drüber.'})}])},
  {id:'power',c:()=>!(S.furn.lamp&&S.lampOn),run:()=>{S.powerOutUntil=S.tot+20;stopFilm(true);showCard('Stromausfall','Zappenduster. Der Fernseher ist aus. Du bist allein mit deinen zwei Gehirnzellen. Die prügeln sich gerade.',[{t:'Im Dunkeln sitzen',f:()=>({say:'Mit einer Stehlampe wäre das nicht passiert.',fx:fx({bo:10})})}])}},
  {id:'remote',c:()=>S.right!=='remote'&&S.remoteGone<S.tot,run:()=>{S.remoteGone=S.tot+30;showCard('Fernbedienung weg','Die Fernbedienung ist weg. Unter dem Sofa? Im Kühlschrank? Im Bier?',[{t:'Suchen',f:()=>({say:'Nicht gefunden. Sie taucht in einer halben Stunde wieder auf. Wie immer.',fx:fx({bo:-5})})}])}},
  {id:'fridgeempty',c:()=>S.furn.fridge&&S.fridge===0,run:()=>showCard('Leerer Kühlschrank','Im Kühlschrank: ein Licht, eine Senftube und ein Schimmelkäse, der dich auslacht.',[{t:'Bier nachfüllen',f:()=>{fridgeTap();return{}}},{t:'Traurig gucken',f:()=>({})}])},
@@ -936,7 +938,7 @@ const EVENTS=[
 // ---------- Calls ----------
 const CALLS=[
  {n:'Frau Meier vom Jobcenter',t:'Haben Sie die Unterlagen eingereicht, oder haben Sie sich wieder nur einen runtergeholt?',o:[['Höflich: „Sind unterwegs!“',()=>{S.h.jc=Math.max(0,S.h.jc-1);return{say:'Na gut. Ich warte. Wie immer.',fx:fx({xp:2})}}],['Frech: „Welche Unterlagen?“',()=>({say:'Das wird Konsequenzen haben.',fx:fx({jc:1})})],['Beleidigend',()=>{rude();return{say:'Das notiere ich. Wörtlich.',fx:fx({jc:2})}}]],miss:()=>fx({jc:1})},
- {n:'Mama',t:'Isst du genug? Hast du Arbeit? Ach was frag ich, du warst schon als Baby eine Enttäuschung.',o:[['Höflich: „Alles super, Mama.“',()=>({say:'Ich schick dir 10 Euro. Kauf dir Gemüse.',fx:fx({money:10,nice:1})})],['Frech: „Ich hab zu tun.“',()=>({say:'Zu tun? DU?? Dein Bruder ist Zahnarzt und du bist der Grund, warum Papa säuft!',fx:fx({bo:-3})})],['Beleidigend',()=>{rude();return{say:'(Mama legt weinend auf. Du fühlst dich kurz schlecht. Sehr kurz.)'}}]],miss:()=>'Mama hat 7 Sprachnachrichten hinterlassen'},
+ {n:'Mama',t:'Isst du genug? Hast du Arbeit? Ach, was frag ich, du warst schon als Baby eine Enttäuschung.',o:[['Höflich: „Alles super, Mama.“',()=>({say:'Ich schick dir 10 Euro. Kauf dir Gemüse.',fx:fx({money:10,nice:1})})],['Frech: „Ich hab zu tun.“',()=>({say:'Zu tun? DU?? Dein Bruder ist Zahnarzt und du bist der Grund, warum Papa säuft!',fx:fx({bo:-3})})],['Beleidigend',()=>{rude();return{say:'(Mama legt weinend auf. Du fühlst dich kurz schlecht. Sehr kurz.)'}}]],miss:()=>'Mama hat 7 Sprachnachrichten hinterlassen'},
  {n:'Herr Kruse vom Inkasso',t:'Sie schulden uns 5 Euro seit 2019, Sie Pleitegeier. Wir wissen, wo Ihr Sofa wohnt.',o:[['Höflich: zahlen (5 €)',()=>{if(!canPay(5))return{say:'Kein Geld? Wir sehen uns.',fx:fx({inkasso:1})};S.h.inkasso=0;return{say:'Danke. Sie sind frei.',fx:fx({money:-5})}}],['Frech: „Falsch verbunden.“',()=>({say:'Netter Versuch.',fx:fx({inkasso:1})})],['Beleidigend',()=>{rude();return{say:'Das kostet extra.',fx:fx({inkasso:2})}}]],miss:()=>fx({inkasso:1})},
  {n:'Dieter (Kumpel)',t:'Ey, kann ich vorbeikommen? Ich bring was mit.',o:[['Klar, komm',()=>({say:'Dieter kommt mit 4 Bier und geht mit 6. Mathe.',fx:fx({beer:-Math.min(2,S.beer),bo:-25})})],['Heute nicht',()=>({say:'Okay, Langweiler.'})],['Beleidigend',()=>{rude();return{say:'Dieter legt auf. Er kommt trotzdem wieder.'}}]],miss:()=>''},
  {n:'Telefonverkäufer',t:'Zeitschriften-Abo „Angeln & Saufen“, nur 9 Euro!',o:[['Höflich ablehnen',()=>({say:'Schade. Schönen Tag noch.'})],['Abschließen (9 €)',()=>{if(!canPay(9))return{say:'Abgelehnt mangels Bonität.'};return{say:'Glückwunsch! Erste Ausgabe kommt nie.',fx:fx({money:-9,bo:-5})}}],['Beleidigend',()=>{rude();return{say:'Tut-tut-tut.'}}]],miss:()=>''},
@@ -1037,7 +1039,7 @@ function doJob(j){closeModal();S.right='empty';stopFilm(true);for(let i=0;i<j.d*
   const m=Math.round(j.r()*100)/100;let extra=j.ex?j.ex():'';if(j.legal)S.h.legal++;else S.h.crimesOk++;if(j.risk)S.h.police+=1;
   S.money+=m;snd('cash');addXP(j.risk?6:4);toast(j.n+' erledigt.',(m?'Geld +'+eur(m):'')+(extra?' · '+extra:'')+(j.risk?' · Polizei +1':''),3500);checkAch();showDay()}
 // ---------- Diary ----------
-const DIARY=['Tag 1: Herr Brandt hat einen Zettel an meine Tür geklebt. „RUHE!“ In Großbuchstaben. Mit Ausrufezeichen. Ich hab ihn eingerahmt.','Tag 2: Kevin war bei „Hartz & Herzlich“ als Statist. Er hat einen Becher geworfen. Er sagt, das war seine Idee.','Tag 3: Der Pizzabote kennt mein Gesicht. Er hat gewunken. Ich hab zurückgewunken. Wir sind jetzt quasi Familie.','Tag 4: Frau Kowalski hat mir zugezwinkert. Oder sie hat was im Auge. Ich hoffe auf das Auge.','Tag 5: Die Pflanze vom Vormieter lebt noch. Sie ist zäher als ich.','Tag 6: Ich hab versucht, mich zu bewerben. Dann lief Schnitzel-Duell.','Tag 7: Uwe hat mir erklärt, wie Pfand funktioniert. Er hat Tränen in den Augen gehabt. Ich auch. Wegen dem Geruch.','Tag 8: Ich hab gezählt: Das Sofa hat drei Dellen. Alle von mir. Das ist mein Lebenswerk.'];
+const DIARY=['Tag 1: Herr Brandt hat einen Zettel an meine Tür geklebt. „RUHE!“ In Großbuchstaben. Mit Ausrufezeichen. Ich hab ihn eingerahmt.','Tag 2: Kevin war bei „Hartz & Herzlich“ als Statist. Er hat einen Becher geworfen. Er sagt, das war seine Idee.','Tag 3: Der Pizzabote kennt mein Gesicht. Er hat gewunken. Ich hab zurückgewunken. Wir sind jetzt quasi Familie.','Tag 4: Frau Kowalski hat mir zugezwinkert. Oder sie hat was im Auge. Ich hoffe auf das Auge.','Tag 5: Die Pflanze vom Vormieter lebt noch. Sie ist zäher als ich.','Tag 6: Ich hab versucht, mich zu bewerben. Dann lief Schnitzel-Duell.','Tag 7: Uwe hat mir erklärt, wie Pfand funktioniert. Er hat Tränen in den Augen gehabt. Ich auch. Wegen des Geruchs.','Tag 8: Ich hab gezählt: Das Sofa hat drei Dellen. Alle von mir. Das ist mein Lebenswerk.'];
 function diaryMenu(back){S.diaryNew=false;openModal(`<h2>Tagebuch</h2>${S.diary?DIARY.slice(0,S.diary).map(t=>`<p>${esc(t)}</p>`).reverse().join(''):'<p>Noch leer. Jeden Morgen um 6 kommt ein Eintrag dazu.</p>'}${closeBtn}`,()=>bindAll({'[data-x]':back||closeModal}))}
 // ---------- Achievements ----------
 const ACH=[
@@ -1184,10 +1186,19 @@ function stashMenu(){if(!S.furn.stash)return;if(S.stashDay!==S.day){S.stashDay=S
 function drawStash(){if(!S.furn.stash||!L.stash)return;const b=L.stash;cx.save();cx.translate(b.x+b.w*.55,b.y+b.h);cx.rotate(-.12);rr(-b.w*.18,-b.h*.95,b.w*.36,b.h*.95,3,'#7a1d14');cx.fillStyle='#d9b24a';cx.fillRect(-b.w*.18,-b.h*.8,b.w*.36,b.h*.06);cx.fillRect(-b.w*.18,-b.h*.25,b.w*.36,b.h*.06);cx.font='800 '+Math.round(b.w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('€',0,-b.h*.42);cx.restore();hit('stash',b)}
 // ---------- Schmuddelheft ----------
 function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.right!=='empty'){toast(T('busy'));return}if(S.tot<S.magCd){toast(pick(['Schon wieder? Dein Schwanz hat Urlaub beantragt.','Gib ihm ’ne Pause, der ist wund gescheuert.','Noch nicht. Selbst Kaninchen machen mal Pause.'])+' (noch '+Math.ceil((S.magCd-S.tot)/10)+' Std.)');return}
-  busyUI=true;S.magCd=S.tot+60;const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
+  busyUI=true;S.magCd=S.tot+60;MAGA={t:0};snd('plop');const cv=document.getElementById('cv');
+  SELF.wank=SELF.wank||['Mal gucken, was die Busen-Express diesen Monat so bringt…','Ohhh ja. Seite 34. Die Gisela aus Castrop-Rauxel.','Hnnngh… nicht klingeln jetzt, bitte nicht klingeln…'];
+  say('wank',true);setTimeout(()=>{cv.classList.add('jig');say('wank',true)},1300);setTimeout(()=>say('wank',true),2600);
+  setTimeout(()=>{cv.classList.remove('jig');MAGA=null;
+  const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
   setTimeout(()=>{advance(2.5);S.tissues=Math.min(9,(S.tissues||0)+RI(1,3));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
-    toast(pick(['Fertig. Die Taschentücher kleben am Tisch fest.','Erledigt. Das war das Produktivste heute.','Puh. Frau Kowalski hat durch die Wand applaudiert.','Gekommen, gesehen, Taschentuch verbraucht.']),fx({bo:-60,xp:4,dirt:0}));S.dirt=clamp(S.dirt+6,0,100);say('idle',true)},2600)}
-function drawMag(){if(!L.roomMode)return;const m=L.mm;if(S.mag){const p=m(820,1185),w=L.bottleH*.85,h=w*1.25;cx.save();cx.translate(p.x,p.y);cx.rotate(.18);rr(-w/2,-h,w,h,3,'#e8417a');cx.fillStyle='#ffe14d';cx.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('BUSEN',0,-h*.78);cx.fillText('EXPRESS',0,-h*.6);cx.fillStyle='#111';cx.fillRect(-w*.32,-h*.45,w*.64,h*.12);cx.fillStyle='#fff';cx.font='800 '+Math.round(w*.11)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,-h*.36);cx.restore();hit('mag',{x:p.x-w*.6,y:p.y-h,w:w*1.2,h:h})}
+    toast(pick(['Fertig. Die Taschentücher kleben am Tisch fest.','Erledigt. Das war das Produktivste heute.','Puh. Frau Kowalski hat durch die Wand applaudiert.','Gekommen, gesehen, Taschentuch verbraucht.']),fx({bo:-60,xp:4,dirt:0}));S.dirt=clamp(S.dirt+6,0,100);say('idle',true)},2600)},3800)}
+let MAGA=null;
+function drawMagAnim(t){if(!MAGA)return;MAGA.t+=1/60;const k=Math.min(1,MAGA.t/.4),w=W*.62,h=w*1.3,x=W/2,y=H*1.15-(H*.55)*k+(MAGA.t>1.3?Math.sin(t*28)*H*.012:0);
+  cx.save();cx.translate(x,y);cx.rotate(-.05+(MAGA.t>1.3?Math.sin(t*28)*.02:0));rr(-w/2,-h/2,w,h,8,'#e8417a');cx.fillStyle='#ffe14d';cx.textAlign='center';cx.font='900 '+Math.round(w*.13)+'px "Lilita One",sans-serif';cx.fillText('BUSEN',0,-h*.33);cx.fillText('EXPRESS',0,-h*.2);
+  cx.fillStyle='#111';cx.fillRect(-w*.42,-h*.08,w*.84,h*.2);cx.fillStyle='#fff';cx.font='900 '+Math.round(w*.09)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,h*.05);
+  cx.fillStyle='#ffe14d';cx.font='800 '+Math.round(w*.055)+'px Nunito,sans-serif';cx.fillText('Heiße Omas aus deiner Nähe',0,h*.3);cx.fillText('Nr. 47 · 2,99 €',0,h*.4);cx.restore()}
+function drawMag(){if(!L.roomMode)return;const m=L.mm;if(S.mag){const p=m(820,1185),w=L.bottleH*.85,h=w*1.25;cx.save();cx.translate(p.x,p.y);cx.rotate(.18);rr(-w/2,-h,w,h,3,'#e8417a');cx.fillStyle='#ffe14d';cx.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('BUSEN',0,-h*.78);cx.fillText('EXPRESS',0,-h*.6);cx.fillStyle='#111';cx.fillRect(-w*.32,-h*.45,w*.64,h*.12);cx.fillStyle='#fff';cx.font='800 '+Math.round(w*.11)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,-h*.36);cx.restore();L.magR={x:p.x-w*.6,y:p.y-h,w:w*1.2,h:h};hit('mag',L.magR)}else L.magR=null;
   for(let i=0;i<(S.tissues||0);i++){const p=m(735+(i*41)%120,1185+(i*29)%30),r=L.bottleH*.16;cx.fillStyle='#f4f1ea';cx.beginPath();for(let k=0;k<7;k++){const a=k/7*Math.PI*2,rr2=r*(.7+((i*7+k*13)%5)/10);cx.lineTo(p.x+Math.cos(a)*rr2,p.y+Math.sin(a)*rr2*.7)}cx.fill();cx.strokeStyle='#c9c4b8';cx.lineWidth=1;cx.stroke();hit('tissue',{x:p.x-r*1.6,y:p.y-r*1.4,w:r*3.2,h:r*2.8})}}
 function tissueTap(){S.tissues=Math.max(0,(S.tissues||0)-1);snd('pop');toast(pick(['Taschentuch entsorgt. Mit spitzen Fingern.','Weg damit. Das Ding war schon steif.','Ab in den Müll, du Ferkel.']),fx({chaos:-1}))}
 // ---------- Faustschlag ----------
@@ -1297,7 +1308,7 @@ function frame(now){const dtr=Math.min(.1,(now-lastT)/1000);lastT=now;const t=no
   HITS=[];cx.save();
   if(PUKE){const k=PUKE.t;const sh=k<.55?k*16:k<1.9?7:Math.max(0,7-(k-1.9)*10);cx.translate(R(-sh,sh),R(-sh,sh)+(k>.4&&k<1.9?6:0));const sq=k<.55?1-k*.04:1;cx.translate(W/2,H/2);cx.scale(1,sq);cx.translate(-W/2,-H/2)}
   if(S.prom>=1.1){const k=Math.min(1,(S.prom-1)/1.5);cx.translate(W/2,H/2);cx.rotate(Math.sin(t*.9)*.015*k);cx.translate(-W/2+Math.sin(t*.7)*6*k,-H/2)}
-  pukeTick(Math.min(.05,dtr));drawRoom(t);drawVisitor(t);drawTable(t);drawHands(t);smokeTick(t);drawOverlay(t);drawPuke(t);drawFist();cx.restore();
+  pukeTick(Math.min(.05,dtr));drawRoom(t);drawVisitor(t);drawTable(t);drawHands(t);smokeTick(t);drawOverlay(t);drawPuke(t);drawFist();drawMagAnim(t);cx.restore();
   hud()}catch(err){console.error(err)}
   requestAnimationFrame(frame)}
 
@@ -1312,7 +1323,7 @@ $('lvl').onclick=()=>{const n=performance.now();if(n-adminT>1500)adminTaps=0;adm
 window.addEventListener('resize',()=>{layout();if(VISIT)placeBubble()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){save();if(!busyUI&&S.started)pauseMenu()}});
 window.addEventListener('pagehide',save);
-layout();try{window.__dbg={L:()=>L,W:()=>W,H:()=>H,ev:id=>{CUR_EV=id;EVENTS.find(e=>e.id===id).run()},swat:(k,t)=>swat(k,t),S:()=>S}}catch(e){}
+layout();try{window.__dbg={L:()=>L,W:()=>W,H:()=>H,ev:id=>{CUR_EV=id;EVENTS.find(e=>e.id===id).run()},swat:(k,t)=>swat(k,t),S:()=>S,hits:()=>HITS}}catch(e){}
 loadSprites().then(()=>{});
 mainMenu();
 requestAnimationFrame(frame);
