@@ -143,7 +143,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=81;
+const APPVER=82;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -390,7 +390,7 @@ function tvFromSprite(){const k=tvKey(),i=SP[k];if(!(i&&i.complete&&i.naturalWid
 function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Math.max(W/iw,H/(ih+170*k)),ox=(W-iw*s)/2,oy=H-ih*s;L0={iw,ih,s,ox,oy};const m=(x0,y0,x1,y1)=>({x:ox+x0*k*s,y:oy+y0*k*s,w:(x1-x0)*k*s,h:(y1-y0)*k*s});
   L={roomMode:true,wall:oy+900*k*s,
    shelf:m(0,120,270,930),win:m(765,150,941,585),cab:m(278,660,748,895),
-   neon:m(420,190,610,330),plant:m(790,430,905,597),lamp:m(632,345,900,905),fridge:m(196,778,344,962),massage:m(735,560,1075,995),gold:m(640,660,960,1010),stash:m(104,200,128,300),
+   neon:m(420,190,610,330),plant:m(790,430,905,597),lamp:m(688,345,945,905),fridge:m(196,778,344,962),massage:m(735,560,1075,995),gold:m(640,660,960,1010),stash:m(104,200,128,300),
    table:{y0:oy+1000*k*s,y1:oy+1215*k*s},tableHit:m(0,995,941,1222),
    crate:m(95,905,300,1085),cigpack:m(318,995,385,1095),lighter:m(386,1003,412,1060),ash:m(395,1035,525,1112),remote:m(525,1045,670,1130),phone:m(396,1118,471,1231),catalog:m(625,962,759,1087),
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
@@ -514,15 +514,13 @@ function subtitle(s,txt){cx.font='700 10px Nunito,sans-serif';cx.textAlign='cent
 
 // Licht der Stehlampe: kommt aus der Schirmöffnung, weicher Lichtkegel nach unten, warmer Schein im Raum
 function lampKey(){return S.lampType==='80s'?'lamp_80s':'lamp_fringe'}
-function drawLampLight(d,t){const l=L.lamp;if(!l)return;const cxm=l.x+l.w*.45,st=l.y+l.h*.02,sb=l.y+l.h*.31,sw=l.w*.5,a=.35+.65*d,fl=1+Math.sin(t*13)*.012,warm=S.lampType==='80s'?'255,230,175':'255,205,130';
+function drawLampLight(d,t){const l=L.lamp;if(!l)return;const cxm=l.x+l.w*.45,cy=l.y+l.h*.16,a=.35+.65*d,fl=1+Math.sin(t*13)*.01,warm=S.lampType==='80s'?'255,232,180':'255,200,125';
   cx.save();cx.globalCompositeOperation='lighter';
-  let g=cx.createRadialGradient(cxm,(st+sb)/2,8,cxm,(st+sb)/2,H*.55);g.addColorStop(0,'rgba('+warm+','+(.26*a*fl)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.fillRect(0,0,W,H);
-  g=cx.createRadialGradient(cxm,(st+sb)/2,4,cxm,(st+sb)/2,l.w*.55);g.addColorStop(0,'rgba(255,240,200,'+(.35*fl)+')');g.addColorStop(1,'rgba(255,220,160,0)');cx.fillStyle=g;cx.beginPath();cx.ellipse(cxm,(st+sb)/2,l.w*.6,l.h*.2,0,0,7);cx.fill();
-  try{cx.filter='blur('+Math.round(l.w*.05)+'px)'}catch(e){}
-  g=cx.createLinearGradient(0,sb,0,l.y+l.h);g.addColorStop(0,'rgba('+warm+','+(.42*a*fl)+')');g.addColorStop(.7,'rgba('+warm+','+(.12*a)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.beginPath();cx.moveTo(cxm-sw,sb);cx.lineTo(cxm+sw,sb);cx.lineTo(cxm+l.w*1.05,l.y+l.h);cx.lineTo(cxm-l.w*1.05,l.y+l.h);cx.closePath();cx.fill();
-  g=cx.createLinearGradient(0,st,0,st-l.h*.35);g.addColorStop(0,'rgba('+warm+','+(.22*a)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.beginPath();cx.moveTo(cxm-sw*.55,st);cx.lineTo(cxm+sw*.55,st);cx.lineTo(cxm+sw*1.1,st-l.h*.35);cx.lineTo(cxm-sw*1.1,st-l.h*.35);cx.closePath();cx.fill();
-  try{cx.filter='none'}catch(e){}
-  g=cx.createRadialGradient(cxm,l.y+l.h,4,cxm,l.y+l.h,l.w*.9);g.addColorStop(0,'rgba('+warm+','+(.3*a)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.save();cx.translate(0,l.y+l.h);cx.scale(1,.16);cx.translate(0,-(l.y+l.h));cx.beginPath();cx.arc(cxm,l.y+l.h,l.w*.9,0,7);cx.fill();cx.restore();
+  const glow=(x,y,rx,ry,al)=>{cx.save();cx.translate(x,y);cx.scale(1,ry/rx);const g=cx.createRadialGradient(0,0,0,0,0,rx);g.addColorStop(0,'rgba('+warm+','+al+')');g.addColorStop(.45,'rgba('+warm+','+(al*.45)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.beginPath();cx.arc(0,0,rx,0,7);cx.fill();cx.restore()};
+  glow(cxm,cy,H*.6,H*.6,.22*a*fl);
+  glow(cxm,cy,l.w*1.1,l.w*.9,.3*a*fl);
+  glow(cxm,l.y+l.h*.55,l.w*1.2,l.h*.5,.10*a);
+  glow(cxm,l.y+l.h*.99,l.w*1.1,l.w*.22,.22*a);
   cx.restore()}
 // ---------- Table & hands ----------
 let HITS=[];
