@@ -1145,6 +1145,7 @@ function gCatch(){miniOpen();const Wm=mcv.width,Hm=mcv.height;let px=Wm/2,items=
 // ================= ERWEITERUNGEN =================
 // ---------- Eigene Sprüche (Selbstgespräche) ----------
 const SELF={
+  horny:['Mir ist so langweilig… die Busen-Express guckt mich schon so an.','Gisela ruft. Seite 34. Ich hör sie bis hierher.','Langeweile. Hose. Heft. Du weißt Bescheid.','Wenn jetzt keiner klingelt, gönn ich mir das Heft.'],
   noBeer:['Ich brauch’n Bier. Jetzt. Sonst fress ich die Tapete.','Wo ist mein Bier? Wer hat mein Bier geklaut? Ach, ich war’s.','Trocken wie Omas Muschi hier drin.','Mein Hals ist so trocken, da könnt man Kakteen züchten.','Ein Königreich für ’ne Flasche. Ach, ich hab ja kein Königreich.'],
   noCig:['Boah, ich brauch ’ne Kippe, sonst werd ich zum Mörder.','Meine Lunge ist zu sauber. Das macht mir Angst.','Ohne Kippe zittern mir die Wichsgriffel.','Ich rauch gleich den Teppich, wenn ich nix kriege.'],
   afterPuke:['Boah… das war Döner. Glaub ich.','Der Boden hat’s verdient.','Ich hab jetzt Platz für mehr Bier.','Die Brocken da… waren die von heute?','Wenigstens nicht in die Fernbedienung.'],
@@ -1166,7 +1167,7 @@ function moreTick(dt){
   if(w.v>0){S.bo+=dt*.25*w.v;whineT-=dt;if(whineT<=0){whineT=R(16,26);const k=w.b>=w.c?'noBeer':'noCig';say(w.v>.6&&Math.random()<.4?'shake':k);vib([20,30,20,30,20])}}
   stereoTick(dt);
   // Selbstgespräche
-  selfNext-=dt;if(selfNext<=0){selfNext=R(55,110);if(S.dirt>75&&Math.random()<.5)say('dirty');else if(w.v<=0)say('idle')}
+  selfNext-=dt;if(selfNext<=0){selfNext=R(55,110);if(S.mag&&S.bo>65&&S.tot>=S.magCd&&Math.random()<.6)say('horny');else if(S.dirt>75&&Math.random()<.5)say('dirty');else if(w.v<=0)say('idle')}
   // Aschenbecher voll stinkt
   if(S.ash>20)S.chaos=Math.min(100,S.chaos+dt*.02)}
 // ---------- Aschenbecher ----------
