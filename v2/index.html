@@ -137,7 +137,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=67;
+const APPVER=68;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -505,7 +505,7 @@ function subtitle(s,txt){cx.font='700 10px Nunito,sans-serif';cx.textAlign='cent
   lines=lines.slice(0,3);cx.fillStyle='#000a';cx.fillRect(s.x,s.y+s.h-lines.length*12-4,s.w,lines.length*12+4);cx.fillStyle='#ffd';lines.forEach((l,i)=>cx.fillText(l,s.x+s.w/2,s.y+s.h-lines.length*12+i*12+7))}
 
 // Licht der Stehlampe: kommt aus der Schirmöffnung, weicher Lichtkegel nach unten, warmer Schein im Raum
-function drawLampLight(d,t){const l=L.lamp;if(!l)return;const ox=l.x+.82*l.w,oy=l.y+.215*l.h,a=.35+.65*d,fl=1+Math.sin(t*13)*.015;
+function drawLampLight(d,t){const l=L.lamp;if(!l)return;const ox=l.x+.81*l.w,oy=l.y+.205*l.h,bx=l.x+.805*l.w,by=l.y+.172*l.h,a=.35+.65*d,fl=1+Math.sin(t*13)*.015;
   cx.save();cx.globalCompositeOperation='lighter';
   let g=cx.createRadialGradient(ox,oy+l.h*.25,10,ox,oy+l.h*.25,H*.55);g.addColorStop(0,'rgba(255,190,110,'+(.28*a*fl)+')');g.addColorStop(1,'rgba(255,170,90,0)');cx.fillStyle=g;cx.fillRect(0,0,W,H);
   try{cx.filter='blur('+Math.round(l.w*.05)+'px)'}catch(e){}
@@ -513,7 +513,7 @@ function drawLampLight(d,t){const l=L.lamp;if(!l)return;const ox=l.x+.82*l.w,oy=
   cx.fillStyle=g;cx.beginPath();cx.moveTo(ox-l.w*.15,oy);cx.lineTo(ox+l.w*.14,oy+l.h*.01);cx.lineTo(ox+l.w*.62,oy+l.h*.78);cx.lineTo(ox-l.w*.5,oy+l.h*.78);cx.closePath();cx.fill();
   g=cx.createRadialGradient(ox,l.y+l.h*.98,4,ox,l.y+l.h*.98,l.w*.7);g.addColorStop(0,'rgba(255,210,150,'+(.35*a)+')');g.addColorStop(1,'rgba(255,200,140,0)');cx.fillStyle=g;cx.save();cx.translate(0,l.y+l.h*.98);cx.scale(1,.18);cx.translate(0,-(l.y+l.h*.98));cx.beginPath();cx.arc(ox,l.y+l.h*.98,l.w*.7,0,7);cx.fill();cx.restore();
   try{cx.filter='none'}catch(e){}
-  g=cx.createRadialGradient(ox,oy+2,1,ox,oy+2,l.w*.2);g.addColorStop(0,'rgba(255,250,225,'+(.9*fl)+')');g.addColorStop(.35,'rgba(255,230,170,.45)');g.addColorStop(1,'rgba(255,210,140,0)');cx.fillStyle=g;cx.beginPath();cx.ellipse(ox,oy+2,l.w*.2,l.w*.12,-.15,0,7);cx.fill();
+  g=cx.createRadialGradient(bx,by,1,bx,by,l.w*.13);g.addColorStop(0,'rgba(255,250,225,'+(.95*fl)+')');g.addColorStop(.4,'rgba(255,230,170,.5)');g.addColorStop(1,'rgba(255,210,140,0)');cx.fillStyle=g;cx.beginPath();cx.ellipse(bx,by,l.w*.13,l.w*.09,-.2,0,7);cx.fill();
   cx.restore()}
 // ---------- Table & hands ----------
 let HITS=[];
