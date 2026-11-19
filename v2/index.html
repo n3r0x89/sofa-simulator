@@ -143,7 +143,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=83;
+const APPVER=84;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -730,6 +730,7 @@ function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=t
 function sip(){const b=S.bottle;if(!b)return;if(b.opened===false){toast('Erst aufmachen, du hirnloser Nuckelbubi. Flasche antippen.');snd('bad');return}if(b.sips<=0){toast(pick(['Die Flasche ist leer, du Flaschenlutscher. Saugen bringt nix.','Da ist nix mehr drin. Wie in deinem Kopf und deiner Hose.']));return}
   b.sips--;S.lastBeer=S.tot;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=.19*pl;S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
   if(b.sips===2){S.st.beers++;}
+  if(b.sips<=0){setTimeout(()=>{if(S.bottle===b&&b.sips<=0&&!busyUI){S.bottle=null;S.empties++;S.pfandStock++;snd('clink');checkAch()}},1600)}
   clampAll();doneHint('drink');checkAch();promCheck()}
 function throwBottle(){if(!S.bottle)return;if(S.prom<.8){toast('Nüchtern traust du dich nicht mal, ’ne Flasche zu schmeißen. Eierlose Lusche.');return}
   handAnim.throwT=1;snd('whoosh');setTimeout(()=>{snd('smash');vib(80);{const z=L.stainZone||{x:150,y:H*.15,w:270,h:L.wall-60-H*.15};S.stains.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h)})};if(S.stains.length>14)S.stains.shift()},420);
