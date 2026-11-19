@@ -142,7 +142,8 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=75;
+const APPVER=76;
+const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -232,7 +233,7 @@ const TX={
   lvl:['Sofa-Level {l}! Dein Arsch ist jetzt offiziell mit dem Polster verwachsen.','Level {l}. Andere machen Karriere, du machst Bremsspuren.','Level {l}. Deine Mutter erzählt Bekannten immer noch, du wärst im Ausland.','Level {l}. Gratuliere, du Versager auf höchstem Niveau.'],
   sick:'Dir wird kotzübel. Der Raum dreht sich schneller als dein Lebensabstieg.',
   puke:['BLÖÖÄRGH. Auf den Boden, du Reiherkönig. Schmeckt nach Döner von vorgestern.','Du kotzt dir die Seele aus dem Leib. Viel war da eh nicht.','Gereihert wie ein Weltmeister. Das Einzige, bei dem du ganz vorne mitspielst.'],
-  filmriss:'FILMRISS. 6 Uhr, Geld weg, Hose feucht. Du willst nicht wissen, wovon.',
+  filmriss:'FILMRISS. Sechs Stunden weg, Geld weg, Hose feucht. Du willst nicht wissen, wovon.',
   zap:['Zapp.','Nächster Scheiß.','Weiter, du Daumenwichser.']
 };
 function T(k){const v=TX[k];return Array.isArray(v)?pick(v):v}
@@ -745,16 +746,21 @@ function cleanPuddle(p){p.taps++;snd('slap');if(p.taps>=3){S.puddles.splice(S.pu
 function promCheck(){
   if(S.prom>=1.1&&!S.taskDone&&!busyUI){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
   if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
-  if(S.prom>=S.pukeAt)puke()}
-function puke(){snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};S.dirt=Math.min(100,S.dirt+12);setTimeout(()=>say('afterPuke',true),3200);if(S.right==='cig'){S.right='empty';S.butts++;S.ash++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(2.1,2.5);S.sickSaid=false;clampAll();
-  if(S.tot-S.lastPuke<150){filmriss()}else toast(T('puke'),'Promille −0,90 · Hunger +40');S.lastPuke=S.tot;checkAch()}
-function filmriss(){const lost=Math.min(S.money,RI(2,5));S.money-=lost;S.st.filmriss++;if(S.hour<6){advance((6-S.hour)*10+.01)}else{advance((30-S.hour)*10+.01)}S.hang=Math.max(S.hang,2);toast(T('filmriss'),'Geld −'+eur(lost)+' · Kater',5000);checkAch()}
+  if(S.prom>=3&&!busyUI){filmriss();return}
+  if(S.prom>=S.pukeAt&&S.prom<3)puke()}
+function puke(){snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};S.dirt=Math.min(100,S.dirt+12);setTimeout(()=>say('afterPuke',true),3200);if(S.right==='cig'){S.right='empty';S.butts++;S.ash++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(3.3,3.7);S.sickSaid=false;clampAll();
+  toast(T('puke'),'Promille −0,90 · Hunger +40');S.lastPuke=S.tot;checkAch()}
+function filmriss(){if(busyUI)return;busyUI=true;PUKE=null;const lost=Math.min(S.money,RI(2,5));S.money-=lost;S.st.filmriss++;stopFilm(true);S.right='empty';
+  if(S.bottle&&S.bottle.sips<=0){S.bottle=null;S.empties++;S.pfandStock++}
+  snd('groan');vib([200,100,400]);const f=document.createElement('div');f.className='fade';f.innerHTML='<div style="text-align:center">FILMRISS<br><small style="font:600 16px Nunito,sans-serif;opacity:.8">Sechs Stunden später …</small></div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
+  setTimeout(()=>{const tot0=S.tot;for(let i=0;i<60;i++)advance(1,.75);const slept=S.tot-tot0;S.lastBeer=(S.lastBeer||0)+slept;S.lastCig=(S.lastCig||0)+slept;S.prom=Math.min(S.prom,.6);S.pukeAt=R(2.1,2.5);S.hang=Math.max(S.hang,2);clampAll();
+    setTimeout(()=>{f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;snd('wake');toast(T('filmriss'),'Geld −'+eur(lost)+' · Kater · 6 Stunden weg',5000);checkAch();showDay()},1800)},900)}
 function putDown(){if(S.right!=='empty'){if(S.right==='phone'&&CALL){missCall();}S.right='empty';snd('pop');toast(pick(['Abgelegt. Wahnsinn, du Genie. Nobelpreis kommt per Post.','Weggelegt. Das ist mehr Arbeit, als du letzte Woche gemacht hast.']));doneHint('put');return}
   if(S.bottle&&S.bottle.sips<=0){S.bottle=null;S.empties++;S.pfandStock++;snd('clink');checkAch()}}
 function massage(){if(S.tot<S.massageAt){toast('Der Sessel muss sich von deinem Fettarsch erholen. Noch '+Math.ceil((S.massageAt-S.tot)/10)+' Std.');return}
   S.massageAt=S.tot+40;advance(10);S.hang=Math.max(0,S.hang-1);snd('buzz');toast('Brrrrr. Das Einzige, was dich je so lange angefasst hat.',fx({bo:-40,prom:-.15,xp:3}))}
 function sleep(){if(!canSleep()){toast('Schlafen erst ab 19 Uhr, du stinkfaule Matratzenleiche.');return}
-  const tot0=S.tot;let n=0;const target=8;while(!(S.hour>=target&&S.hour<target+.2)&&n<400){advance(1,.75);n++}
+  S.pukeAt=R(2.1,2.5);const tot0=S.tot;let n=0;const target=8;while(!(S.hour>=target&&S.hour<target+.2)&&n<400){advance(1,.75);n++}
   {const slept=S.tot-tot0;S.lastBeer=(S.lastBeer||0)+slept;S.lastCig=(S.lastCig||0)+slept}S.bo-=30;clampAll();stopFilm(true);warnT.th=warnT.hu=warnT.bo=S.tot+15;snd('wake');toast(T('morning').replace('{d}',S.day),'Langeweile −30',3500);evTimer=Math.max(evTimer,R(15,25));showDay()}
 function showDay(){if(S.pendingDay){const l=S.pendingDay;S.pendingDay=null;setTimeout(()=>toast('Neuer Tag '+S.day,l.join(' · '),4500),S.lastToastDelay||0)}}
 // ---------- Hints ----------
@@ -1386,7 +1392,7 @@ let lastT=performance.now(),acc=0,idleFart=R(50,150),saveT=0;
 function frame(now){const dtr=Math.min(.1,(now-lastT)/1000);lastT=now;const t=now/1000;
   try{
   if(MG&&MG.step){mc.clearRect(0,0,mcv.width,mcv.height);MG.step(dtr)}
-  if(!busyUI&&S.started){advance(dtr);
+  if(!busyUI&&S.started){advance(dtr*TIME_SCALE);
     holdTick();eventTick(dtr);moreTick(dtr);
     // TV ads / night / film
     if(tvState.film!==null){S.bo-=1.6*dtr;if(S.tot-tvState.filmStart>=56){S.st.films++;addXP(12);toast('Abspann. Großes Kino.','XP +12');tvState.film=null;checkAch()}
