@@ -195,14 +195,14 @@ const SND={
   bad:()=>tone(200,.4,'sawtooth',.12,90),
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],bad:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
 function playBank(k){if(!AC||!soundOn||!BUF[k])return false;const ok=BUF[k].map((b,i)=>b?i:-1).filter(i=>i>=0);if(!ok.length)return false;
   if(!ORD[k].length){ORD[k]=ok.slice().sort(()=>Math.random()-.5);if(ORD[k][0]===LAST[k]&&ORD[k].length>1)ORD[k].push(ORD[k].shift())}
   if(NOOVER[k]&&AC.currentTime<(BUSY[k]||0))return true;const i=ORD[k].shift();LAST[k]=i;try{const s=AC.createBufferSource();s.buffer=BUF[k][i];if(NOOVER[k])BUSY[k]=AC.currentTime+BUF[k][i].duration-.15;const g=AC.createGain();g.gain.value=.9;s.connect(g).connect(AC.destination);s.start();return true}catch(e){return false}}
-function snd(n){try{if(BANKS[n]&&playBank(n))return;SND[n]&&SND[n]()}catch(e){}}
+let lastBad=0;function snd(n){try{if(n==='bad'){const nw=performance.now();if(nw-lastBad<3500)return;lastBad=nw}if(BANKS[n]&&playBank(n))return;SND[n]&&SND[n]()}catch(e){}}
 function vib(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 
 // ---------- Texte ----------
@@ -730,7 +730,7 @@ function massage(){if(S.tot<S.massageAt){toast('Der Sessel muss sich von deinem 
   S.massageAt=S.tot+40;advance(10);S.hang=Math.max(0,S.hang-1);snd('buzz');toast('Brrrrr. Das Einzige, was dich je so lange angefasst hat.',fx({bo:-40,prom:-.15,xp:3}))}
 function sleep(){if(!canSleep()){toast('Schlafen erst ab 19 Uhr, du stinkfaule Matratzenleiche.');return}
   const tot0=S.tot;let n=0;const target=8;while(!(S.hour>=target&&S.hour<target+.2)&&n<400){advance(1,.75);n++}
-  {const slept=S.tot-tot0;S.lastBeer=(S.lastBeer||0)+slept;S.lastCig=(S.lastCig||0)+slept}S.bo-=30;clampAll();stopFilm(true);warnT.th=warnT.hu=warnT.bo=S.tot+15;toast(T('morning').replace('{d}',S.day),'Langeweile −30',3500);evTimer=Math.max(evTimer,R(15,25));showDay()}
+  {const slept=S.tot-tot0;S.lastBeer=(S.lastBeer||0)+slept;S.lastCig=(S.lastCig||0)+slept}S.bo-=30;clampAll();stopFilm(true);warnT.th=warnT.hu=warnT.bo=S.tot+15;snd('wake');toast(T('morning').replace('{d}',S.day),'Langeweile −30',3500);evTimer=Math.max(evTimer,R(15,25));showDay()}
 function showDay(){if(S.pendingDay){const l=S.pendingDay;S.pendingDay=null;setTimeout(()=>toast('Neuer Tag '+S.day,l.join(' · '),4500),S.lastToastDelay||0)}}
 // ---------- Hints ----------
 const HINTS=[['remote','Fernbedienung antippen, dann links/rechts wischen zum Zappen.'],['zap','Wischen links/rechts wechselt den Sender.'],['beer','Sixpack antippen für eine Flasche.'],['open','Flasche antippen: Kronkorken öffnen.'],['drink','Flasche gedrückt halten zum Trinken.'],['cig','Zigarettenschachtel antippen, dann Kippe gedrückt halten.'],['put','Auf den Tisch tippen legt ab, was du in der Hand hast.']];
@@ -1092,9 +1092,9 @@ function offerDrunkTask(){if(busyUI||VISIT||CARD||PUKE){S.taskDone=false;return}
 function swat(kind,title){miniOpen();const Wm=mcv.width,Hm=mcv.height,dur=R(12,14);let t0=performance.now(),hits=0;const bugs=[];for(let i=0;i<6;i++)bugs.push(nb());
   function nb(){return{x:R(30,Wm-30),y:R(60,Hm-60),vx:R(-160,160),vy:R(-160,160),dead:0}}
   mui.textContent=title;
-  let tool={x:Wm*.5,y:Hm*.8,t:-9};
+  let tool={x:Wm*.5,y:Hm*.8,t:-9},buzzT=.3;
   MG={move:p=>{tool.x=p.x;tool.y=p.y},down:p=>{tool={x:p.x,y:p.y,t:performance.now()/1000};let hit=false;for(const b of bugs)if(!b.dead&&Math.hypot(p.x-b.x,p.y-b.y)<36){b.dead=1;hits++;hit=true;snd('slap');vib(30);{const z=L.stainZone||{x:0,y:0,w:W,h:L.wall-20};S.splats.push({x:z.x+p.x/Wm*z.w,y:z.y+p.y/Hm*z.h})};if(S.splats.length>40)S.splats.shift();setTimeout(()=>Object.assign(b,nb()),400)}if(!hit)snd('pop')},
-   step:dt=>{const el=(performance.now()-t0)/1000;const rm=SP.room;if(rm&&rm.naturalWidth){const sc=Math.max(Wm/rm.naturalWidth,Hm/(rm.naturalHeight*.55));mc.drawImage(rm,0,0,rm.naturalWidth,rm.naturalHeight*.55,(Wm-rm.naturalWidth*sc)/2,0,rm.naturalWidth*sc,rm.naturalHeight*.55*sc);mc.fillStyle='rgba(0,0,0,.25)';mc.fillRect(0,0,Wm,Hm)}else{mc.fillStyle='#d8c08a';mc.fillRect(0,0,Wm,Hm);mc.fillStyle='#0002';for(let x=0;x<Wm;x+=30)mc.fillRect(x,0,15,Hm)}
+   step:dt=>{const el=(performance.now()-t0)/1000;if(kind==='fly'||kind==='mosquito'){buzzT-=dt;if(buzzT<=0&&bugs.some(b=>!b.dead)){buzzT=R(.7,1.6);snd('buzz')}}const rm=SP.room;if(rm&&rm.naturalWidth){const sc=Math.max(Wm/rm.naturalWidth,Hm/(rm.naturalHeight*.55));mc.drawImage(rm,0,0,rm.naturalWidth,rm.naturalHeight*.55,(Wm-rm.naturalWidth*sc)/2,0,rm.naturalWidth*sc,rm.naturalHeight*.55*sc);mc.fillStyle='rgba(0,0,0,.25)';mc.fillRect(0,0,Wm,Hm)}else{mc.fillStyle='#d8c08a';mc.fillRect(0,0,Wm,Hm);mc.fillStyle='#0002';for(let x=0;x<Wm;x+=30)mc.fillRect(x,0,15,Hm)}
     for(const b of bugs){if(b.dead){mc.fillStyle='#3a1a0a';mc.beginPath();mc.ellipse(b.x,b.y,10,7,0,0,7);mc.fill();continue}b.x+=b.vx*dt;b.y+=b.vy*dt;if(Math.random()<.03){b.vx=R(-200,200);b.vy=R(-200,200)}if(b.x<20||b.x>Wm-20)b.vx*=-1;if(b.y<50||b.y>Hm-20)b.vy*=-1;
      if(!mspr(kind,b.x-20,b.y-20,40,40)){mc.fillStyle=kind==='dustbunny'?'#999':kind==='roach'?'#5a3010':'#222';mc.beginPath();mc.ellipse(b.x,b.y,kind==='roach'?14:9,kind==='roach'?8:6,0,0,7);mc.fill();if(kind!=='roach'&&kind!=='dustbunny'){mc.fillStyle='#cde8';mc.beginPath();mc.ellipse(b.x-6,b.y-7,7,4,-.5,0,7);mc.ellipse(b.x+6,b.y-7,7,4,.5,0,7);mc.fill()}}}
     drawSwatTool(kind==='roach'?'roach':'fly',tool.x,tool.y,performance.now()/1000-tool.t);
