@@ -482,9 +482,7 @@ function drawTVContent(s,t){const now=S.tot;
     cx.fillStyle='#0008';cx.fillRect(s.x,s.y+s.h-18,s.w,18);cx.fillStyle='#ffe';cx.font='700 10px Nunito,sans-serif';const ft='▶ '+FILMS[f].t,fw=cx.measureText(ft).width;if(fw<=s.w-8){cx.textAlign='center';cx.fillText(ft,s.x+s.w/2,s.y+s.h-6)}else{cx.textAlign='left';const span=fw+40,off=((t*28)%span);cx.fillText(ft,s.x+s.w-off,s.y+s.h-6);cx.fillText(ft,s.x+s.w-off+span,s.y+s.h-6)}
     cx.fillStyle='#fff';cx.font='700 9px monospace';cx.textAlign='left';cx.fillText('PLAY  '+Math.max(0,Math.ceil(56-(now-tvState.filmStart)))+'s',s.x+4,s.y+11);return}
   if(tvState.adUntil>now){if(!spr('ad',s,'cover')){cx.fillStyle='#f6f0a0';cx.fillRect(s.x,s.y,s.w,s.h)}
-    for(let i=0;i<5;i++){const fx=s.x+s.w/2+Math.sin(t*3+i*2)*s.w*.35,fy=s.y+s.h/2+Math.cos(t*4+i)*s.h*.3;ell(fx,fy,4,3,'#222')}
-    if(Math.sin(t*5)>.7){cx.fillStyle='#e33';cx.font='900 18px "Lilita One",sans-serif';cx.textAlign='center';cx.fillText('SPLAT!',s.x+s.w/2,s.y+s.h/2)}
-    cx.fillStyle='#000';cx.font='800 10px Nunito,sans-serif';cx.textAlign='left';cx.fillText('Fliegen zählen: '+tvState.flies,s.x+4,s.y+12);return}
+    return}
   if(tvState.night){if(!spr('night',s,'cover')){cx.fillStyle=grad(s.y,s.y+s.h,'#4a1650','#14061a');cx.fillRect(s.x,s.y,s.w,s.h);stick(s.x+s.w/2,s.y+s.h*.8,'#d4f',1,t*2,4)}
     subtitle(s,NIGHT[tvState.nightLine%NIGHT.length]);return}
   const c=CH[S.ch];const CD=4.2,crt=performance.now()/1000,cfi=Math.floor(crt/CD)%4,cph=(crt%CD)/CD,ck='ch_'+S.ch+'_'+(cfi+1);let chd=false;if(SP[ck]&&SP[ck].naturalWidth){const z=1.02+.05*cph,r={x:s.x-s.w*(z-1)/2,y:s.y-s.h*(z-1)/2,w:s.w*z,h:s.h*z};chd=spr(ck,r,'cover');if(chd&&cph<.03){cx.fillStyle='rgba(255,255,255,.25)';cx.fillRect(s.x,s.y,s.w,s.h)}}if(!chd&&!spr('ch_'+S.ch,s,'cover')){cx.fillStyle=grad(s.y,s.y+s.h,c.bg[0],c.bg[1]);cx.fillRect(s.x,s.y,s.w,s.h);
