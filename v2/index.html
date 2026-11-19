@@ -142,7 +142,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=78;
+const APPVER=79;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -1006,7 +1006,7 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay()});S.started=true;closeModal();showDay()}
-  if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg. Dein Name '+(assiName()||'')+' bleibt.',()=>{const snd0=soundOn;S=fresh();S.name=assiName();S.started=true;layout();save();closeModal();toast('Tag 1. Du sitzt auf dem Sofa. Für immer.')},mainMenu);
+  if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='idea')ideaMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
@@ -1014,7 +1014,7 @@ function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
-  if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>{S=fresh();S.started=true;layout();save();closeModal();toast('Neues Spiel. Gleiches Sofa.')},pauseMenu)}}))}
+  if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>newGameWithName('Neues Spiel. Gleiches Sofa.'),pauseMenu)}}))}
 function confirmBox(q,yes,no){openModal(`<h2>Sicher?</h2><p>${esc(q)}</p><div class="list"><button class="btn red" data-y>Ja, weg damit</button><button class="btn" data-n>Nein</button></div>`,()=>bindAll({'[data-y]':yes,'[data-n]':no}))}
 function howMenu(back){openModal(`<h2>So geht’s</h2>
  <p><b>Fernbedienung</b> antippen, dann links/rechts wischen: Sender wechseln.</p><p><b>Sixpack</b> antippen: neue Flasche. <b>Flasche antippen</b>: Kronkorken ab. <b>Flasche gedrückt halten</b>: trinken. Ab 0,8 ‰ Flasche schnell <b>nach oben wischen</b>: gegen die Wand.</p>
@@ -1163,10 +1163,11 @@ setInterval(()=>{try{questTick()}catch(e){}},1500);
 
 // ---------- Name des Assis (bleibt fest, für das spätere Ranking) ----------
 function assiName(){let n=S&&S.name;if(!n){try{n=localStorage.getItem('sofasim_name')||''}catch(e){}if(n&&S)S.name=n}return n||''}
-function nameMenu(then){openModal(`<div class="sugg"><h2>Wie heißt dein Assi?</h2><p>Der Name steht später im Ranking und bleibt für immer. Also überleg dir was Gutes. Oder was Peinliches.</p>
+function newGameWithName(msg){const old=assiName();S=fresh();S.name='';try{localStorage.removeItem('sofasim_name')}catch(e){}layout();nameMenu(()=>{S.started=true;layout();save();closeModal();setTimeout(()=>toast(msg),3200)},old)}
+function nameMenu(then,prefill){openModal(`<div class="sugg"><h2>Wie heißt dein Assi?</h2><p>Der Name steht später im Ranking und bleibt für dieses Spiel. Erst bei einem neuen Spiel kannst du ihn wieder ändern.</p>
   <input id="nameIn" maxlength="20" autocomplete="off" placeholder="z. B. Kalle Kotzbrocken" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid #6a5546;background:#1d1510;color:#f4e9dc;font:800 18px Nunito,sans-serif">
   <p id="nameErr" style="color:#e66;font-size:13px;min-height:16px"></p><div class="list"><button class="btn pri" data-n="ok">Los geht’s</button><button class="btn" data-n="rnd">Zufallsname</button></div></div>`,()=>{
-  const inp=document.getElementById('nameIn');setTimeout(()=>{try{inp.focus()}catch(e){}},200);
+  const inp=document.getElementById('nameIn');if(prefill)inp.value=prefill;setTimeout(()=>{try{inp.focus()}catch(e){}},200);
   const RN=['Kalle Kotzbrocken','Dieter Dosenbier','Ronny Ranzig','Uwe Unterhemd','Heinz Hartgeld','Manni Mundgeruch','Bodo Bierbauch','Kevin Kippenkönig','Olaf Ochsenfrosch','Siggi Sofapilz','Jürgen Jogginghose','Horst Hackedicht'];
   bindAll({'[data-n]':el=>{if(el.dataset.n==='rnd'){inp.value=pick(RN);return}
     const v=inp.value.replace(/\s+/g,' ').trim();const err=document.getElementById('nameErr');
