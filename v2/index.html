@@ -143,7 +143,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=80;
+const APPVER=81;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -324,7 +324,7 @@ function dbAll(){return new Promise(res=>{if(!DB)return res({});try{const out={}
 function dbPut(k,v){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').put(v,k)}catch(e){}}
 function dbClear(){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').clear()}catch(e){}}
 function mkImg(src){const i=new Image();i.src=src;return i}
-const SPKEYS=["swatter_hit","newspaper","newspaper_hit","splat_fly_1","splat_fly_2","splat_roach_1","splat_roach_2","stereo_0","stereo_1","stereo_2","ch_0_1","ch_0_2","ch_0_3","ch_0_4","ch_1_1","ch_1_2","ch_1_3","ch_1_4","ch_2_1","ch_2_2","ch_2_3","ch_2_4","ch_3_1","ch_3_2","ch_3_3","ch_3_4","ch_4_1","ch_4_2","ch_4_3","ch_4_4","ch_5_1","ch_5_2","ch_5_3","ch_5_4","vhs_0_1","vhs_0_2","vhs_0_3","vhs_0_4","vhs_1_1","vhs_1_2","vhs_1_3","vhs_1_4","vhs_2_1","vhs_2_2","vhs_2_3","vhs_2_4","vhs_3_1","vhs_3_2","vhs_3_3","vhs_3_4","vhs_4_1","vhs_4_2","vhs_4_3","vhs_4_4","stash_shelf","stash_spine","stash_low","stash_full","money_pile","mag_worn","mag_sticky","tissues","tissue_used","landlord_hurt", "bailiff_hurt", "police_hurt", "salesman_hurt", "pizza_hurt", "tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5", "crate", "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying", "lh_open", "cap", "cigpack_closed", "cigpack_half", "cigpack_empty", "cig", "cig_lit", "butt", "lighter", "basket_0", "basket_1", "basket_2", "basket_3", "basket_4", "basket_5", "basket_6", "basket_7", "mag", "mag_open", "stash_book", "stash_book_open"];
+const SPKEYS=["lamp_fringe","lamp_80s","swatter_hit","newspaper","newspaper_hit","splat_fly_1","splat_fly_2","splat_roach_1","splat_roach_2","stereo_0","stereo_1","stereo_2","ch_0_1","ch_0_2","ch_0_3","ch_0_4","ch_1_1","ch_1_2","ch_1_3","ch_1_4","ch_2_1","ch_2_2","ch_2_3","ch_2_4","ch_3_1","ch_3_2","ch_3_3","ch_3_4","ch_4_1","ch_4_2","ch_4_3","ch_4_4","ch_5_1","ch_5_2","ch_5_3","ch_5_4","vhs_0_1","vhs_0_2","vhs_0_3","vhs_0_4","vhs_1_1","vhs_1_2","vhs_1_3","vhs_1_4","vhs_2_1","vhs_2_2","vhs_2_3","vhs_2_4","vhs_3_1","vhs_3_2","vhs_3_3","vhs_3_4","vhs_4_1","vhs_4_2","vhs_4_3","vhs_4_4","stash_shelf","stash_spine","stash_low","stash_full","money_pile","mag_worn","mag_sticky","tissues","tissue_used","landlord_hurt", "bailiff_hurt", "police_hurt", "salesman_hurt", "pizza_hurt", "tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5", "crate", "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying", "lh_open", "cap", "cigpack_closed", "cigpack_half", "cigpack_empty", "cig", "cig_lit", "butt", "lighter", "basket_0", "basket_1", "basket_2", "basket_3", "basket_4", "basket_5", "basket_6", "basket_7", "mag", "mag_open", "stash_book", "stash_book_open"];
 async function loadSprites(){const base='sprites/';const mk=(k,src)=>{const i=new Image();i.onload=()=>{layout();if(k==='splash'&&mainOpen)mainMenu()};let tries=0;i.onerror=()=>{if(SP[k]!==i)return;if(tries<3){tries++;setTimeout(()=>{if(SP[k]===i)i.src=src+'?r='+tries+'_'+Date.now()},700*tries);return}delete SP[k]};i.src=src;SP[k]=i};
   mk('room',base+'room.jpg');for(const k of SPKEYS)mk(k,base+k+'.webp');
   await dbOpen();const all=await dbAll();for(const k in all){const i=mkImg(all[k]);i.onload=()=>layout();SP[k]=i}}
@@ -390,7 +390,7 @@ function tvFromSprite(){const k=tvKey(),i=SP[k];if(!(i&&i.complete&&i.naturalWid
 function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Math.max(W/iw,H/(ih+170*k)),ox=(W-iw*s)/2,oy=H-ih*s;L0={iw,ih,s,ox,oy};const m=(x0,y0,x1,y1)=>({x:ox+x0*k*s,y:oy+y0*k*s,w:(x1-x0)*k*s,h:(y1-y0)*k*s});
   L={roomMode:true,wall:oy+900*k*s,
    shelf:m(0,120,270,930),win:m(765,150,941,585),cab:m(278,660,748,895),
-   neon:m(420,190,610,330),plant:m(790,430,905,597),lamp:m(590,300,925,905),fridge:m(196,778,344,962),massage:m(735,560,1075,995),gold:m(640,660,960,1010),stash:m(104,200,128,300),
+   neon:m(420,190,610,330),plant:m(790,430,905,597),lamp:m(632,345,900,905),fridge:m(196,778,344,962),massage:m(735,560,1075,995),gold:m(640,660,960,1010),stash:m(104,200,128,300),
    table:{y0:oy+1000*k*s,y1:oy+1215*k*s},tableHit:m(0,995,941,1222),
    crate:m(95,905,300,1085),cigpack:m(318,995,385,1095),lighter:m(386,1003,412,1060),ash:m(395,1035,525,1112),remote:m(525,1045,670,1130),phone:m(396,1118,471,1231),catalog:m(625,962,759,1087),
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
@@ -451,7 +451,7 @@ function drawRoom(t){const wall=L.wall;
   // plant
   if(S.furn.plant){const p=L.plant;if(!spr('plant',p)){rr(p.x+8,p.y+p.h-40,30,40,4,'#b5552c');for(let i=0;i<7;i++){cx.save();cx.translate(p.x+23,p.y+p.h-40);cx.rotate(-1.2+i*.4+Math.sin(t*.8+i)*.03);ell(0,-50,12,34,i%2?'#3f7d3a':'#2f6a2e');cx.restore()}}}
   // lamp
-  if(S.furn.lamp){const l=L.lamp,on=S.lampOn&&!powerOut();if(spr('lamp_off',l)){}else{cx.fillStyle='#222';cx.fillRect(l.x+21,l.y+30,4,l.h-36);ell(l.x+23,l.y+l.h-4,18,5,'#222');cx.beginPath();cx.moveTo(l.x+6,l.y+34);cx.lineTo(l.x+40,l.y+34);cx.lineTo(l.x+30,l.y);cx.lineTo(l.x+16,l.y);cx.closePath();cx.fillStyle='#2b2b2b';cx.fill()}}
+  if(S.furn.lamp){const l=L.lamp,on=S.lampOn&&!powerOut();const lk=lampKey();if(SP[lk]&&SP[lk].naturalWidth){const im=SP[lk],h=l.h,w=h*im.naturalWidth/im.naturalHeight;cx.save();if(!on)cx.filter='brightness(.62) saturate(.8)';cx.drawImage(im,l.x+l.w*.45-w*.45,l.y,w,h);cx.restore()}else if(spr('lamp_off',l)){}else{cx.fillStyle='#222';cx.fillRect(l.x+21,l.y+30,4,l.h-36);ell(l.x+23,l.y+l.h-4,18,5,'#222');cx.beginPath();cx.moveTo(l.x+6,l.y+34);cx.lineTo(l.x+40,l.y+34);cx.lineTo(l.x+30,l.y);cx.lineTo(l.x+16,l.y);cx.closePath();cx.fillStyle='#2b2b2b';cx.fill()}}
   // fridge
   if(S.furn.fridge){const f=L.fridge;if(!spr(FX.fridgeOpen>S.tot?'fridge_open':'fridge',f)){rr(f.x,f.y,f.w,f.h,8,'#e9e9e4','#bbb');cx.fillStyle='#999';cx.fillRect(f.x+f.w-12,f.y+20,4,30);ell(f.x+24,f.y+26,8,8,'#e44');ell(f.x+40,f.y+50,6,6,'#4ae')}
     cx.fillStyle='#fff';cx.font='800 13px Nunito,sans-serif';cx.textAlign='center';cx.fillText('❄ '+S.fridge,f.x+f.w/2,f.y+f.h-10)}
@@ -513,15 +513,16 @@ function subtitle(s,txt){cx.font='700 10px Nunito,sans-serif';cx.textAlign='cent
   lines=lines.slice(0,3);cx.fillStyle='#000a';cx.fillRect(s.x,s.y+s.h-lines.length*12-4,s.w,lines.length*12+4);cx.fillStyle='#ffd';lines.forEach((l,i)=>cx.fillText(l,s.x+s.w/2,s.y+s.h-lines.length*12+i*12+7))}
 
 // Licht der Stehlampe: kommt aus der Schirmöffnung, weicher Lichtkegel nach unten, warmer Schein im Raum
-function drawLampLight(d,t){const l=L.lamp;if(!l)return;const ox=l.x+.81*l.w,oy=l.y+.205*l.h,bx=l.x+.805*l.w,by=l.y+.172*l.h,a=.35+.65*d,fl=1+Math.sin(t*13)*.015;
+function lampKey(){return S.lampType==='80s'?'lamp_80s':'lamp_fringe'}
+function drawLampLight(d,t){const l=L.lamp;if(!l)return;const cxm=l.x+l.w*.45,st=l.y+l.h*.02,sb=l.y+l.h*.31,sw=l.w*.5,a=.35+.65*d,fl=1+Math.sin(t*13)*.012,warm=S.lampType==='80s'?'255,230,175':'255,205,130';
   cx.save();cx.globalCompositeOperation='lighter';
-  let g=cx.createRadialGradient(ox,oy+l.h*.25,10,ox,oy+l.h*.25,H*.55);g.addColorStop(0,'rgba(255,190,110,'+(.28*a*fl)+')');g.addColorStop(1,'rgba(255,170,90,0)');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  let g=cx.createRadialGradient(cxm,(st+sb)/2,8,cxm,(st+sb)/2,H*.55);g.addColorStop(0,'rgba('+warm+','+(.26*a*fl)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  g=cx.createRadialGradient(cxm,(st+sb)/2,4,cxm,(st+sb)/2,l.w*.55);g.addColorStop(0,'rgba(255,240,200,'+(.35*fl)+')');g.addColorStop(1,'rgba(255,220,160,0)');cx.fillStyle=g;cx.beginPath();cx.ellipse(cxm,(st+sb)/2,l.w*.6,l.h*.2,0,0,7);cx.fill();
   try{cx.filter='blur('+Math.round(l.w*.05)+'px)'}catch(e){}
-  g=cx.createLinearGradient(ox,oy,ox,oy+l.h*.78);g.addColorStop(0,'rgba(255,225,165,'+(.5*a*fl)+')');g.addColorStop(.6,'rgba(255,205,140,'+(.2*a)+')');g.addColorStop(1,'rgba(255,195,130,0)');
-  cx.fillStyle=g;cx.beginPath();cx.moveTo(ox-l.w*.15,oy);cx.lineTo(ox+l.w*.14,oy+l.h*.01);cx.lineTo(ox+l.w*.62,oy+l.h*.78);cx.lineTo(ox-l.w*.5,oy+l.h*.78);cx.closePath();cx.fill();
-  g=cx.createRadialGradient(ox,l.y+l.h*.98,4,ox,l.y+l.h*.98,l.w*.7);g.addColorStop(0,'rgba(255,210,150,'+(.35*a)+')');g.addColorStop(1,'rgba(255,200,140,0)');cx.fillStyle=g;cx.save();cx.translate(0,l.y+l.h*.98);cx.scale(1,.18);cx.translate(0,-(l.y+l.h*.98));cx.beginPath();cx.arc(ox,l.y+l.h*.98,l.w*.7,0,7);cx.fill();cx.restore();
+  g=cx.createLinearGradient(0,sb,0,l.y+l.h);g.addColorStop(0,'rgba('+warm+','+(.42*a*fl)+')');g.addColorStop(.7,'rgba('+warm+','+(.12*a)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.beginPath();cx.moveTo(cxm-sw,sb);cx.lineTo(cxm+sw,sb);cx.lineTo(cxm+l.w*1.05,l.y+l.h);cx.lineTo(cxm-l.w*1.05,l.y+l.h);cx.closePath();cx.fill();
+  g=cx.createLinearGradient(0,st,0,st-l.h*.35);g.addColorStop(0,'rgba('+warm+','+(.22*a)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.beginPath();cx.moveTo(cxm-sw*.55,st);cx.lineTo(cxm+sw*.55,st);cx.lineTo(cxm+sw*1.1,st-l.h*.35);cx.lineTo(cxm-sw*1.1,st-l.h*.35);cx.closePath();cx.fill();
   try{cx.filter='none'}catch(e){}
-  g=cx.createRadialGradient(bx,by,1,bx,by,l.w*.13);g.addColorStop(0,'rgba(255,250,225,'+(.95*fl)+')');g.addColorStop(.4,'rgba(255,230,170,.5)');g.addColorStop(1,'rgba(255,210,140,0)');cx.fillStyle=g;cx.beginPath();cx.ellipse(bx,by,l.w*.13,l.w*.09,-.2,0,7);cx.fill();
+  g=cx.createRadialGradient(cxm,l.y+l.h,4,cxm,l.y+l.h,l.w*.9);g.addColorStop(0,'rgba('+warm+','+(.3*a)+')');g.addColorStop(1,'rgba('+warm+',0)');cx.fillStyle=g;cx.save();cx.translate(0,l.y+l.h);cx.scale(1,.16);cx.translate(0,-(l.y+l.h));cx.beginPath();cx.arc(cxm,l.y+l.h,l.w*.9,0,7);cx.fill();cx.restore();
   cx.restore()}
 // ---------- Table & hands ----------
 let HITS=[];
@@ -844,14 +845,15 @@ const GREET={
 };
 const STINK=['Boah, hier stinkt’s wie im Pumakäfig! Waschen Sie sich mal, Sie Ferkel!','Riechen Sie das? Das sind SIE. Gehen Sie duschen!','Mir tränen die Augen. Haben Sie in die Ecke geschissen?'];
 let CUR_EV='';
+let BUBBLE_IMG=null;
 // ================= EVENTS & VISITORS =================
 let CARD=null,CALL=null,evTimer=R(20,30),lastEv='',schnitzelT=0;
 const bub=$('bubble'),card=$('card');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function visit(who,text,opts,pose=0){if(GREET[CUR_EV]&&Math.random()<.8)text=pick(GREET[CUR_EV]);if(S.dirt>70&&Math.random()<.5&&who!=='kowalski')text=pick(STINK)+' '+text;VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
 function placeBubble(){const r=cv.getBoundingClientRect(),sc=r.width/W;bub.style.left=((L.visitor.x+L.visitor.w*.9)*sc)+'px';bub.style.top=((L.visitor.y-10)*sc)+'px'}
-function showBubble(who,text,opts){if(!VISIT)return;if(PUNCHABLE[who]&&!opts.some(o=>o.punch))opts=opts.concat([Object.assign(punchOpt(who),{punch:1})]);placeBubble();bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(text)+'</p><div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
-  bub.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=o.f()||{};if(r.pose!==undefined)VISIT.pose=r.pose;
+function showBubble(who,text,opts){if(!VISIT)return;if(PUNCHABLE[who]&&!opts.some(o=>o.punch))opts=opts.concat([Object.assign(punchOpt(who),{punch:1})]);placeBubble();const bimg=BUBBLE_IMG;BUBBLE_IMG=null;bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(text)+'</p>'+(bimg?'<img src="'+bimg+'" alt="" style="display:block;height:110px;margin:2px auto 6px">':'')+'<div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
+  bub.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=o.f()||{};if(r.pose!==undefined&&VISIT)VISIT.pose=r.pose;
     bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(r.say||'…')+'</p>'+(r.fx?'<small>'+esc(r.fx)+'</small>':'');snd('pop');
     if(r.after){setTimeout(()=>{if(VISIT)showBubble(who,r.after.text,r.after.opts)},2200);return}
     setTimeout(leave,2800);checkAch()})}
@@ -939,10 +941,13 @@ const EVENTS=[
    {t:'Wegschicken',f:()=>({say:'Dann esse ich sie selber, du Arschloch. Und spuck vorher noch drauf, nur aus Prinzip.',pose:1})}])}},
  {id:'brandt',c:()=>S.h.neighbor<3,run:()=>visit('brandt','RUHE, Sie asozialer Dreckssack! Ihre Glotze dröhnt durch die Wand, und Ihr Gestöhne beim Pornogucken auch!',[
    {t:'Lauter',f:()=>({say:'Sie verfickter Prolet! Ich schreibe Zettel! Hundert Zettel!',fx:fx({neighbor:1,bo:-5}),pose:1})},
-   {t:'Leiser',f:()=>({say:'Danke. Geht doch. Ein Wunder.',fx:fx({neighbor:-1,nice:1}),pose:2})},
+   {t:'Leiser',f:()=>{S.h.brandtNice=(S.h.brandtNice||0)+1;return{say:'Danke. Geht doch. Ein Wunder.',fx:fx({neighbor:-1,nice:1}),pose:2}}},
    {t:'Nicht da',f:()=>{S.h.ignored++;return{say:'Ich weiß, dass Sie da sind, Sie Sofaparasit! Sie sind IMMER da! Ich höre Sie furzen!',pose:1}}}])},
+ {id:'brandtgift',prio:1,c:()=>(S.h.brandtNice||0)>=5&&!S.h.brandtLamp&&S.h.neighbor<3,run:()=>{BUBBLE_IMG='sprites/lamp_80s.webp';visit('brandt','Sie waren jetzt fünfmal… erträglich. Ich hab im Keller noch eine Stehlampe aus den 80ern. Hässlich wie Sie, aber sie geht. Wollen Sie die?',[
+   {t:'Nehmen',f:()=>{const had=S.furn.lamp;S.furn.lamp=true;S.lampType='80s';S.lampOn=true;S.h.brandtLamp=true;layout();return{say:had?'Ihre alte Fransen-Funzel nehm ich mit. Die passt zu meiner Schwiegermutter.':'Stecker rein, fertig. Und jetzt bitte LEISE dabei.',fx:fx({neighbor:-1,xp:10}),pose:2}}},
+   {t:'Nein danke',f:()=>{S.h.brandtLamp=true;return{say:'Dann eben nicht. Undankbares Pack. Ich stell sie zum Sperrmüll.',fx:fx({neighbor:1}),pose:1}}}],2)}},
  {id:'brandtstreit',prio:1,c:()=>S.h.neighbor>=3&&S.h.neighbor<4,run:()=>visit('brandt','So, Sie Saftsack, jetzt reicht’s! 14 Seiten Lärmprotokoll! Inklusive Ihrer Darmgeräusche!',[
-   {t:'Entschuldigen',f:()=>({say:'Na… gut. Aber das ist die letzte Warnung.',fx:fx({neighbor:-1,nice:1}),pose:2})},
+   {t:'Entschuldigen',f:()=>{S.h.brandtNice=(S.h.brandtNice||0)+1;return{say:'Na… gut. Aber das ist die letzte Warnung.',fx:fx({neighbor:-1,nice:1}),pose:2}}},
    {t:'Zurückbrüllen',f:()=>({say:'SIE BRÜLLEN MICH AN, Sie Schwein?! Das sag ich dem Vermieter!',fx:fx({neighbor:1}),pose:1})},
    {t:'Mittelfinger',f:()=>{rude();return{say:'Sie zeigen mir den Finger? Den steck ich Ihnen gleich in die Nase, Sie Penner! Ich zeige Sie an!',fx:fx({neighbor:2,police:1}),pose:3}}}],1)},
  {id:'parcel',c:()=>true,run:()=>visit('parcel','Paket für Ihren Nachbarn Brandt. Nehmen Sie’s an?',[
