@@ -137,7 +137,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=68;
+const APPVER=69;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -794,7 +794,7 @@ function tap(id,p){
    case'ctrl':if(!needRightFree('ctrl'))return;S.right='ctrl';snd('pop');return openGames();
    case'empty':return toBasket(false);
    case'basket':if(S.empties>0)return toBasket(true);return toast(S.basket?S.basket+' Flaschen im Korb. Im Shop gibt’s Pfand dafür.':'Der Korb ist leer. Wie dein Bett seit Jessica.');
-   case'ash':return emptyAsh();
+   case'ash':if(S.right==='cig'){S.right='empty';S.butts++;S.ash++;S.cigPuffs=0;S.smolderUntil=S.tot+20;snd('pop');toast(pick(['Kippe im Ascher ausgedrückt. Halb geraucht, halb verschwendet.','Ausgedrückt. Die halbe Kippe hebst du dir für schlechte Zeiten auf.','Zack, in den Ascher. Deine Lunge atmet kurz auf.']));return}return emptyAsh();
    case'stash':return stashMenu();
    case'stereo':return stereoTap();
    case'mag':return magTap();
