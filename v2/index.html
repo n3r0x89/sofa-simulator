@@ -91,6 +91,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 #self b{color:#a0521a}
 .fade{position:absolute;inset:0;z-index:18;background:#000;opacity:0;transition:opacity .5s;display:grid;place-items:center;color:#f6e8cf;font:28px 'Lilita One',sans-serif;pointer-events:all}
 .fade.on{opacity:1}
+#cv.jig2{animation:jig .06s infinite alternate}.flash{position:absolute;inset:0;z-index:17;background:#fff3b0;pointer-events:none;animation:fl .7s forwards}@keyframes fl{from{opacity:.85}to{opacity:0}}
 #cv.jig{animation:jig .12s infinite alternate}@keyframes jig{from{transform:translateY(0)}to{transform:translateY(5px)}}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
@@ -1185,19 +1186,32 @@ function stashMenu(){if(!S.furn.stash)return;if(S.stashDay!==S.day){S.stashDay=S
    '[data-out]':el=>{const v=el.dataset.out==='all'?S.stash:5;S.stash-=v;S.money+=v;snd('cash');stashMenu()},'[data-x]':closeModal}))}
 function drawStash(){if(!S.furn.stash||!L.stash)return;const b=L.stash;cx.save();cx.translate(b.x+b.w*.55,b.y+b.h);cx.rotate(-.12);rr(-b.w*.18,-b.h*.95,b.w*.36,b.h*.95,3,'#7a1d14');cx.fillStyle='#d9b24a';cx.fillRect(-b.w*.18,-b.h*.8,b.w*.36,b.h*.06);cx.fillRect(-b.w*.18,-b.h*.25,b.w*.36,b.h*.06);cx.font='800 '+Math.round(b.w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('€',0,-b.h*.42);cx.restore();hit('stash',b)}
 // ---------- Schmuddelheft ----------
-function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.right!=='empty'){toast(T('busy'));return}if(S.tot<S.magCd){toast(pick(['Schon wieder? Dein Schwanz hat Urlaub beantragt.','Gib ihm ’ne Pause, der ist wund gescheuert.','Noch nicht. Selbst Kaninchen machen mal Pause.'])+' (noch '+Math.ceil((S.magCd-S.tot)/10)+' Std.)');return}
-  busyUI=true;S.magCd=S.tot+60;MAGA={t:0};snd('plop');const cv=document.getElementById('cv');
-  SELF.wank=SELF.wank||['Mal gucken, was die Busen-Express diesen Monat so bringt…','Ohhh ja. Seite 34. Die Gisela aus Castrop-Rauxel.','Hnnngh… nicht klingeln jetzt, bitte nicht klingeln…'];
-  say('wank',true);setTimeout(()=>{cv.classList.add('jig');say('wank',true)},1300);setTimeout(()=>say('wank',true),2600);
-  setTimeout(()=>{cv.classList.remove('jig');MAGA=null;
-  const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
-  setTimeout(()=>{advance(2.5);S.tissues=Math.min(9,(S.tissues||0)+RI(1,3));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
-    toast(pick(['Fertig. Die Taschentücher kleben am Tisch fest.','Erledigt. Das war das Produktivste heute.','Puh. Frau Kowalski hat durch die Wand applaudiert.','Gekommen, gesehen, Taschentuch verbraucht.']),fx({bo:-60,xp:4,dirt:0}));S.dirt=clamp(S.dirt+6,0,100);say('idle',true)},2600)},3800)}
+function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.right!=='empty'){toast(T('busy'));return}if(S.tot<S.magCd){toast(pick(['Schon wieder? Dein Schwanz hat Urlaub beantragt.','Gib ihm ’ne Pause, der ist wund gescheuert.','Noch nicht. Selbst Kaninchen machen mal Pause.','Der Kleine liegt noch im Koma. Lass ihn schlafen.'])+' (noch '+Math.ceil((S.magCd-S.tot)/10)+' Std.)');return}
+  busyUI=true;S.magCd=S.tot+60;MAGA={t:0,page:0,pow:0};snd('plop');const cv=document.getElementById('cv'),T0=[];const at=(ms,f)=>T0.push(setTimeout(f,ms));
+  const sx=l=>{selfEl.innerHTML='<b>Du:</b> '+esc(l);selfEl.classList.add('on');clearTimeout(selfT);selfT=setTimeout(()=>selfEl.classList.remove('on'),2600)};
+  sx(pick(['Mal gucken, was die Busen-Express diesen Monat so bringt…','So. Hose auf, Hirn aus.','Kurz Druck ablassen. Medizinisch notwendig.']));
+  at(1200,()=>{MAGA.page=1;snd('plop');sx(pick(['Seite 34… Gisela, 71, aus Castrop-Rauxel. Ohhh Gisela…','Uiii, die Doppelseite. Mit Ausklapper.','Die Lesebrille… wo ist die Lesebrille… egal, Fantasie reicht.']))});
+  at(2000,()=>{cv.classList.add('jig');MAGA.pow=1;vib([30,60,30,60,30])});
+  at(3200,()=>{MAGA.page=2;cv.classList.remove('jig');cv.classList.add('jig2');MAGA.pow=2;sx(pick(['Hnnngh… nicht klingeln jetzt… bitte nicht klingeln…','Ja… ja… JAAA… nein, Krampf in der Wade!','Schneller, Gerhard, schneller!']));vib([20,30,20,30,20,30,20,30])});
+  const interrupt=Math.random()<.22;
+  if(interrupt){at(4300,()=>{cv.classList.remove('jig2');MAGA=null;snd('bell');vib(200);busyUI=false;S.magCd=S.tot+15;
+      toast(pick(['DING DONG. Ausgerechnet jetzt. Der Paketbote. Stimmung im Eimer.','Es klingelt. Hose hoch, Heft unters Kissen, Puls auf 180. Fehlalarm, Kinderstreich.','Kowalski klopft: „Ich hör doch, dass du da bist, Schätzchen!“ Alles erschlafft.']),fx({bo:-10}));
+      say('idle',true)});return}
+  at(4600,()=>{cv.classList.remove('jig2');MAGA.pop=0.001;snd('plop');snd('smash');vib([250]);
+      const fl=document.createElement('div');fl.className='flash';document.getElementById('stage').appendChild(fl);setTimeout(()=>fl.remove(),700);
+      sx(pick(['UUUAAAHHH!','Hach… Gisela…','HALLELUJA!']))});
+  at(6200,()=>{MAGA=null;const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
+  setTimeout(()=>{advance(2.5);S.tissues=Math.min(9,(S.tissues||0)+RI(2,4));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
+    toast(pick(['Fertig. Die Taschentücher kleben am Tisch fest.','Erledigt. Das war das Produktivste heute.','Kowalski klopft an die Wand: „Gesundheit!“','Gekommen, gesehen, Taschentuch verbraucht.','Der Fernseher hat weggeguckt. Die Kakerlaken nicht.','Seite 34 klebt jetzt an Seite 35. Für immer.']),fx({bo:-60,xp:4}));S.dirt=clamp(S.dirt+6,0,100);
+    setTimeout(()=>{selfEl.innerHTML='<b>Du:</b> '+esc(pick(['Jetzt ’ne Kippe. Das gehört sich so.','Ich bin so müde, ich könnt im Stehen pennen. Gut, dass ich sitz.','Wenn das die Gisela wüsste…']));selfEl.classList.add('on');setTimeout(()=>selfEl.classList.remove('on'),3500)},900)},2600)})}
 let MAGA=null;
-function drawMagAnim(t){if(!MAGA)return;MAGA.t+=1/60;const k=Math.min(1,MAGA.t/.4),w=W*.62,h=w*1.3,x=W/2,y=H*1.15-(H*.55)*k+(MAGA.t>1.3?Math.sin(t*28)*H*.012:0);
-  cx.save();cx.translate(x,y);cx.rotate(-.05+(MAGA.t>1.3?Math.sin(t*28)*.02:0));rr(-w/2,-h/2,w,h,8,'#e8417a');cx.fillStyle='#ffe14d';cx.textAlign='center';cx.font='900 '+Math.round(w*.13)+'px "Lilita One",sans-serif';cx.fillText('BUSEN',0,-h*.33);cx.fillText('EXPRESS',0,-h*.2);
-  cx.fillStyle='#111';cx.fillRect(-w*.42,-h*.08,w*.84,h*.2);cx.fillStyle='#fff';cx.font='900 '+Math.round(w*.09)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,h*.05);
-  cx.fillStyle='#ffe14d';cx.font='800 '+Math.round(w*.055)+'px Nunito,sans-serif';cx.fillText('Heiße Omas aus deiner Nähe',0,h*.3);cx.fillText('Nr. 47 · 2,99 €',0,h*.4);cx.restore()}
+function drawMagAnim(t){if(!MAGA)return;MAGA.t+=1/60;const pw=MAGA.pow||0,sp=pw===2?44:28,am=pw===2?.022:pw?.012:0,k=Math.min(1,MAGA.t/.4),w=W*.62,h=w*1.3,x=W/2,y=H*1.15-(H*.55)*k+Math.sin(t*sp)*H*am;
+  cx.save();cx.translate(x,y);cx.rotate(-.05+Math.sin(t*sp)*am*1.6);rr(-w/2,-h/2,w,h,8,MAGA.page===0?'#e8417a':MAGA.page===1?'#c2185b':'#ad1457');cx.fillStyle='#ffe14d';cx.textAlign='center';
+  if(MAGA.page===0){cx.font='900 '+Math.round(w*.13)+'px "Lilita One",sans-serif';cx.fillText('BUSEN',0,-h*.33);cx.fillText('EXPRESS',0,-h*.2);cx.fillStyle='#111';cx.fillRect(-w*.42,-h*.08,w*.84,h*.2);cx.fillStyle='#fff';cx.font='900 '+Math.round(w*.09)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,h*.05);cx.fillStyle='#ffe14d';cx.font='800 '+Math.round(w*.055)+'px Nunito,sans-serif';cx.fillText('Heiße Omas aus deiner Nähe',0,h*.3);cx.fillText('Nr. 47 · 2,99 €',0,h*.4)}
+  else{cx.font='900 '+Math.round(w*.08)+'px "Lilita One",sans-serif';cx.fillText(MAGA.page===1?'SEITE 34':'DOPPELSEITE!',0,-h*.38);cx.fillStyle='#111';cx.fillRect(-w*.4,-h*.28,w*.8,h*.5);cx.fillStyle='#fff';cx.font='900 '+Math.round(w*.1)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,0);cx.fillStyle='#ffe14d';cx.font='800 '+Math.round(w*.055)+'px Nunito,sans-serif';cx.fillText(MAGA.page===1?'Gisela (71), Castrop-Rauxel':'„Ich mag Männer mit Bauch“',0,h*.33)}
+  cx.restore();
+  if(MAGA.pop){MAGA.pop+=1/60;const p=MAGA.pop;if(p<1.2){cx.save();cx.translate(W/2,H*.32);const s=1+Math.min(1,p*4)*.25;cx.scale(s,s);cx.fillStyle='#ffe14d';cx.beginPath();for(let i=0;i<20;i++){const a=i/20*Math.PI*2,r=i%2?W*.13:W*.27;cx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}cx.fill();cx.fillStyle='#d22';cx.font='900 '+Math.round(W*.11)+'px "Lilita One",sans-serif';cx.textAlign='center';cx.fillText('PLÖPP!',0,W*.035);cx.restore();
+    for(let i=0;i<14;i++){const a=i*2.4,r=p*W*.5;cx.fillStyle=['#ffe14d','#e8417a','#7fd3ff','#9be36b'][i%4];cx.fillRect(W/2+Math.cos(a)*r,H*.32+Math.sin(a)*r+p*p*H*.2,8,14)}}}}
 function drawMag(){if(!L.roomMode)return;const m=L.mm;if(S.mag){const p=m(820,1185),w=L.bottleH*.85,h=w*1.25;cx.save();cx.translate(p.x,p.y);cx.rotate(.18);rr(-w/2,-h,w,h,3,'#e8417a');cx.fillStyle='#ffe14d';cx.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('BUSEN',0,-h*.78);cx.fillText('EXPRESS',0,-h*.6);cx.fillStyle='#111';cx.fillRect(-w*.32,-h*.45,w*.64,h*.12);cx.fillStyle='#fff';cx.font='800 '+Math.round(w*.11)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,-h*.36);cx.restore();L.magR={x:p.x-w*.6,y:p.y-h,w:w*1.2,h:h};hit('mag',L.magR)}else L.magR=null;
   for(let i=0;i<(S.tissues||0);i++){const p=m(735+(i*41)%120,1185+(i*29)%30),r=L.bottleH*.16;cx.fillStyle='#f4f1ea';cx.beginPath();for(let k=0;k<7;k++){const a=k/7*Math.PI*2,rr2=r*(.7+((i*7+k*13)%5)/10);cx.lineTo(p.x+Math.cos(a)*rr2,p.y+Math.sin(a)*rr2*.7)}cx.fill();cx.strokeStyle='#c9c4b8';cx.lineWidth=1;cx.stroke();hit('tissue',{x:p.x-r*1.6,y:p.y-r*1.4,w:r*3.2,h:r*2.8})}}
 function tissueTap(){S.tissues=Math.max(0,(S.tissues||0)-1);snd('pop');toast(pick(['Taschentuch entsorgt. Mit spitzen Fingern.','Weg damit. Das Ding war schon steif.','Ab in den Müll, du Ferkel.']),fx({chaos:-1}))}
