@@ -137,7 +137,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=65;
+const APPVER=66;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -389,7 +389,7 @@ function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Mat
    lh:m(30,1105,440,1395),rh:m(501,1105,911,1395),
    visitor:m(0,200,330,965),puddleZone:m(330,912,860,950),
    mold:m(275,140,470,380),basket:m(392,1228,632,1433),basketOcc:m(370,1219,660,1277),stainZone:m(290,120,680,620),
-   vcr:m(420,700,610,758),console:m(425,765,605,852),lava:m(296,555,348,688),stereo:m(64,520,236,598)};
+   vcr:m(420,700,610,758),console:m(425,765,605,852),lava:m(296,555,348,688),stereo:m(76,485,236,603),stereoClip:m(0,461,242,596)};
   const tw=S.furn.tv55?470:S.furn.tv43?380:265;const ti=SP[tvKey()];const th=ti&&ti.naturalWidth?tw*ti.naturalHeight/ti.naturalWidth:tw*.9;
   L.mm=(x,y)=>({x:ox+x*k*s,y:oy+y*k*s});L.bottleH=118*k*s;L.slots=null;
   L.tv=m(513-tw/2,686-th,513+tw/2,686);L.scr={x:L.tv.x+L.tv.w*.1,y:L.tv.y+L.tv.h*.1,w:L.tv.w*.8,h:L.tv.h*.7};tvFromSprite()}
@@ -1312,7 +1312,7 @@ function stereoTick(dt){if(!S.furn.stereo){if(S.stereo){S.stereo=0;musicSet()}re
       {t:'Leiser machen',f:()=>{S.stereo=1;musicSet();return{say:pick(['Na also. Und jetzt verpiss dich zurück auf dein Schimmelsofa.','Danke. War das so schwer, du Hirnschwamm?']),fx:fx({neighbor:-1}),pose:2}}},
       {t:'Noch lauter drehen',f:()=>{S.loud=35;return{say:pick(['Das wirst du bereuen, du Wichser! Ich ruf die Bullen!','Gut. Dann lernst du jetzt meinen Anwalt kennen. Und meinen Schwager.']),fx:fx({neighbor:2,police:1,bo:-10,xp:3}),pose:1}}},
       {t:'Tür zuknallen',f:()=>{return{say:'BUMM. Durchs Holz hört man noch: „…verrecken sollst du!“',fx:fx({neighbor:1,bo:-5}),pose:1}}}])}}
-function drawStereo(t){if(!S.furn.stereo||!L.stereo)return;const b=L.stereo,on=S.stereo||0,beat=on?Math.abs(Math.sin(t*(on===2?8:4))):0;{const sk='stereo_'+on;if(SP[sk]&&SP[sk].naturalWidth){const im=SP[sk],w=b.w,h=w*im.naturalHeight/im.naturalWidth,sc=1+(on===2?.04:.015)*beat;cx.save();cx.translate(b.x+b.w/2,b.y+b.h);cx.scale(sc,sc);cx.drawImage(im,-w/2,-h,w,h);cx.restore();hit('stereo',{x:b.x,y:b.y+b.h-h,w:b.w,h:h});return}}
+function drawStereo(t){if(!S.furn.stereo||!L.stereo)return;const b=L.stereo,on=S.stereo||0,beat=on?Math.abs(Math.sin(t*(on===2?8:4))):0;{const sk='stereo_'+on;if(SP[sk]&&SP[sk].naturalWidth){const im=SP[sk],w=b.w,h=w*im.naturalHeight/im.naturalWidth,sc=1+(on===2?.03:.012)*beat,cl=L.stereoClip;cx.save();if(cl){cx.beginPath();cx.rect(cl.x,cl.y,cl.w,cl.h);cx.clip()}const sh=cx.createRadialGradient(b.x+b.w/2,b.y+b.h,2,b.x+b.w/2,b.y+b.h,b.w*.55);sh.addColorStop(0,'rgba(0,0,0,.55)');sh.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=sh;cx.fillRect(b.x-b.w*.1,b.y+b.h-b.w*.14,b.w*1.2,b.w*.12);cx.translate(b.x+b.w/2,b.y+b.h);cx.scale(sc,sc);cx.filter='brightness(.72) sepia(.18) saturate(.9)';cx.drawImage(im,-w/2,-h,w,h);cx.filter='none';if(on){cx.globalCompositeOperation='lighter';cx.globalAlpha=.10+.12*beat;cx.drawImage(im,-w/2,-h,w,h);cx.globalAlpha=1;cx.globalCompositeOperation='source-over'}cx.restore();hit('stereo',{x:b.x,y:b.y+b.h-h,w:b.w,h:h});return}}
   const sw=b.w*.24,sh=b.h*(.95+(on===2?beat*.05:0));
   for(const sx of[b.x,b.x+b.w-sw]){rr(sx,b.y+b.h-sh,sw,sh,3,'#1b1b1d');ell(sx+sw/2,b.y+b.h-sh*.62,sw*.36*(1+(on===2?beat*.12:0)),sw*.36*(1+(on===2?beat*.12:0)),'#333');ell(sx+sw/2,b.y+b.h-sh*.62,sw*.14,sw*.14,'#555');ell(sx+sw/2,b.y+b.h-sh*.2,sw*.16,sw*.12,'#2a2a2a')}
   const ux=b.x+sw+b.w*.03,uw=b.w-2*sw-b.w*.06,uh=b.h*.7;rr(ux,b.y+b.h-uh,uw,uh,3,'#2b2b30');cx.fillStyle='#111';cx.fillRect(ux+uw*.08,b.y+b.h-uh*.85,uw*.84,uh*.32);
