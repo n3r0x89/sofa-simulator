@@ -86,6 +86,11 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 .sheet .t{flex:1}
 .sheet .t span{font-size:12px;color:var(--dim)}
 .ok{color:var(--grn)}
+#self{position:absolute;left:10px;right:10px;bottom:10px;z-index:6;background:#fff8eaee;color:#2a1a08;border-radius:14px;padding:8px 12px;font:800 15px/1.3 Nunito,sans-serif;opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s;pointer-events:none}
+#self.on{opacity:1;transform:none}
+#self b{color:#a0521a}
+.fade{position:absolute;inset:0;z-index:18;background:#000;opacity:0;transition:opacity .5s;display:grid;place-items:center;color:#f6e8cf;font:28px 'Lilita One',sans-serif;pointer-events:all}
+.fade.on{opacity:1}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
@@ -100,6 +105,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
     <button class="btn sm" id="bSnack" aria-label="Snack essen">🥨</button>
     <button class="btn sm" id="bShop" aria-label="Shop">🛒</button>
     <button class="btn sm" id="bDiary" aria-label="Tagebuch">📖</button>
+    <button class="btn sm" id="bWash" aria-label="Körperpflege">🚿</button>
     <button class="btn sm" id="bSleep" aria-label="Schlafen">🛏</button>
     <button class="btn sm" id="bMenu" aria-label="Pause">☰</button>
   </div>
@@ -136,7 +142,7 @@ const SAVE='sofasim_v2';
 function fresh(){return{
   day:1,hour:8,tot:0,lvl:1,xp:0,money:5,beer:6,snacks:2,cigs:10,
   th:20,hu:20,bo:20,chaos:0,prom:0,hang:0,mold:0,
-  empties:0,basket:0,pfandStock:0,bottle:null,right:'empty',cigPuffs:0,butts:0,packClosed:false,smolderUntil:0,
+  empties:0,basket:0,pfandStock:0,bottle:null,right:'empty',cigPuffs:0,butts:0,ash:0,stash:0,stashIn:0,stashDay:0,dirt:25,lastBeer:0,lastCig:0,mag:false,magCd:0,tissues:0,punches:0,stereo:0,loud:0,packClosed:false,smolderUntil:0,
   ch:0,tvOn:true,powerOutUntil:0,remoteGone:0,
   furn:{},lampOn:false,fridge:0,fridgeColdAt:0,massageAt:0,
   puddles:[],stains:[],splats:[],
@@ -150,7 +156,7 @@ function fresh(){return{
   sound:true,hintsDone:{},started:false
 }}
 let S=null;
-function load(){try{const t=localStorage.getItem(SAVE);if(t){const o=JSON.parse(t);const f=fresh();for(const k in f)if(o[k]===undefined)o[k]=f[k];for(const k in f.h)if(o.h[k]===undefined)o.h[k]=f.h[k];for(const k in f.st)if(o.st[k]===undefined)o.st[k]=f.st[k];return o}}catch(e){}return null}
+function load(){try{const t=localStorage.getItem(SAVE);if(t){const o=JSON.parse(t);const f=fresh();for(const k in f)if(o[k]===undefined)o[k]=f[k];for(const k in f.h)if(o.h[k]===undefined)o.h[k]=f.h[k];for(const k in f.st)if(o.st[k]===undefined)o.st[k]=f.st[k];if(o.ash===undefined||o.ash===0&&o.butts)o.ash=Math.min(o.butts||0,20);return o}}catch(e){}return null}
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
 function hasSave(){try{return !!localStorage.getItem(SAVE)}catch(e){return false}}
 S=load()||fresh();
@@ -159,7 +165,7 @@ S=load()||fresh();
 let AC=null,soundOn=true;
 try{soundOn=localStorage.getItem('sofasim_snd')!=='0'}catch(e){}
 function initAudio(){if(AC)return;try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
-  try{AC=new (window.AudioContext||window.webkitAudioContext)();const b=AC.createBuffer(1,1,22050);const s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){AC=null}loadBanks()}
+  try{AC=new (window.AudioContext||window.webkitAudioContext)();const b=AC.createBuffer(1,1,22050);const s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){AC=null}loadBanks();setTimeout(()=>{try{musicSet()}catch(e){}},0)}
 function env(g,t,a,d,v){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+d)}
 function tone(f,d,type='sine',v=.2,f2){if(!AC||!soundOn)return;const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);env(g,t,.01,d,v);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.05)}
 function noise(d,v=.2,fl=800,q=1,type='lowpass',sweep){if(!AC||!soundOn)return;const t=AC.currentTime,n=AC.sampleRate*d,b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=AC.createBufferSource();s.buffer=b;const f=AC.createBiquadFilter();f.type=type;f.frequency.setValueAtTime(fl,t);if(sweep)f.frequency.exponentialRampToValueAtTime(sweep,t+d);f.Q.value=q;const g=AC.createGain();env(g,t,.01,d,v);s.connect(f).connect(g).connect(AC.destination);s.start(t)}
@@ -206,13 +212,13 @@ const TX={
   morning:['Guten Morgen, du verwichster Schandfleck. Die Sonne hat schon gekotzt, als sie dich gesehen hat.','Aufgewacht, leider. Der liebe Gott hat wieder nicht zugehört.','Tag {d}. Du hast wieder nichts erreicht außer einer Morgenlatte, und selbst die ist wieder weg.','Morgen, Matratzenschimmel. Dein Mundgeruch hat die Tapete gelöst.','Tag {d}. Deine Mutter hat dich heute Nacht wieder aus ihren Träumen abgetrieben.'],
   burp:['BÖÖRPS. Selbst die Kakerlaken haben sich übergeben.','Rülps. Damit hast du mehr Ausdruck gezeigt als in deinem ganzen Lebenslauf.','Das kam aus tiefster Seele. Also aus dem Dreck.','Ein Rülpser wie ein Brunftschrei. Und trotzdem kommt keine Frau.'],
   fart:['Pfffrrt. Das Sofa hat gerade um Sterbehilfe gebeten.','Furz mit Bremsspur, oder? Du weißt es nicht mal mehr.','PRÖÖT. Die Fliegen fallen tot von der Decke, du Gülletank.','Das roch nach verwestem Döner und gescheiterten Lebensentscheidungen.','Gut, dass dich keiner besucht. Ach ne, das liegt nicht am Furz, das liegt an dir.'],
-  cough:['KCHHH-KCHHH. Deine Lunge sieht aus wie ein Aschenbecher am Hauptbahnhof.','Hust wie ein alter Diesel. Wenigstens irgendwas an dir springt noch an.','Bring den Schleim ruhig raus, ist eh das Einzige, was du produzierst.'],
+  cough:['KCHHH-KCHHH. Deine Lunge sieht aus wie ein Aschenbecher am Hauptbahnhof.','Husten wie ein alter Diesel. Wenigstens irgendwas an dir springt noch an.','Bring den Schleim ruhig raus, ist eh das Einzige, was du produzierst.'],
   th:'Du verdurstest, du ausgetrocknete Pflaume. Trink was, bevor dein Hirn ganz zur Rosine wird.',
-  hu:'Dein Magen knurrt lauter als Herr Brandt beim Kacken. Fress was, du Hungerhaken.',
+  hu:'Dein Magen knurrt lauter als Herr Brandt beim Kacken. Friss was, du Hungerhaken.',
   bo:'Dir ist so scheißlangweilig, dass du schon deine Fußpilzkolonie benennst.',
   lvl:['Sofa-Level {l}! Dein Arsch ist jetzt offiziell mit dem Polster verwachsen.','Level {l}. Andere machen Karriere, du machst Bremsspuren.','Level {l}. Deine Mutter erzählt Bekannten immer noch, du wärst im Ausland.','Level {l}. Gratuliere, du Versager auf höchstem Niveau.'],
   sick:'Dir wird kotzübel. Der Raum dreht sich schneller als dein Lebensabstieg.',
-  puke:['BLÖÖÄRGH. Auf den Boden, du Reiherkönig. Schmeckt nach Döner von vorgestern.','Du kotzt dir die Seele aus dem Leib. Viel war da eh nicht.','Gereihert wie ein Weltmeister. Das Einzige, wo du ganz vorne mitspielst.'],
+  puke:['BLÖÖÄRGH. Auf den Boden, du Reiherkönig. Schmeckt nach Döner von vorgestern.','Du kotzt dir die Seele aus dem Leib. Viel war da eh nicht.','Gereihert wie ein Weltmeister. Das Einzige, bei dem du ganz vorne mitspielst.'],
   filmriss:'FILMRISS. 6 Uhr, Geld weg, Hose feucht. Du willst nicht wissen, wovon.',
   zap:['Zapp.','Nächster Scheiß.','Weiter, du Daumenwichser.']
 };
@@ -236,7 +242,7 @@ function fx(o){for(const[k,v]of Object.entries(o)){if(!v)continue;
 function clampAll(){S.th=clamp(S.th,0,100);S.hu=clamp(S.hu,0,100);S.bo=clamp(S.bo,0,100);S.chaos=clamp(S.chaos,0,100);S.prom=Math.max(0,S.prom);S.beer=Math.max(0,S.beer);S.snacks=Math.max(0,S.snacks);S.cigs=Math.max(0,S.cigs);S.empties=Math.max(0,S.empties);S.money=Math.round(S.money*100)/100}
 
 // ---------- XP ----------
-function xpFactor(){let f=1;for(const n of[S.th,S.hu,S.bo])if(n>80)f-=.25;if(S.hang>0)f-=.25;f-=.1*S.mold;f=Math.max(.25,f);if(S.furn.neon)f+=.1;return f}
+function xpFactor(){let f=1;for(const n of[S.th,S.hu,S.bo])if(n>80)f-=.25;if(S.hang>0)f-=.25;f-=.1*S.mold;if(S.dirt>70)f-=.1;try{f-=.15*withdrawal().v}catch(e){}f=Math.max(.25,f);if(S.furn.neon)f+=.1;return f}
 function addXP(n){S.xp+=n*xpFactor();while(S.xp>=S.lvl*40){S.xp-=S.lvl*40;S.lvl++;levelUp()}}
 function levelUp(){snd('lvl');vib([60,40,60]);let extra='';
   if(S.lvl===8)extra='Videorekorder jetzt im Katalog.';
@@ -257,7 +263,7 @@ function advance(dt,mult=1){ // dt real seconds of game time passing
   const hk=S.hang>0?1.4:1;
   S.th+=.2*dt*(S.furn.fridge?.8:1)*hk*mult;S.hu+=.14*dt*hk*mult;S.bo+=.4*dt*(S.furn.massage?.6:1)*mult;
   S.chaos+=(S.furn.plant?-.06:-.03)*dt+.05*S.puddles.length*dt;
-  S.prom=Math.max(0,S.prom-.006*dt);
+  S.prom=Math.max(0,S.prom-.006*dt);S.dirt=Math.min(100,(S.dirt||0)+dt*.11);
   if(S.tvOn&&!powerOut())S.st.tvH+=dt/10;
   clampAll()}
 function powerOut(){return S.tot<S.powerOutUntil}
@@ -368,20 +374,21 @@ function tvFromSprite(){const k=tvKey(),i=SP[k];if(!(i&&i.complete&&i.naturalWid
 function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Math.max(W/iw,H/(ih+170*k)),ox=(W-iw*s)/2,oy=H-ih*s;L0={iw,ih,s,ox,oy};const m=(x0,y0,x1,y1)=>({x:ox+x0*k*s,y:oy+y0*k*s,w:(x1-x0)*k*s,h:(y1-y0)*k*s});
   L={roomMode:true,wall:oy+900*k*s,
    shelf:m(0,120,270,930),win:m(765,150,941,585),cab:m(278,660,748,895),
-   neon:m(420,190,610,330),plant:m(205,640,320,935),lamp:m(660,300,790,900),fridge:m(775,700,941,935),massage:m(-80,820,230,1120),gold:m(735,820,1030,1120),
+   neon:m(420,190,610,330),plant:m(790,430,905,597),lamp:m(640,350,756,904),fridge:m(196,722,344,906),massage:m(735,560,1075,995),gold:m(-110,620,250,1010),stash:m(140,368,232,452),
    table:{y0:oy+1000*k*s,y1:oy+1215*k*s},tableHit:m(0,995,941,1222),
    crate:m(95,905,300,1085),cigpack:m(318,995,385,1095),lighter:m(386,1003,412,1060),ash:m(395,1035,525,1112),remote:m(525,1045,670,1130),phone:m(660,985,735,1098),catalog:m(728,1015,862,1140),
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
    lh:m(30,1105,440,1395),rh:m(501,1105,911,1395),
    visitor:m(0,200,330,965),puddleZone:m(330,912,860,950),
    mold:m(275,140,470,380),basket:m(575,858,740,995),stainZone:m(290,120,680,620),
-   vcr:m(420,700,610,758),console:m(425,765,605,852),lava:m(168,20,232,135)};
+   vcr:m(420,700,610,758),console:m(425,765,605,852),lava:m(296,555,348,688),stereo:m(14,520,238,598)};
   const tw=S.furn.tv55?470:S.furn.tv43?380:265;const ti=SP[tvKey()];const th=ti&&ti.naturalWidth?tw*ti.naturalHeight/ti.naturalWidth:tw*.9;
   L.mm=(x,y)=>({x:ox+x*k*s,y:oy+y*k*s});L.bottleH=118*k*s;L.slots=null;
   L.tv=m(513-tw/2,686-th,513+tw/2,686);L.scr={x:L.tv.x+L.tv.w*.1,y:L.tv.y+L.tv.h*.1,w:L.tv.w*.8,h:L.tv.h*.7};tvFromSprite()}
 
 // ================= DRAW HELPERS =================
 function rr(x,y,w,h,r,fill,stroke){cx.beginPath();cx.roundRect?cx.roundRect(x,y,w,h,r):cx.rect(x,y,w,h);if(fill){cx.fillStyle=fill;cx.fill()}if(stroke){cx.strokeStyle=stroke;cx.lineWidth=2;cx.stroke()}}
+function sprRect(key,b){const i=SP[key];if(!i||!i.complete||!i.naturalWidth)return null;const s=Math.min(b.w/i.naturalWidth,b.h/i.naturalHeight);const w=i.naturalWidth*s,h=i.naturalHeight*s;return{x:b.x+(b.w-w)/2,y:b.y+b.h-h,w,h}}
 function spr(key,b,mode){const i=SP[key];if(!i||!i.complete||!i.naturalWidth)return false;
   if(mode==='cover'){const s=Math.max(b.w/i.naturalWidth,b.h/i.naturalHeight);const w=i.naturalWidth*s,h=i.naturalHeight*s;cx.drawImage(i,b.x+(b.w-w)/2,b.y+(b.h-h)/2,w,h);return true}
   const s=Math.min(b.w/i.naturalWidth,b.h/i.naturalHeight);const w=i.naturalWidth*s,h=i.naturalHeight*s;cx.drawImage(i,b.x+(b.w-w)/2,b.y+b.h-h,w,h);return true}
@@ -441,7 +448,7 @@ function drawRoom(t){const wall=L.wall;
   if(S.furn.massage){const m=L.massage;if(!spr('massage',m)){rr(m.x,m.y,m.w,m.h,26,'#1d1d1f');rr(m.x+14,m.y+14,m.w-28,m.h*.55,18,'#2c2c30')}}
   // puddles
   for(const p of S.puddles){const sh=(1-p.taps*.25)*(p.g===undefined?1:p.g),pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
-  drawEmpties(t,'back');
+  drawStash();drawStereo(t);drawEmpties(t,'back');
   if(S.furn.gold){const g=L.gold;if(!spr('goldchair',g)){rr(g.x,g.y,g.w,g.h,30,grad(g.y,g.y+g.h,'#ffe27a','#b8860b'));rr(g.x+18,g.y+20,g.w-36,g.h*.5,20,'#a3122a')}}
 }
 
@@ -517,11 +524,11 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   cx.font='800 11px Nunito,sans-serif';cx.textAlign='center';{const tx=String(S.cigs),tw=cx.measureText(tx).width+8;cx.fillStyle='#000a';cx.fillRect(p.x+2,p.y-6,tw,14);cx.fillStyle='#fff';cx.fillText(tx,p.x+2+tw/2,p.y+5)}hit('cigpack',p);
   // ashtray
   if(L.lighter&&SP.lighter&&SP.lighter.naturalWidth)spr('lighter',L.lighter);
-  const a=L.ash,al=S.butts>=12?2:S.butts>=4?1:0;const hasButt=SP.butt&&SP.butt.naturalWidth&&SP.ash_0&&SP.ash_0.naturalWidth;
-  if(hasButt){spr('ash_0',a);const n=Math.min(S.butts,14);let sd=11;const rn=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
+  const a=L.ash,al=S.ash>=12?2:S.ash>=4?1:0;hit('ash',a);const hasButt=SP.butt&&SP.butt.naturalWidth&&SP.ash_0&&SP.ash_0.naturalWidth;
+  if(hasButt){spr('ash_0',a);const n=Math.min(S.ash,14);let sd=11;const rn=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
     for(let i=0;i<n;i++){const ang=rn()*Math.PI*2,rad=Math.sqrt(rn())*.3,bx=a.x+a.w*(.5+Math.cos(ang)*rad),by=a.y+a.h*(.42+Math.sin(ang)*rad*.55),bw=a.w*.36;
       cx.save();cx.translate(bx,by);cx.rotate((rn()-.5)*2.4);spr('butt',{x:-bw/2,y:-bw*.45,w:bw,h:bw*.6});cx.restore()}
-    if(S.butts>14){cx.fillStyle='rgba(90,85,80,.55)';cx.beginPath();cx.ellipse(a.x+a.w*.5,a.y+a.h*.45,a.w*.3,a.h*.18,0,0,7);cx.fill()}
+    if(S.ash>14){cx.fillStyle='rgba(90,85,80,.55)';cx.beginPath();cx.ellipse(a.x+a.w*.5,a.y+a.h*.45,a.w*.3,a.h*.18,0,0,7);cx.fill()}
     if(S.tot<S.smolderUntil&&S.right!=='cig'&&SP.cig_lit&&SP.cig_lit.naturalWidth){const lw=a.w*.62,lh2=lw*.45;cx.save();cx.translate(a.x+a.w*.62,a.y+a.h*.32);cx.rotate(-.18);spr('cig_lit',{x:-lw/2,y:-lh2*.7,w:lw,h:lh2});cx.restore();smolderTip={x:a.x+a.w*.62-lw*.42,y:a.y+a.h*.32+lh2*.05}}else smolderTip=null}
   else if(!spr('ash_'+al,a)){ell(a.x+a.w/2,a.y+a.h/2,a.w/2,a.h/2,'#9fb7c4aa');ell(a.x+a.w/2,a.y+a.h/2-2,a.w/2-7,a.h/2-6,'#555');for(let i=0;i<Math.min(S.butts,18);i++){cx.fillStyle=i%2?'#e9d8b0':'#d0a060';cx.fillRect(a.x+10+(i*13)%40,a.y+6+(i*7)%10,9,3)}}
   // remote
@@ -532,6 +539,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
     if(ring){cx.globalAlpha=.55+.35*Math.sin(t*12);cx.fillStyle='#7fb2ff';cx.fillRect(ph.x+ph.w*.18,ph.y+ph.h*.12,ph.w*.64,ph.h*.66);cx.globalAlpha=1}cx.restore();hit('phone',ph)}
   // catalog
   const k=L.catalog;if(!spr('catalog',k)){rr(k.x,k.y,k.w,k.h,3,'#e8e2d0');rr(k.x+6,k.y+6,k.w-12,k.h-18,2,'#b5552c');cx.fillStyle='#333';cx.font='800 8px Nunito,sans-serif';cx.fillText('MÖBEL',k.x+k.w/2,k.y+k.h-4)}hit('catalog',k);
+  drawMag();
   // controller
   if(S.furn.console&&S.right!=='ctrl'){const g=L.ctrl;if(!spr('controller',g)){rr(g.x,g.y,g.w,g.h,12,'#1a1a1a');ell(g.x+14,g.y+12,4,4,'#555');ell(g.x+g.w-14,g.y+12,4,4,'#555')}hit('ctrl',g)}
   drawEmpties(t,'front');
@@ -564,11 +572,12 @@ const SLOTDEF=[ // [x,y,lying] in room-image coords, filled in this order
  [330,960,0],[45,965,1],[420,975,1],[790,955,0],[500,950,0],[880,975,1],[300,688,0],[700,690,0],
  [560,980,1],[835,925,0],[905,590,0],[60,598,1],[350,690,1],[380,935,0],[930,1040,0],
  [210,447,0],[760,592,1],[455,925,0],[670,690,0],[30,925,0],[860,890,1],[230,722,0],[530,925,1],
- [120,960,0],[820,1000,0],[400,1150,0],[640,955,1]];
-function emptySlots(){if(L.slots&&L.slotsW===W&&L.slotsH===H)return L.slots;const m=L.mm;if(!m)return[];
+ [120,960,0],[820,1000,0],[400,1150,0],[640,955,1],[300,1000,1],[700,1005,0],[455,1000,0],[190,1000,1],[930,600,0],[150,598,0],[100,447,1],[60,720,0]];
+function emptySlots(){const fk=['massage','fridge','lamp','gold','stash'].map(k=>S.furn[k]?1:0).join('');if(L.slots&&L.slotsW===W&&L.slotsH===H&&L.slotsF===fk)return L.slots;const m=L.mm;if(!m)return[];
+  const block=[];if(S.furn.massage)block.push([735,560,1075,1000]);if(S.furn.fridge)block.push([196,722,344,910]);if(S.furn.lamp)block.push([640,350,756,910]);if(S.furn.gold)block.push([-110,620,250,1015]);
   let seed=97;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
-  const res=SLOTDEF.map(([x,y,ly])=>{const p=m(x+(rnd()-.5)*10,y);const dep=clamp(.42+.58*(y-600)/580,.45,1);return{x:p.x,y:p.y,iy:y,lying:!!ly,dep,r:ly?(rnd()-.5)*.5:(rnd()-.5)*.12,flip:rnd()<.5}});
-  L.slots=res;L.slotsW=W;L.slotsH=H;return res}
+  const res=SLOTDEF.filter(([x,y])=>!block.some(k=>x>k[0]-15&&x<k[2]+15&&y>k[1]&&y<k[3]+10)).map(([x,y,ly])=>{const p=m(x+(rnd()-.5)*10,y);const dep=clamp(.42+.58*(y-600)/580,.45,1);return{x:p.x,y:p.y,iy:y,lying:!!ly,dep,r:ly?(rnd()-.5)*.5:(rnd()-.5)*.12,flip:rnd()<.5}});
+  L.slots=res;L.slotsW=W;L.slotsH=H;L.slotsF=fk;return res}
 function drawEmpties(t,pass){const n=S.empties;if(pass==='back')EH=[];if(n<=0)return;
   if(!L.roomMode){if(pass!=='front')return;const E=L.empties;for(let i=0;i<Math.min(n,22);i++){const col=i%11,row=Math.floor(i/11);drawBottle(E.x+col*E.w/11.5+(row?E.w/23:0),E.y-row*E.h*.25,E.w/12,E.h*.75,5)}return}
   const sl=emptySlots(),cnt=Math.min(n,sl.length);
@@ -600,7 +609,7 @@ function drawPuke(t){const P=PUKE;if(!P)return;const k=P.t;
   for(const q of P.splat){cx.globalAlpha=1-q.life/.35;cx.fillStyle=q.c;cx.beginPath();cx.arc(q.x,q.y,q.r,0,7);cx.fill();cx.globalAlpha=1}
   if(k<.55){cx.fillStyle='rgba(255,255,255,'+(Math.sin(k*40)*.04+.04)+')';cx.fillRect(0,0,W,H)}}
 function hasHands(){const i=SP.lh_full;return !!(i&&i.complete&&i.naturalWidth)}
-function drawHands(t){const lh=L.lh,rh=L.rh,sway=S.prom>=.8?Math.sin(t*1.7)*S.prom*4:0;
+function drawHands(t){const lh=L.lh,rh=L.rh,wv=withdrawal().v,sway=(S.prom>=.8?Math.sin(t*1.7)*S.prom*4:0)+(wv>0?Math.sin(t*47)*wv*4+Math.sin(t*31)*wv*2:0);
   if(hasHands()){
     let lk;const d=handAnim.drink;
     if(handAnim.throwT>0)lk=handAnim.throwT>.6?'throw_1':'throw_2';
@@ -641,7 +650,8 @@ const VIS={landlord:{n:'Vermieter',c:'#d8c38f',h:'#555',s:1.05},kowalski:{n:'Fra
 let VISIT=null; // {who,pose,x,target,leaving}
 function drawVisitor(t){if(!VISIT)return;const v=VISIT,d=VIS[v.who],b=L.visitor;
   v.x+=(v.target-v.x)*.12;const x=b.x+v.x;
-  let pose=v.pose;if(v.who==='parcel'||v.who==='salesman')pose=pose===2?2:0;if(typeof pose==='string'&&!SP[v.who+'_'+pose])pose=2;
+  let pose=v.pose;if(pose!=='hurt'){if(v.who==='parcel'||v.who==='salesman')pose=pose===2?2:0;if(typeof pose==='string'&&!SP[v.who+'_'+pose])pose=2}
+  if(pose==='hurt'){if(spr(v.who+'_hurt',{x,y:b.y,w:b.w,h:b.h}))return;const hp=(v.who==='salesman'||v.who==='parcel')?'_0':'_1';const rc=sprRect(v.who+hp,{x,y:b.y,w:b.w,h:b.h});if(rc){spr(v.who+hp,{x,y:b.y,w:b.w,h:b.h});drawHurt(rc);return}pose=1}
   if(spr(v.who+'_'+pose,{x,y:b.y,w:b.w,h:b.h}))return;
   cx.save();cx.translate(x+b.w/2,b.y+b.h);cx.scale(d.s,d.s);const bob=Math.sin(t*3)*2;
   ell(0,0,48,10,'#0004');cx.fillStyle='#333';cx.fillRect(-26,-120,20,120);cx.fillRect(6,-120,20,120);
@@ -692,26 +702,26 @@ function fridgeTap(){FX.fridgeOpen=S.tot+1.2;if(S.fridge>0&&S.tot>=S.fridgeColdA
   const n=Math.min(6,S.beer);S.beer-=n;S.fridge=n;S.fridgeColdAt=S.tot+10;toast(n+' Flaschen in den Kühlschrank gestellt.','In einer Stunde kalt')}
 function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=true;snd('plop');vib(30);handAnim.capT=1;toast(pick(['Plopp. Das einzige Loch, das du heute aufmachst.','Kronkorken ab. Zum Glück kriegst du wenigstens das noch auf.','Zisch. Feierabend, obwohl du seit 2011 nicht angefangen hast.']));doneHint('open')}
 function sip(){const b=S.bottle;if(!b)return;if(b.opened===false){toast('Erst aufmachen, du hirnloser Nuckelbubi. Flasche antippen.');snd('bad');return}if(b.sips<=0){toast(pick(['Die Flasche ist leer, du Flaschenlutscher. Saugen bringt nix.','Da ist nix mehr drin. Wie in deinem Kopf und deiner Hose.']));return}
-  b.sips--;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=.19*pl;S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
+  b.sips--;S.lastBeer=S.tot;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=.19*pl;S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
   if(b.sips===2){S.st.beers++;}
   clampAll();doneHint('drink');checkAch();promCheck()}
 function throwBottle(){if(!S.bottle)return;if(S.prom<.8){toast('Nüchtern traust du dich nicht mal, ne Flasche zu schmeißen. Eierlose Lusche.');return}
   handAnim.throwT=1;snd('whoosh');setTimeout(()=>{snd('smash');vib(80);{const z=L.stainZone||{x:150,y:H*.15,w:270,h:L.wall-60-H*.15};S.stains.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h)})};if(S.stains.length>14)S.stains.shift()},420);
   S.bottle=null;S.st.throws++;toast(pick(['KLIRR! Mehr Treffer als du je bei Frauen hattest.','Volltreffer, du asoziales Stück. Die Tapete weint.','Herr Brandt hat das gehört und sich vor Angst eingeschissen.']),fx({bo:-20,chaos:6,neighbor:1}));checkAch()}
 function takeCig(){if(!needRightFree('cig'))return;if(S.right==='cig')return;if(S.cigs<=0){toast('Schachtel leer. Wie dein Konto, deine Zukunft und deine Eier.');return}S.cigs--;S.packClosed=false;handAnim.cigFly=1;S.right='cig';S.cigPuffs=0;snd('lighter');doneHint('cig')}
-function puff(){if(S.right!=='cig')return;S.cigPuffs++;S.bo-=1.2;smokeLevel=Math.min(2,smokeLevel+.25);handAnim.puff=.5;snd('puff');setTimeout(exhale,700);addXP(.5);
+function puff(){if(S.right!=='cig')return;S.cigPuffs++;S.lastCig=S.tot;S.bo-=1.2;smokeLevel=Math.min(2,smokeLevel+.25);handAnim.puff=.5;snd('puff');setTimeout(exhale,700);addXP(.5);
   coughCnt++;if(coughCnt>=coughNext){coughCnt=0;coughNext=RI(1,7);setTimeout(()=>{snd('cough');vib([40,40,40]);toast(T('cough'))},500)}
-  if(S.cigPuffs>=5){S.right='empty';S.butts++;S.smolderUntil=S.tot+30;toast(pick(['Kippe aus. Deine Lunge hat gerade den Notarzt gerufen.','Aus. Noch ein Sargnagel, du Teerfresse.','Fertig gequalmt. Riechst jetzt wie ein Kneipenklo von innen.']));checkAch()}clampAll()}
+  if(S.cigPuffs>=5){S.right='empty';S.butts++;S.ash++;S.smolderUntil=S.tot+30;toast(pick(['Kippe aus. Deine Lunge hat gerade den Notarzt gerufen.','Aus. Noch ein Sargnagel, du Teerfresse.','Fertig gequalmt. Riechst jetzt wie ein Kneipenklo von innen.']));checkAch()}clampAll()}
 function eatSnack(){if(S.snacks<=0){toast('Keine Snacks mehr, du verfressenes Schwabbelschwein. Ab in den Shop.');snd('bad');return}S.snacks--;S.hang=Math.max(0,S.hang-1);snd('pop');handAnim.snack=1.2;toast(pick(['Mampf. Die Krümel in deinem Brusthaar sind dein Notvorrat.','Lecker Fett. Deine Arterien machen schon die Schotten dicht.','Du frisst wie ein Schwein. Schweine finden das beleidigend.']),fx({hu:-30,prom:-.15,xp:1}))}
 function zap(dir){if(S.right!=='remote')return;if(S.prom>=1.4&&Math.random()<.35){dir=-dir;toast('Falsche Richtung, du besoffener Daumenlutscher.')}
   stopFilm(true);S.ch=(S.ch+dir+CH.length)%CH.length;tvState.chStart=S.tot;tvState.zapFx=S.tot+.35;tvState.night=isNight()&&Math.random()<.4;tvState.nightLine++;snd('stat');
   S.bo-=6;addXP(.5);S.st.zaps.push(S.tot);S.st.zaps=S.st.zaps.filter(z=>S.tot-z<300);schnitzelT=0;clampAll();doneHint('zap');checkAch()}
-function cleanPuddle(p){p.taps++;snd('slap');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;toast(pick(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch Ekelhaft.']),fx({chaos:-3,xp:2}));checkAch()}}
+function cleanPuddle(p){p.taps++;snd('slap');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;toast(pick(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.']),fx({chaos:-3,xp:2}));checkAch()}}
 function promCheck(){
   if(S.prom>=1.1&&!S.taskDone&&!busyUI){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
   if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
   if(S.prom>=S.pukeAt)puke()}
-function puke(){snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};if(S.right==='cig'){S.right='empty';S.butts++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(2.1,2.5);S.sickSaid=false;clampAll();
+function puke(){snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};S.dirt=Math.min(100,S.dirt+12);setTimeout(()=>say('afterPuke',true),3200);if(S.right==='cig'){S.right='empty';S.butts++;S.ash++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(2.1,2.5);S.sickSaid=false;clampAll();
   if(S.tot-S.lastPuke<150){filmriss()}else toast(T('puke'),'Promille −0,90 · Hunger +40');S.lastPuke=S.tot;checkAch()}
 function filmriss(){const lost=Math.min(S.money,RI(2,5));S.money-=lost;S.st.filmriss++;if(S.hour<6){advance((6-S.hour)*10+.01)}else{advance((30-S.hour)*10+.01)}S.hang=Math.max(S.hang,2);toast(T('filmriss'),'Geld −'+eur(lost)+' · Kater',5000);checkAch()}
 function putDown(){if(S.right!=='empty'){if(S.right==='phone'&&CALL){missCall();}S.right='empty';snd('pop');toast(pick(['Abgelegt. Wahnsinn, du Genie. Nobelpreis kommt per Post.','Weggelegt. Das ist mehr Arbeit, als du letzte Woche gemacht hast.']));doneHint('put');return}
@@ -759,6 +769,11 @@ function tap(id,p){
    case'ctrl':if(!needRightFree('ctrl'))return;S.right='ctrl';snd('pop');return openGames();
    case'empty':return toBasket(false);
    case'basket':if(S.empties>0)return toBasket(true);return toast(S.basket?S.basket+' Flaschen im Korb. Im Shop gibt’s Pfand dafür.':'Der Korb ist leer. Wie dein Bett seit Jessica.');
+   case'ash':return emptyAsh();
+   case'stash':return stashMenu();
+   case'stereo':return stereoTap();
+   case'mag':return magTap();
+   case'tissue':return tissueTap();
    case'table':return putDown();
    case'right':if(S.right==='phone')return openPhone();if(S.right==='ctrl')return openGames();return;
    case'bottle':if(S.bottle&&S.bottle.opened===false)return openBottle();if(S.bottle&&S.bottle.sips<=0)return putDown();return toast('Gedrückt halten zum Trinken, du Saufanfänger. Selbst Babys können nuckeln.');
@@ -770,21 +785,42 @@ function tap(id,p){
   if(S.furn.console&&inB(L.console)){if(!needRightFree('ctrl'))return;S.right='ctrl';return openGames()}
   if(inB(L.tv)){if(S.right==='remote')return toast('Wischen, nicht tippen, du Fingerakrobat. Links oder rechts. Selbst du kriegst das hin.');return toast('Nimm die Fernbedienung, du Neandertaler. Mit Draufglotzen allein schaltet nix um.')}
 }
+// ================= MEHR BESUCHER-SPRÜCHE =================
+const GREET={
+ landlord:['Ihre Bude stinkt bis in den Keller, Sie Schwein! Die Nachbarn kotzen schon ins Treppenhaus. 10 Euro Strafe, sofort!','Ich hab Beschwerden über Sie, dicker als Ihr Bauch. 10 Euro, oder ich lass die Tür ausbauen, während Sie drauf pennen!','Sie asozialer Mietnomade! Noch eine Beschwerde und ich räume Ihre Bude mit dem Bagger. Mit Ihnen drin. 10 Euro!','Wissen Sie, was die Nachbarn über Sie sagen? Dass Sie riechen wie ein toter Iltis im Bierfass. Strafe: 10 Euro!','Ich hab Ihren Müll im Hof gefunden. Mit Ihrem Namen drauf. Und Dingen, die ich nie wieder vergessen werde. 10 Euro!','Hören Sie zu, Sie Made: Entweder 10 Euro oder ich erzähle der Hausgemeinschaft, was ich in Ihrem Abfluss gefunden habe.'],
+ lfriend:['Kumpel! Ich hab Bier dabei und Geschichten über die Mieter, da wird dir schlecht!','Na, alter Saufkopp? Ich muss dir erzählen, was die Müller im Keller treibt. Mit dem Hausmeister. Und einem Rasenmäher.','Ich hab Feierabend und keinen Bock auf meine Alte. Lass mich rein, ich hab Korn!'],
+ kowflirt:['Na, mein Hengst? Ich hab heute nichts drunter. Also, außer der Inkontinenzeinlage.','Schätzchen, mein Heinz hat immer gesagt, ich sei eine Wildkatze. Dann ist er gestorben. Zufall.','Ich hab Eierlikör warm gemacht. Und mich auch.','Mach auf, Bärchen, sonst muss ich mir wieder selber helfen. Mit dem Massagestab vom Teleshop.','Ich hab mir extra die Achselhaare gekämmt. Für dich.','Du riechst nach Bier und Schweiß. Genau wie mein dritter Mann. Mach auf!','Ich bin wie guter Wein, Schätzchen: alt, sauer und ich mach dich besoffen.','Ich hab gehört, du bist arbeitslos und einsam. Ich bin Rentnerin und gelenkig. Rechne mal.'],
+ kowbeer:['Gib mal ein Bier rüber, Schätzchen. Mein Herzschrittmacher läuft nur mit Alkohol.','Ein Bierchen für die alte Dame? Sonst erzähle ich allen, dass du nachts deine Socken ableckst.','Hast du Bier? Ich hab Durst und Hitzewallungen. Das eine kannst du lösen.'],
+ kowkrach:['FÜNF MAL hast du mich abblitzen lassen, du schlappschwänziger Sofapilz! Jetzt kommen die Bullen!','Glaubst du, du bist was Besseres? Du riechst wie ein Altkleidercontainer! Ich hab den Vermieter UND die Polizei gerufen!'],
+ uwe:['Moin, du Wrack. Haste Leergut? Ich riech dein Pfand bis in den Hof.','Ey, Kollege! Drei Flaschen für ein Rubbellos. Ich hab sie mit Spucke poliert.','Ich hab im Container einen toten Hamster gefunden. Den tausch ich dir auch gegen Leergut.','Pfand her, oder ich pinkel dir vor die Tür. Wieder.','Moin. Ich hab seit Dienstag nicht geschissen. Haste Leergut?'],
+ kevin:['Ey Digga, mach auf, ich hab Hämorrhoiden und ’ne Idee!','Bruder! Ich hab was organisiert. Frag nicht woher. Und frag nicht, warum es nass ist.','Mach auf, Alter! Die Bullen suchen mich nicht. Noch nicht.','Digga, ich hab drei Tage nicht gepennt und deine Mutter auf Facebook geaddet. Lass mich rein!','Alter, ich hab mir in die Hose gemacht und brauch dein Klo. Und ’ne Hose. Und Bier.','Ey, ich hab ’nen Kumpel, der verkauft Nieren. Ist nur ’ne Idee. Mach auf!'],
+ pizza:['Pizza Fista! Ich hab extra auf deine reingeniest, weil du immer kein Trinkgeld gibst.','Wieder du? Mein Chef sagt, du bist der Grund, warum wir Atemmasken haben.','Hier riecht’s, als hätte jemand eine Leiche mit Döner gefüllt. Pizza?','Salami wie immer? Die Salami ist das einzige Stück Fleisch, das du noch in den Mund kriegst.','Ich klingel seit fünf Minuten. Wichst du wieder? Pizza wird kalt!','Ich hab die Pizza fallen lassen. Im Treppenhaus. Ist aber noch gut, die Katze hat nur kurz probiert.'],
+ brandt:['RUHE, Sie verfickter Prolet! Ich höre Sie atmen! ICH HÖRE SIE FURZEN!','Ihr Fernseher dröhnt, Ihr Klo spült um drei Uhr nachts, und Ihr Gestöhne beim Pornogucken ist eine Zumutung!','Ich habe ein Lärmmessgerät und einen Anwalt. Und ein Beil im Keller. Für Holz natürlich.','Wenn Sie noch einmal so laut sind, schraube ich Ihnen die Sicherungen raus und lass Sie im Dunkeln verfaulen!','Ich habe Ihre Darmgeräusche aufgenommen. 47 Minuten. Das geht ans Gericht!'],
+ brandtstreit:['So, Sie Saftsack, jetzt reicht’s! 14 Seiten Lärmprotokoll, inklusive Ihrer Darmwinde!','Ich weiß, wo Ihre Mülltonne steht. Und ich weiß, wo SIE schlafen. Denken Sie mal drüber nach.','Noch ein Ton und ich ramme Ihnen mein Lärmmessgerät so tief rein, dass es Ihre Herztöne misst!'],
+ parcel:['Paket für Brandt. Nehmen Sie’s an, oder ich lass es bei Ihnen auf der Fußmatte verrotten wie Ihr Leben.','Paket für den Nachbarn. Und bitte nicht wieder dran schnüffeln wie letztes Mal.','Ich hab ein Paket, das tickt. Für Herrn Brandt. Spaß. Oder nicht. Nehmen Sie’s an?'],
+ salesman:['Guten Tag! Bei dem Gestank hier brauchen Sie dringend den Wunder-Staubsauger! Saugt sogar Pisse aus dem Teppich! 49 Euro!','Ich sehe, Sie leben im Dreck wie eine Made im Speck. Mein Staubsauger rettet Ihre Würde. 49 Euro!','Der Turbo-Sauger 3000! Saugt Krümel, Haare, Kakerlaken und Ihre Ex-Freundin aus dem Gedächtnis. 49 Euro!'],
+ bailiff:['Gerichtsvollzieher. Machen Sie auf, ich höre Ihre Glotze und Ihren Herzschlag.','Ich pfände alles, was nicht festgewachsen ist. Bei Ihnen also nur das Sofa nicht.','Aufmachen! Ich hab einen Bohrer, einen Schlosser und keine Geduld mit Leuten wie Ihnen.'],
+ police:['Polizei. Wir haben Fragen zu Fahrrädern, Kupferkabeln und warum es hier riecht wie im Affenkäfig.','Aufmachen, Polizei! Ihr Nachbar sagt, hier liegt eine Leiche. Wir sind gespannt, ob er Sie meint.','Polizei. Ein Kevin hat Ihren Namen gesungen. Laut. Ohne dass wir gefragt haben.'],
+ jobcenter:['Hausbesuch vom Jobcenter. Na, Sie Sozialschmarotzer, wie viele Bewerbungen? Null? Dachte ich mir.','Ich bin hier, um zu prüfen, ob Sie noch leben. Leider ja, rieche ich.','Frau Meier, Jobcenter. Ich hab Ihre Akte gelesen und musste mich übergeben. Aufmachen!'],
+ jessica:['Na, Schlappschwanz? Immer noch am Sofa festgewachsen? Mein Neuer kann’s dreimal am Abend.','Ich war zufällig in der Gegend. Mit meinem Neuen. Der hat Auto, Arbeit und einen, den man ohne Lupe findet.','Hast du noch mein Glätteisen? Und Bier? Bier war ja das Einzige, was bei dir je steif war. Die Flasche.','Ich wollte nur sehen, ob du noch lebst. Und ob du immer noch nach Fußpilz riechst. Ja und ja.','Ich hab meinen Freundinnen erzählt, wie klein er war. Die haben geweint vor Lachen.']
+};
+const STINK=['Boah, hier stinkt’s wie im Pumakäfig! Waschen Sie sich mal, Sie Ferkel!','Riechen Sie das? Das sind SIE. Gehen Sie duschen!','Mir tränen die Augen. Haben Sie in die Ecke geschissen?'];
+let CUR_EV='';
 // ================= EVENTS & VISITORS =================
 let CARD=null,CALL=null,evTimer=R(20,30),lastEv='',schnitzelT=0;
 const bub=$('bubble'),card=$('card');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function visit(who,text,opts,pose=0){VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
+function visit(who,text,opts,pose=0){if(GREET[CUR_EV]&&Math.random()<.8)text=pick(GREET[CUR_EV]);if(S.dirt>70&&Math.random()<.5&&who!=='kowalski')text=pick(STINK)+' '+text;VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
 function placeBubble(){const r=cv.getBoundingClientRect(),sc=r.width/W;bub.style.left=((L.visitor.x+L.visitor.w*.9)*sc)+'px';bub.style.top=((L.visitor.y-10)*sc)+'px'}
-function showBubble(who,text,opts){if(!VISIT)return;placeBubble();bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(slur(text))+'</p><div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
+function showBubble(who,text,opts){if(!VISIT)return;if(PUNCHABLE[who]&&!opts.some(o=>o.punch))opts=opts.concat([Object.assign(punchOpt(who),{punch:1})]);placeBubble();bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(text)+'</p><div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
   bub.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=o.f()||{};if(r.pose!==undefined)VISIT.pose=r.pose;
-    bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(slur(r.say||'…'))+'</p>'+(r.fx?'<small>'+esc(r.fx)+'</small>':'');snd('pop');
+    bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(r.say||'…')+'</p>'+(r.fx?'<small>'+esc(r.fx)+'</small>':'');snd('pop');
     if(r.after){setTimeout(()=>{if(VISIT)showBubble(who,r.after.text,r.after.opts)},2200);return}
     setTimeout(leave,2800);checkAch()})}
 function leave(){bub.style.display='none';if(VISIT){VISIT.target=-260;setTimeout(()=>{VISIT=null},900)}evTimer=R(25,45)}
-function showCard(title,text,opts){CARD=1;$('toast').classList.remove('on');card.innerHTML='<h3>'+esc(title)+'</h3><p>'+esc(slur(text))+'</p><div class="opts">'+opts.map((o,i)=>'<button class="btn'+(i===0?' pri':'')+'" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';card.style.display='block';
+function showCard(title,text,opts){CARD=1;$('toast').classList.remove('on');card.innerHTML='<h3>'+esc(title)+'</h3><p>'+esc(text)+'</p><div class="opts">'+opts.map((o,i)=>'<button class="btn'+(i===0?' pri':'')+'" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';card.style.display='block';
   card.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=(o.f&&o.f())||{};snd('pop');
-    if(r.say){card.innerHTML='<h3>'+esc(title)+'</h3><p>'+esc(slur(r.say))+'</p>'+(r.fx?'<small>'+esc(r.fx)+'</small>':'')+'<div class="opts" style="margin-top:10px"><button class="btn pri">Weiter</button></div>';card.querySelector('button').onclick=closeCard}
+    if(r.say){card.innerHTML='<h3>'+esc(title)+'</h3><p>'+esc(r.say)+'</p>'+(r.fx?'<small>'+esc(r.fx)+'</small>':'')+'<div class="opts" style="margin-top:10px"><button class="btn pri">Weiter</button></div>';card.querySelector('button').onclick=closeCard}
     else closeCard();checkAch()})}
 function closeCard(){card.style.display='none';CARD=null;evTimer=R(25,45)}
 const OK=t=>({t,f:()=>({})});
@@ -806,6 +842,7 @@ const KEVIN=[
  ()=>({say:'Kevin erzählt, wie er bei „Hartz & Herzlich“ Statist war. Spannender als dein Leben.',fx:fx({bo:-15}),pose:2}),
  ()=>({say:'Kevin bestellt Pizza auf deine Kosten.',fx:fx({hu:-30,money:-Math.min(S.money,4)}),pose:2}),
  ()=>({say:'Kevin will nur kurz aufs Klo. 40 Minuten später ist es ein Tatort.',fx:fx({chaos:5,bo:-5}),pose:0})];
+KOW_LINES.push(...GREET.kowflirt);
 const PIZZA_N=['Rajesh','Vikram','Sanjay','Deepak','Amit'];
 const PIZZA_L=['Pizza Fista! Du bist so fett, wir liefern dir mittlerweile mit dem Transporter.','Wieder du? Dein Foto hängt bei uns an der Wand. Unter „Nicht ohne Handschuhe anfassen“.','Die Pizza ist heiß. Das ist mehr, als je eine Frau über dich gesagt hat.','Salami wie immer? Ist ja die einzige Wurst, die du noch hochkriegst.','Mein Chef sagt, du bist unser bester Kunde. Er meint, du bist ein fetter Versager.','Alter, hier riecht’s nach Arschschweiß und Verzweiflung. Pizza?'];
 const GOSSIP=['Die Müller aus dem Dritten hält Hühner auf dem Balkon.','Der Schröder zahlt seit drei Monaten mit Pfandbons.','Die Studenten im Zweiten haben eine Hanfplantage. Angeblich Tomaten.','Frau Kowalski hat schon drei Hausmeister verschlissen.','Herr Brandt misst die Lautstärke mit einer App.','Der Typ unterm Dach züchtet Kakerlaken. Absichtlich.','Familie Yilmaz ist die einzige, die pünktlich zahlt. Außer dir. Du nicht.'];
@@ -861,7 +898,7 @@ const EVENTS=[
  {id:'pizza',c:()=>true,run:()=>{const n=pick(PIZZA_N);visit('pizza',n+' von Pizza Fista: '+pick(PIZZA_L),[
    {t:'Pizza nehmen (8 €)',f:()=>{if(!canPay(8))return{say:'Kein Geld? Dann friss deine Socken, du Schnorrer.',pose:1};S.h.pizza++;return{say:'Guten Hunger. Bis morgen, wie immer.',fx:fx({money:-8,hu:-50,xp:2}),pose:2}}},
    {t:'Trinkgeld (10 €)',f:()=>{if(!canPay(10))return{say:'Mit was willst du Trinkgeld geben, du armer Schlucker? Mit Fußpilz?',pose:1};S.h.pizza++;return{say:'Wow! Du bist der beste schlechteste Kunde!',fx:fx({money:-10,hu:-50,nice:1,xp:2}),pose:2}}},
-   {t:'Wegschicken',f:()=>({say:'Dann ess ich sie selber, du Arschloch. Und spuck vorher noch drauf, nur aus Prinzip.',pose:1})}])}},
+   {t:'Wegschicken',f:()=>({say:'Dann esse ich sie selber, du Arschloch. Und spuck vorher noch drauf, nur aus Prinzip.',pose:1})}])}},
  {id:'brandt',c:()=>S.h.neighbor<3,run:()=>visit('brandt','RUHE, Sie asozialer Dreckssack! Ihre Glotze dröhnt durch die Wand, und Ihr Gestöhne beim Pornogucken auch!',[
    {t:'Lauter',f:()=>({say:'Sie verfickter Prolet! Ich schreibe Zettel! Hundert Zettel!',fx:fx({neighbor:1,bo:-5}),pose:1})},
    {t:'Leiser',f:()=>({say:'Danke. Geht doch. Ein Wunder.',fx:fx({neighbor:-1,nice:1}),pose:2})},
@@ -869,7 +906,7 @@ const EVENTS=[
  {id:'brandtstreit',prio:1,c:()=>S.h.neighbor>=3&&S.h.neighbor<4,run:()=>visit('brandt','So, Sie Saftsack, jetzt reicht’s! 14 Seiten Lärmprotokoll! Inklusive Ihrer Darmgeräusche!',[
    {t:'Entschuldigen',f:()=>({say:'Na… gut. Aber das ist die letzte Warnung.',fx:fx({neighbor:-1,nice:1}),pose:2})},
    {t:'Zurückbrüllen',f:()=>({say:'SIE BRÜLLEN MICH AN, Sie Schwein?! Das sag ich dem Vermieter!',fx:fx({neighbor:1}),pose:1})},
-   {t:'Mittelfinger',f:()=>{rude();return{say:'Steck dir den Finger doch selber rein, du Penner! Ich zeige Sie an!',fx:fx({neighbor:2,police:1}),pose:3}}}],1)},
+   {t:'Mittelfinger',f:()=>{rude();return{say:'Sie zeigen mir den Finger? Den steck ich Ihnen gleich in die Nase, Sie Penner! Ich zeige Sie an!',fx:fx({neighbor:2,police:1}),pose:3}}}],1)},
  {id:'parcel',c:()=>true,run:()=>visit('parcel','Paket für Ihren Nachbarn Brandt. Nehmen Sie’s an?',[
    {t:'Annehmen',f:()=>({say:'Danke! Unterschrift hier. Nicht so krakelig.',fx:fx({nice:1,neighbor:-1}),pose:2})},
    {t:'Aufmachen und behalten',f:()=>{S.h.crimes++;S.h.crimesOk++;return{say:'(Drin: eine Schachtel Pralinen. Und ein Lärmmessgerät.)',fx:fx({snacks:2,police:1}),pose:0}}},
@@ -915,7 +952,7 @@ function answerCall(){const c=CALL.c;CALL=null;clearInterval(callTimer);S.h.call
   showCard(c.n,c.t,c.o.map(([t,f])=>({t,f})));checkAch()}
 // ---------- Scheduler ----------
 function eventTick(dt){if(VISIT||CARD||CALL||busyUI||PUKE)return;evTimer-=dt;if(evTimer>0)return;
-  const ok=EVENTS.filter(e=>e.id!==lastEv&&e.c());const pr=ok.filter(e=>e.prio);const e=pr.length?pr[0]:pick(ok.filter(e=>!e.prio));if(!e){evTimer=10;return}
+  const ok=EVENTS.filter(e=>e.id!==lastEv&&e.c());const pr=ok.filter(e=>e.prio);const np=ok.filter(e=>!e.prio);const e=pr.length?pr[0]:(np.length?pickEvent(np):null);if(!e){evTimer=10;return}noteEvent(e);CUR_EV=e.id;
   lastEv=e.id;evTimer=R(25,45);e.run()}
 // ================= MENUS =================
 const M=$('modal');
@@ -933,12 +970,12 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
   if(a==='go'){S.started=true;closeModal();showDay()}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>{const snd0=soundOn;S=fresh();S.started=true;layout();save();closeModal();toast('Tag 1. Du sitzt auf dem Sofa. Für immer.')},mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);
-  if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}mainMenu()}}})})}
+  if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="img">Bilder laden</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
-  if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}pauseMenu()}
+  if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
   if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>{S=fresh();S.started=true;layout();save();closeModal();toast('Neues Spiel. Gleiches Sofa.')},pauseMenu)}}))}
 function confirmBox(q,yes,no){openModal(`<h2>Sicher?</h2><p>${esc(q)}</p><div class="list"><button class="btn red" data-y>Ja, weg damit</button><button class="btn" data-n>Nein</button></div>`,()=>bindAll({'[data-y]':yes,'[data-n]':no}))}
 function howMenu(back){openModal(`<h2>So geht’s</h2>
@@ -955,6 +992,7 @@ const SHOP=[
  {n:'Pommes rot-weiß „Frittenhölle“',p:3,d:'Hunger −35',f:()=>fx({hu:-35})},
  {n:'Tiefkühlpizza „Salami-Pappe“',p:2.5,d:'Hunger −45',f:()=>fx({hu:-45})},
  {n:'Sixpack',p:4,d:'+6 Bier',f:()=>fx({beer:6})},
+ {n:'Schmuddelheft „Busen-Express“',p:6,d:'Gegen Langeweile. Bleibt auf dem Tisch liegen',f:()=>{if(S.mag){S.money+=6;return 'Du hast doch schon eins, du Sammler. Geld zurück.'}S.mag=true;return 'Liegt jetzt auf dem Tisch. Antippen, wenn dir langweilig ist.'}},
  {n:'Zigaretten „Gelbe Lunge“',p:5,d:'+20 Kippen',f:()=>{S.packClosed=true;return fx({cigs:20})}}];
 function shopMenu(){const pf=S.basket;openModal(`<h2>Späti-Shop</h2><p>Kasse: <b>${eur(S.money)}</b> · Bier ${S.beer} · Snacks ${S.snacks} · Kippen ${S.cigs}</p><div class="list">
  ${SHOP.map((it,i)=>`<div class="row${S.money<it.p?' off':''}"><div class="t"><b>${esc(it.n)}</b><span>${esc(it.d)}</span></div><button class="btn pri" data-b="${i}" ${S.money<it.p?'disabled':''}>${eur(it.p)}</button></div>`).join('')}
@@ -964,6 +1002,8 @@ function shopMenu(){const pf=S.basket;openModal(`<h2>Späti-Shop</h2><p>Kasse: <
   '[data-x]':closeModal}))}
 // ---------- Catalog ----------
 const CAT=[
+ {k:'stash',n:'Geheimversteck „Hohles Buch“',p:12,d:'Geld im Regal verstecken – Strafen und Kevin kommen nicht ran'},
+ {k:'stereo',n:'Stereoanlage „Nachbarschreck 3000“',p:25,d:'Antippen: aus / leise / LAUT. Laut killt Langeweile – und den Hausfrieden'},
  {k:'plant',n:'Zimmerpflanze „Grünzeug“',p:15,d:'Chaos sinkt doppelt so schnell'},
  {k:'lamp',n:'Stehlampe „Verhörzimmer“',p:18,d:'Kein Stromausfall, an/aus'},
  {k:'neon',n:'Neon-Wandlampe „Love Noodles“',p:25,d:'+10 % Erfahrung'},
@@ -1024,7 +1064,7 @@ function adminMenu(){openModal(`<h2>Admin</h2><div class="list">${[['money','Gel
  ${['police','neighbor','nice','jc','inkasso','lf','kowNo'].map(k=>`<div class="row"><div class="t"><b>${k}</b></div><input type="number" data-h="${k}" value="${S.h[k]}"></div>`).join('')}
  <button class="btn" data-ev>Ereignis jetzt</button><button class="btn" data-all>Alle Möbel</button></div><button class="btn pri close" data-ok>Übernehmen</button>`,()=>bindAll({
   '[data-ok]':()=>{M.querySelectorAll('[data-k]').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))S[i.dataset.k]=i.dataset.k==='lvl'?Math.max(1,Math.round(v)):v});M.querySelectorAll('[data-h]').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))S.h[i.dataset.h]=v});clampAll();layout();closeModal()},
-  '[data-ev]':()=>{evTimer=0;closeModal()},'[data-all]':()=>{['plant','lamp','neon','fridge','massage','vcr','console','tv43','lava','gold'].forEach(k=>S.furn[k]=true);layout();toast('Alles da.')}}))}
+  '[data-ev]':()=>{evTimer=0;closeModal()},'[data-all]':()=>{['plant','lamp','neon','fridge','massage','vcr','console','tv43','lava','gold','stash','stereo'].forEach(k=>S.furn[k]=true);layout();toast('Alles da.')}}))}
 // ---------- Video ----------
 function stopFilm(silent){if(tvState.film===null)return;tvState.film=null;if(!silent)toast('Film gestoppt.')}
 function openVideo(){if(S.lvl<8){toast('Videothek erst ab Level 8. Streng dich an. Also nicht.');return}
@@ -1051,10 +1091,12 @@ function offerDrunkTask(){if(busyUI||VISIT||CARD||PUKE){S.taskDone=false;return}
 function swat(kind,title){miniOpen();const Wm=mcv.width,Hm=mcv.height,dur=R(12,14);let t0=performance.now(),hits=0;const bugs=[];for(let i=0;i<6;i++)bugs.push(nb());
   function nb(){return{x:R(30,Wm-30),y:R(60,Hm-60),vx:R(-160,160),vy:R(-160,160),dead:0}}
   mui.textContent=title;
-  MG={down:p=>{let hit=false;for(const b of bugs)if(!b.dead&&Math.hypot(p.x-b.x,p.y-b.y)<36){b.dead=1;hits++;hit=true;snd('slap');vib(30);{const z=L.stainZone||{x:0,y:0,w:W,h:L.wall-20};S.splats.push({x:z.x+p.x/Wm*z.w,y:z.y+p.y/Hm*z.h})};if(S.splats.length>40)S.splats.shift();setTimeout(()=>Object.assign(b,nb()),400)}if(!hit)snd('pop')},
+  let tool={x:Wm*.5,y:Hm*.8,t:-9};
+  MG={move:p=>{tool.x=p.x;tool.y=p.y},down:p=>{tool={x:p.x,y:p.y,t:performance.now()/1000};let hit=false;for(const b of bugs)if(!b.dead&&Math.hypot(p.x-b.x,p.y-b.y)<36){b.dead=1;hits++;hit=true;snd('slap');vib(30);{const z=L.stainZone||{x:0,y:0,w:W,h:L.wall-20};S.splats.push({x:z.x+p.x/Wm*z.w,y:z.y+p.y/Hm*z.h})};if(S.splats.length>40)S.splats.shift();setTimeout(()=>Object.assign(b,nb()),400)}if(!hit)snd('pop')},
    step:dt=>{const el=(performance.now()-t0)/1000;const rm=SP.room;if(rm&&rm.naturalWidth){const sc=Math.max(Wm/rm.naturalWidth,Hm/(rm.naturalHeight*.55));mc.drawImage(rm,0,0,rm.naturalWidth,rm.naturalHeight*.55,(Wm-rm.naturalWidth*sc)/2,0,rm.naturalWidth*sc,rm.naturalHeight*.55*sc);mc.fillStyle='rgba(0,0,0,.25)';mc.fillRect(0,0,Wm,Hm)}else{mc.fillStyle='#d8c08a';mc.fillRect(0,0,Wm,Hm);mc.fillStyle='#0002';for(let x=0;x<Wm;x+=30)mc.fillRect(x,0,15,Hm)}
     for(const b of bugs){if(b.dead){mc.fillStyle='#3a1a0a';mc.beginPath();mc.ellipse(b.x,b.y,10,7,0,0,7);mc.fill();continue}b.x+=b.vx*dt;b.y+=b.vy*dt;if(Math.random()<.03){b.vx=R(-200,200);b.vy=R(-200,200)}if(b.x<20||b.x>Wm-20)b.vx*=-1;if(b.y<50||b.y>Hm-20)b.vy*=-1;
      if(!mspr(kind,b.x-20,b.y-20,40,40)){mc.fillStyle=kind==='dustbunny'?'#999':kind==='roach'?'#5a3010':'#222';mc.beginPath();mc.ellipse(b.x,b.y,kind==='roach'?14:9,kind==='roach'?8:6,0,0,7);mc.fill();if(kind!=='roach'&&kind!=='dustbunny'){mc.fillStyle='#cde8';mc.beginPath();mc.ellipse(b.x-6,b.y-7,7,4,-.5,0,7);mc.ellipse(b.x+6,b.y-7,7,4,.5,0,7);mc.fill()}}}
+    drawSwatTool(kind==='roach'?'roach':'fly',tool.x,tool.y,performance.now()/1000-tool.t);
     mui.textContent=title+' · '+hits+' · '+Math.max(0,Math.ceil(dur-el))+' s';
     if(el>=dur){const b=Math.round(clamp(12+hits*.6,12,18));S.st.tasks++;miniClose();toast(hits+' erwischt. Mehr Tote als Frauen in deinem Leben.',fx({bo:-b,xp:3}));checkAch()}}};}
 function countGame(kind,title){miniOpen();const Wm=mcv.width,Hm=mcv.height,n=RI(4,11);let shown=0,t0=performance.now(),items=[],next=0;mui.textContent=title+': gut aufpassen!';
@@ -1097,6 +1139,124 @@ function gCatch(){miniOpen();const Wm=mcv.width,Hm=mcv.height;let px=Wm/2,items=
     if(it.y>Hm-60&&it.y<Hm-20&&Math.abs(it.x-px)<55){it.gone=1;if(it.b){lives--;snd('bad')}else{score++;snd('clink')}}else if(it.y>Hm+20){it.gone=1;if(!it.b)lives--}}
    items=items.filter(i=>!i.gone);if(!mspr('crate',px-55,Hm-70,110,60)){mc.fillStyle='#e7b52a';mc.fillRect(px-55,Hm-50,110,40)}
    mui.textContent='Bierfänger · '+score+' · '+'♥'.repeat(Math.max(0,lives));if(lives<=0){MG.step=()=>{};setTimeout(()=>gameOver('catch',score,'Bierfänger'),400)}}}}
+// ================= ERWEITERUNGEN =================
+// ---------- Eigene Sprüche (Selbstgespräche) ----------
+const SELF={
+  noBeer:['Ich brauch’n Bier. Jetzt. Sonst fress ich die Tapete.','Wo ist mein Bier? Wer hat mein Bier geklaut? Ach, ich war’s.','Trocken wie Omas Muschi hier drin.','Mein Hals ist so trocken, da könnt man Kakteen züchten.','Ein Königreich für ’ne Flasche. Ach, ich hab ja kein Königreich.'],
+  noCig:['Boah, ich brauch ’ne Kippe, sonst werd ich zum Mörder.','Meine Lunge ist zu sauber. Das macht mir Angst.','Ohne Kippe zittern mir die Wichsgriffel.','Ich rauch gleich den Teppich, wenn ich nix kriege.'],
+  afterPuke:['Boah… das war Döner. Glaub ich.','Der Boden hat’s verdient.','Ich hab jetzt Platz für mehr Bier.','Die Brocken da… waren die von heute?','Wenigstens nicht in die Fernbedienung.'],
+  idle:['Mein Leben ist wie mein Sofa: durchgesessen und voller Krümel.','Wenn ich mal reich bin, kauf ich mir ’n zweites Sofa. Für die Füße.','Ich müsste mal duschen. Mal sehen, nächste Woche.','Arbeit? Hab ich mal probiert. 2009. War scheiße.','Ich riech mich selber. Das ist kein gutes Zeichen.','Heute mach ich was aus meinem Leben. Nach der nächsten Folge.','Ich glaub, da wohnt was in meiner Unterhose.','Kevin schuldet mir noch zwanzig Euro. Oder ich ihm. Egal.'],
+  dirty:['Ich stinke wie ein Iltis, der in Gülle gebadet hat.','Meine Achseln haben ein Eigenleben.','Wenn ich die Socken ausziehe, schreien die Kakerlaken.'],
+  shake:['Meine Hände zittern wie Omas Gebiss.','Ich krieg den Flattermann…','Oh Gott, ich muss was trinken, sonst seh ich gleich weiße Mäuse.','Nicht gut. Gar nicht gut. Bier. Kippe. Irgendwas.']
+};
+const selfEl=document.createElement('div');selfEl.id='self';document.getElementById('stage').appendChild(selfEl);
+let selfT=0,selfNext=R(40,80),lastSelf='';
+function say(kind,force){if(!force&&(VISIT||CARD||busyUI||PUKE))return;let l=pick(SELF[kind]);if(l===lastSelf)l=pick(SELF[kind]);lastSelf=l;
+  selfEl.innerHTML='<b>Du:</b> '+esc(slur(l));selfEl.classList.add('on');clearTimeout(selfT);selfT=setTimeout(()=>selfEl.classList.remove('on'),3800)}
+// ---------- Entzug ----------
+function withdrawal(){const b=S.tot-(S.lastBeer||0),c=S.tot-(S.lastCig||0);const wb=clamp((b-70)/60,0,1),wc=clamp((c-55)/50,0,1);return{b:wb,c:wc,v:Math.max(wb,wc)}}
+let whineT=0;
+function moreTick(dt){
+  // Dreck
+  // Entzug
+  const w=withdrawal();
+  if(w.v>0){S.bo+=dt*.25*w.v;whineT-=dt;if(whineT<=0){whineT=R(16,26);const k=w.b>=w.c?'noBeer':'noCig';say(w.v>.6&&Math.random()<.4?'shake':k);vib([20,30,20,30,20])}}
+  stereoTick(dt);
+  // Selbstgespräche
+  selfNext-=dt;if(selfNext<=0){selfNext=R(55,110);if(S.dirt>75&&Math.random()<.5)say('dirty');else if(w.v<=0)say('idle')}
+  // Aschenbecher voll stinkt
+  if(S.ash>20)S.chaos=Math.min(100,S.chaos+dt*.02)}
+// ---------- Aschenbecher ----------
+function emptyAsh(){if(!S.ash){toast('Der Ascher ist leer. Ein Wunder, du Teerlunge.');return}const n=S.ash;S.ash=0;snd('pop');toast(pick(['Aschenbecher ausgekippt. Direkt in den Mülleimer und halb daneben.','Ascher leer. Die Kippen leben jetzt im Mülleimer weiter.','Ausgeleert. Riecht trotzdem wie ’ne Raucherkneipe von 1987.']),fx({chaos:-Math.min(4,1+n*.2),xp:1}))}
+// ---------- Körperpflege ----------
+const WASH=[{k:'katz',n:'Katzenwäsche',d:'Achseln, Sack, fertig. Eine halbe Stunde.',h:.5,dirt:-25,bo:-3},{k:'dusch',n:'Duschen',d:'Mit Wasser UND Seife. Eine Stunde.',h:1,dirt:-60,bo:5},{k:'grund',n:'Gründlich schrubben',d:'Mit Wurzelbürste, auch hinter den Ohren. Zwei Stunden.',h:2,dirt:-100,bo:12}];
+function washMenu(){openModal(`<h2>Körperpflege</h2><p>Gestank: <b>${Math.round(S.dirt)}</b> / 100 ${S.dirt>75?'– die Fliegen halten dich für ein Buffet.':S.dirt>45?'– man riecht dich durch die Tür.':'– geht noch.'}</p><div class="list">${WASH.map((w,i)=>`<div class="row"><div class="t"><b>${w.n}</b><span>${w.d}</span></div><button class="btn pri" data-w="${i}">Los</button></div>`).join('')}</div>${closeBtn}`,()=>bindAll({'[data-w]':el=>{const w=WASH[+el.dataset.w];closeModal();for(let i=0;i<w.h*10;i++)advance(1);
+  S.dirt=clamp(S.dirt+w.dirt,0,100);const lines={katz:['Katzenwäsche. Die Katze würde sich schämen.','Waschlappen einmal durchs Gesicht, einmal durch die Arschritze. In der Reihenfolge, hoffentlich.'],dusch:['Geduscht. Das Wasser im Abfluss ist braun wie dein Bier.','Frisch geduscht. Der Duschvorhang hat jetzt Schimmel und Trauma.'],grund:['Gründlich geschrubbt. Unter der Kruste war tatsächlich ein Mensch.','Alles sauber. Sogar die Zehenzwischenräume. Die Pilze sind obdachlos.']};
+  snd('pop');toast(pick(lines[w.k]),fx({bo:w.bo,xp:w.k==='grund'?4:2})+' · Gestank '+Math.round(S.dirt));showDay()},'[data-x]':closeModal}))}
+// ---------- Versteck ----------
+const STASH_MAX=40,STASH_DAY=10;
+function stashMenu(){if(!S.furn.stash)return;if(S.stashDay!==S.day){S.stashDay=S.day;S.stashIn=0}
+  const room=Math.max(0,Math.min(STASH_MAX-S.stash,STASH_DAY-S.stashIn));
+  openModal(`<h2>Das hohle Buch</h2><p>„Kapital“ von Karl Marx, innen ausgehöhlt. Gerichtsvollzieher, Bullen und Kevin finden hier nix.</p><p>Im Versteck: <b>${eur(S.stash)}</b> · im Geldbeutel: <b>${eur(S.money)}</b></p><p style="font-size:12px;color:var(--dim)">Höchstens ${eur(STASH_MAX)} passen rein, und pro Tag kannst du nur ${eur(STASH_DAY)} verstecken. Heute noch: ${eur(room)}</p>
+  <div class="grid"><button class="btn pri" data-in="1" ${room<1||S.money<1?'disabled':''}>1 € rein</button><button class="btn pri" data-in="5" ${room<5||S.money<5?'disabled':''}>5 € rein</button><button class="btn" data-out="5" ${S.stash<5?'disabled':''}>5 € raus</button><button class="btn" data-out="all" ${S.stash<=0?'disabled':''}>Alles raus</button></div>${closeBtn}`,()=>bindAll({
+   '[data-in]':el=>{const v=+el.dataset.in;S.money-=v;S.stash+=v;S.stashIn+=v;snd('cash');stashMenu()},
+   '[data-out]':el=>{const v=el.dataset.out==='all'?S.stash:5;S.stash-=v;S.money+=v;snd('cash');stashMenu()},'[data-x]':closeModal}))}
+function drawStash(){if(!S.furn.stash||!L.stash)return;const b=L.stash;cx.save();cx.translate(b.x+b.w*.55,b.y+b.h);cx.rotate(-.12);rr(-b.w*.18,-b.h*.95,b.w*.36,b.h*.95,3,'#7a1d14');cx.fillStyle='#d9b24a';cx.fillRect(-b.w*.18,-b.h*.8,b.w*.36,b.h*.06);cx.fillRect(-b.w*.18,-b.h*.25,b.w*.36,b.h*.06);cx.font='800 '+Math.round(b.w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('€',0,-b.h*.42);cx.restore();hit('stash',b)}
+// ---------- Schmuddelheft ----------
+function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.right!=='empty'){toast(T('busy'));return}if(S.tot<S.magCd){toast(pick(['Schon wieder? Dein Schwanz hat Urlaub beantragt.','Gib ihm ’ne Pause, der ist wund gescheuert.','Noch nicht. Selbst Kaninchen machen mal Pause.'])+' (noch '+Math.ceil((S.magCd-S.tot)/10)+' Std.)');return}
+  busyUI=true;S.magCd=S.tot+60;const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
+  setTimeout(()=>{advance(2.5);S.tissues=Math.min(9,(S.tissues||0)+RI(1,3));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
+    toast(pick(['Fertig. Die Taschentücher kleben am Tisch fest.','Erledigt. Das war das Produktivste heute.','Puh. Frau Kowalski hat durch die Wand applaudiert.','Gekommen, gesehen, Taschentuch verbraucht.']),fx({bo:-60,xp:4,dirt:0}));S.dirt=clamp(S.dirt+6,0,100);say('idle',true)},2600)}
+function drawMag(){if(!L.roomMode)return;const m=L.mm;if(S.mag){const p=m(820,1185),w=L.bottleH*.85,h=w*1.25;cx.save();cx.translate(p.x,p.y);cx.rotate(.18);rr(-w/2,-h,w,h,3,'#e8417a');cx.fillStyle='#ffe14d';cx.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('BUSEN',0,-h*.78);cx.fillText('EXPRESS',0,-h*.6);cx.fillStyle='#111';cx.fillRect(-w*.32,-h*.45,w*.64,h*.12);cx.fillStyle='#fff';cx.font='800 '+Math.round(w*.11)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,-h*.36);cx.restore();hit('mag',{x:p.x-w*.6,y:p.y-h,w:w*1.2,h:h})}
+  for(let i=0;i<(S.tissues||0);i++){const p=m(735+(i*41)%120,1185+(i*29)%30),r=L.bottleH*.16;cx.fillStyle='#f4f1ea';cx.beginPath();for(let k=0;k<7;k++){const a=k/7*Math.PI*2,rr2=r*(.7+((i*7+k*13)%5)/10);cx.lineTo(p.x+Math.cos(a)*rr2,p.y+Math.sin(a)*rr2*.7)}cx.fill();cx.strokeStyle='#c9c4b8';cx.lineWidth=1;cx.stroke();hit('tissue',{x:p.x-r*1.6,y:p.y-r*1.4,w:r*3.2,h:r*2.8})}}
+function tissueTap(){S.tissues=Math.max(0,(S.tissues||0)-1);snd('pop');toast(pick(['Taschentuch entsorgt. Mit spitzen Fingern.','Weg damit. Das Ding war schon steif.','Ab in den Müll, du Ferkel.']),fx({chaos:-1}))}
+// ---------- Faustschlag ----------
+const PUNCHABLE={landlord:1,bailiff:1,police:1,salesman:1,pizza:1};
+let FIST=null;
+const PUNCH_FX={
+ landlord:()=>({say:'AUA! Meine Nase! Das gibt eine fristlose Kündigung, Sie Tier!',fx:fx({police:2,inkasso:1,lf:-3,bo:-35,xp:5})}),
+ bailiff:()=>({say:'Sie… Sie haben einen Beamten geschlagen! Das kommt in die Akte, mit Foto!',fx:fx({police:3,bo:-35,xp:5})}),
+ police:()=>{S.h.caught++;const f=Math.min(S.money,60);return{say:'Widerstand gegen die Staatsgewalt! Das kostet, Freundchen!',fx:fx({money:-f,police:5,bo:-30,xp:6})}},
+ salesman:()=>({say:'Mein Staubsauger! Meine Zähne! Ich komm nie wieder!',fx:fx({police:1,bo:-40,xp:5})}),
+ pizza:()=>{S.h.pizza++;return{say:'Spinnst du?! Hier, nimm die Scheißpizza, ich hau ab!',fx:fx({police:2,hu:-50,bo:-35,xp:5})}}};
+function punchOpt(who){return{t:'Auf die Fresse hauen',f:()=>{FIST={t:0,who};snd('slap');setTimeout(()=>{snd('knock');vib([80,40,160])},230);S.punches=(S.punches||0)+1;const r=PUNCH_FX[who]();r.pose='hurt';return r}}}
+function drawFist(){if(!FIST||!VISIT)return;FIST.t+=1/60;const k=Math.min(1,FIST.t/.25),b=L.visitor,vx=b.x+VISIT.x+b.w*.5,vy=b.y+b.h*.13;
+  const sx=W*.9,sy=H*1.05,x=sx+(vx+20-sx)*k,y=sy+(vy-sy)*k,sz=W*(.42-.2*k);
+  if(FIST.t<.6){cx.save();cx.translate(x,y);cx.rotate(-.5+k*.3);cx.scale(-1,1);cx.font=Math.round(sz)+'px "Apple Color Emoji","Noto Color Emoji","Segoe UI Emoji",sans-serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText('👊',0,0);cx.restore()}
+  if(FIST.t>.22&&FIST.t<.5){cx.save();cx.translate(vx,vy);cx.fillStyle='#ffe14d';cx.beginPath();for(let i=0;i<16;i++){const a=i/16*Math.PI*2,r=i%2?W*.05:W*.12;cx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}cx.fill();cx.fillStyle='#d22';cx.font='900 '+Math.round(W*.06)+'px "Lilita One",sans-serif';cx.textAlign='center';cx.fillText('BAM!',0,W*.02);cx.restore()}
+  if(FIST.t>1)FIST=null}
+function drawHurt(rect){// blaues Auge + blutige Nase auf das Besucherbild malen
+  const fx0=rect.x+rect.w*.5,fy=rect.y+rect.h*.12,s=rect.w*.08;cx.save();cx.globalAlpha=.75;ell(fx0-s*.9,fy-s*.2,s*.75,s*.55,'#3b2a6b');ell(fx0-s*.9,fy-s*.2,s*.45,s*.3,'#1e1440');cx.globalAlpha=1;cx.fillStyle='#b3121b';cx.beginPath();cx.ellipse(fx0+s*.15,fy+s*.8,s*.18,s*.5,0,0,7);cx.fill();cx.fillRect(fx0+s*.05,fy+s*.8,s*.2,s*1.2);cx.restore()}
+// ---------- Besucher-Rotation ----------
+const EV_WHO={landlord:'landlord',lfriend:'landlord',kowkrach:'kowalski',kowflirt:'kowalski',kowbeer:'kowalski',kowgift:'kowalski',uwe:'uwe',kevin:'kevin',pizza:'pizza',brandt:'brandt',brandtstreit:'brandt',parcel:'parcel',salesman:'salesman',bailiff:'bailiff',police:'police',jobcenter:'jobcenter',jessica:'jessica'};
+let EVH=[],WHOH=[];
+function pickEvent(ok){const free=ok.filter(e=>!EVH.slice(-5).includes(e.id)&&!(EV_WHO[e.id]&&WHOH.slice(-4).includes(EV_WHO[e.id])));const pool=free.length?free:ok.filter(e=>!EVH.slice(-1).includes(e.id));
+  const lastWasVisit=EVH.length&&EV_WHO[EVH[EVH.length-1]];const wts=pool.map(e=>{let w=1;if(EV_WHO[e.id]){const n=WHOH.filter(x=>x===EV_WHO[e.id]).length;w=1.4/(1+n*.7);if(lastWasVisit)w*=.6}if(e.id==='call')w=.9;return w});
+  let r=Math.random()*wts.reduce((a,b)=>a+b,0);for(let i=0;i<pool.length;i++){r-=wts[i];if(r<=0)return pool[i]}return pool[pool.length-1]}
+function noteEvent(e){EVH.push(e.id);if(EVH.length>12)EVH.shift();if(EV_WHO[e.id]){WHOH.push(EV_WHO[e.id]);if(WHOH.length>10)WHOH.shift()}}
+// ---------- Klatsch-Werkzeug ----------
+function drawSwatTool(kind,x,y,since){const slap=since<.16?(1-since/.16):0;const ang=-.9*slap;mc.save();mc.translate(x,y);mc.rotate(ang);const big=Math.min(mcv.width,mcv.height);
+  if(kind==='roach'){const L2=big*.36,R2=big*.05;mc.rotate(-.6);const g=mc.createLinearGradient(0,-R2,0,R2);g.addColorStop(0,'#eee8da');g.addColorStop(.5,'#d8d0bd');g.addColorStop(1,'#a9a08b');mc.fillStyle=g;mc.beginPath();mc.roundRect?mc.roundRect(-R2,-R2,L2,R2*2,R2*.6):mc.rect(-R2,-R2,L2,R2*2);mc.fill();
+    mc.strokeStyle='#555';mc.lineWidth=1;for(let i=1;i<6;i++){mc.beginPath();mc.moveTo(-R2+i*L2/7,-R2*.8);mc.lineTo(-R2+i*L2/7+6,R2*.8);mc.stroke()}mc.fillStyle='#222';mc.font='900 '+Math.round(R2*.9)+'px Nunito,sans-serif';mc.fillText('BILD',L2*.35,R2*.32);ell2(-R2*.2,0,R2*.5,R2,'#cfc6b0')}
+  else{const sw=SP.swatter;const sz=big*.42;if(sw&&sw.naturalWidth){mc.rotate(-.35);mc.drawImage(sw,-sz*.25,-sz*.25,sz*.5,sz)}else{mc.fillStyle='#d33';mc.fillRect(-sz*.15,-sz*.15,sz*.3,sz*.3);mc.fillRect(-sz*.02,sz*.15,sz*.04,sz*.6)}}
+  mc.restore();function ell2(x2,y2,rx,ry,f){mc.fillStyle=f;mc.beginPath();mc.ellipse(x2,y2,rx,ry,0,0,7);mc.fill()}}
+
+// ---------- Stereoanlage ----------
+let MUS=null,stereoN=0;
+const STEREO_T=['Anlage aus. Die ganze Straße atmet auf.','Leise Mucke. Langweilig wie dein Leben, aber nachbarfreundlich.','VOLLE PULLE! Die Gläser im Schrank wackeln, Kowalskis Gebiss auch.'];
+function stereoTap(){S.stereo=((S.stereo||0)+1)%3;snd('plop');toast(STEREO_T[S.stereo]);musicSet()}
+function musicSet(){const v=S.stereo||0;if(!AC||!soundOn||!v||document.hidden){if(MUS){clearInterval(MUS.iv);try{MUS.g.disconnect()}catch(e){}MUS=null}return}
+  if(!MUS){const g=AC.createGain();g.connect(AC.destination);MUS={g,step:0,next:AC.currentTime+.05,iv:setInterval(musSched,40)}}
+  MUS.g.gain.setTargetAtTime(v===2?.22:.05,AC.currentTime,.1)}
+const BASS=[41,41,0,41,44,0,39,0,41,41,0,46,44,0,39,36];
+function musSched(){if(!MUS)return;const st=.13;while(MUS.next<AC.currentTime+.15){const t=MUS.next,i=MUS.step%16,g=MUS.g;
+  if(i%4===0){const o=AC.createOscillator(),e=AC.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(40,t+.12);e.gain.setValueAtTime(1,t);e.gain.exponentialRampToValueAtTime(.001,t+.18);o.connect(e);e.connect(g);o.start(t);o.stop(t+.2)}
+  if(i%8===4||i%2===1){const n=AC.createBufferSource(),len=AC.sampleRate*.06|0,b=AC.createBuffer(1,len,AC.sampleRate),d=b.getChannelData(0);for(let k=0;k<len;k++)d[k]=(Math.random()*2-1)*(1-k/len);n.buffer=b;const e=AC.createGain(),f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=i%8===4?1200:6000;e.gain.value=i%8===4?.7:.18;n.connect(f);f.connect(e);e.connect(g);n.start(t)}
+  if(BASS[i]){const o=AC.createOscillator(),e=AC.createGain();o.type='sawtooth';o.frequency.value=440*Math.pow(2,(BASS[i]-69+12)/12);e.gain.setValueAtTime(.35,t);e.gain.exponentialRampToValueAtTime(.001,t+st*.9);const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=500;o.connect(f);f.connect(e);e.connect(g);o.start(t);o.stop(t+st)}
+  MUS.next+=st;MUS.step++}}
+document.addEventListener('visibilitychange',()=>musicSet());
+const LOUD_L=[
+ 'MACH DEN SCHEISS LEISER, du asozialer Bassbomber! Mein Wellensittich ist tot umgefallen!',
+ 'Ich hör deine Drecksmucke durch drei Wände, du gehirnamputierter Ghettoblaster! Leiser oder ich schneid dir das Kabel ab – und was anderes gleich mit!',
+ 'Es ist mir scheißegal, ob das „Kunst“ ist! Noch ein Bums und ich steh mit der Axt vor deiner Tür, du versiffte Lautsprecherbox!',
+ 'Mein Kind kann nicht schlafen, mein Mann kann nicht schlafen, und ich überleg grad, wie lang man für Totschlag sitzt!'];
+function stereoTick(dt){if(!S.furn.stereo){if(S.stereo){S.stereo=0;musicSet()}return}
+  if(S.stereo===2){const night=S.hour>=22||S.hour<6;S.loud=(S.loud||0)+dt*(night?2:1);S.bo=Math.max(0,S.bo-dt*.5)}else{S.loud=Math.max(0,(S.loud||0)-dt*.4);if(S.stereo===1)S.bo=Math.max(0,S.bo-dt*.12)}
+  if(S.loud>45&&!VISIT&&!CARD&&!CALL&&!busyUI&&!PUKE){S.loud=20;stereoN++;S.h.neighbor++;
+    if(stereoN>=3&&Math.random()<.6){stereoN=0;CUR_EV='stereo';visit('police','Ruhestörung. Drei Anzeigen in einer Stunde. Der Bass kommt bis aufs Revier, Sie akustischer Sondermüll.',[
+      {t:'Sofort leiser (40 €)',f:()=>{S.stereo=0;musicSet();const f=Math.min(S.money,40);return{say:'Geht doch. Nächstes Mal nehmen wir die Anlage mit – und dich gleich dazu.',fx:fx({money:-f,police:1}),pose:2}}},
+      {t:'„Welche Musik?“',f:()=>{S.stereo=0;musicSet();const f=Math.min(S.money,80);return{say:'Witzig. 80 Euro und die Sicherung nehm ich mit, du Clown.',fx:fx({money:-f,police:3}),pose:1}}}]);return}
+    CUR_EV='stereo';const who=Math.random()<.5?'brandt':'kowalski';visit(who,pick(LOUD_L),[
+      {t:'Leiser machen',f:()=>{S.stereo=1;musicSet();return{say:pick(['Na also. Und jetzt verpiss dich zurück auf dein Schimmelsofa.','Danke. War das so schwer, du Hirnschwamm?']),fx:fx({neighbor:-1}),pose:2}}},
+      {t:'Noch lauter drehen',f:()=>{S.loud=35;return{say:pick(['Das wirst du bereuen, du Wichser! Ich ruf die Bullen!','Gut. Dann lernst du jetzt meinen Anwalt kennen. Und meinen Schwager.']),fx:fx({neighbor:2,police:1,bo:-10,xp:3}),pose:1}}},
+      {t:'Tür zuknallen',f:()=>{return{say:'BUMM. Durchs Holz hört man noch: „…verrecken sollst du!“',fx:fx({neighbor:1,bo:-5}),pose:1}}}])}}
+function drawStereo(t){if(!S.furn.stereo||!L.stereo)return;const b=L.stereo,on=S.stereo||0,beat=on?Math.abs(Math.sin(t*(on===2?8:4))):0;
+  const sw=b.w*.24,sh=b.h*(.95+(on===2?beat*.05:0));
+  for(const sx of[b.x,b.x+b.w-sw]){rr(sx,b.y+b.h-sh,sw,sh,3,'#1b1b1d');ell(sx+sw/2,b.y+b.h-sh*.62,sw*.36*(1+(on===2?beat*.12:0)),sw*.36*(1+(on===2?beat*.12:0)),'#333');ell(sx+sw/2,b.y+b.h-sh*.62,sw*.14,sw*.14,'#555');ell(sx+sw/2,b.y+b.h-sh*.2,sw*.16,sw*.12,'#2a2a2a')}
+  const ux=b.x+sw+b.w*.03,uw=b.w-2*sw-b.w*.06,uh=b.h*.7;rr(ux,b.y+b.h-uh,uw,uh,3,'#2b2b30');cx.fillStyle='#111';cx.fillRect(ux+uw*.08,b.y+b.h-uh*.85,uw*.84,uh*.32);
+  for(let i=0;i<8;i++){const lv=on?(.25+.75*Math.abs(Math.sin(t*(3+i*1.7)+i))):.05;cx.fillStyle=i<5?'#3ddc6a':i<7?'#ffd23d':'#ff4040';const bh=uh*.28*lv;cx.fillRect(ux+uw*.1+i*uw*.1,b.y+b.h-uh*.55-bh,uw*.07,bh)}
+  ell(ux+uw*.5,b.y+b.h-uh*.25,uh*.13,uh*.13,'#888');cx.fillStyle=on?'#ff3030':'#400';cx.fillRect(ux+uw*.1,b.y+b.h-uh*.2,uw*.06,uh*.08);
+  hit('stereo',b)}
 // ================= HUD =================
 function setNeed(id,v,label){const el=$(id);el.classList.toggle('hot',v>=80);el.querySelector('i').style.width=v+'%';el.querySelector('.lab span:last-child').textContent=label!==undefined?label:Math.round(v)}
 var warnT={th:0,hu:0,bo:0};
@@ -1104,7 +1264,7 @@ function hud(){if(S.lvl>=20&&!S.furn.lava)S.furn.lava=true;if(S.lvl>=50&&!S.furn
   
   setNeed('nTh',S.th);setNeed('nHu',S.hu);setNeed('nBo',S.bo);const b=S.bottle;setNeed('nBe',b?b.sips/3*100:0,b?(b.sips?Math.round(b.sips/3*100)+'%':'leer'):'–');
   const bits=['<b>'+eur(S.money)+'</b>','Bier <b>'+S.beer+'</b>','Snacks <b>'+S.snacks+'</b>','Kippen <b>'+S.cigs+'</b>','Tag <b>'+S.day+'</b> <b>'+hourStr()+'</b>','<b>'+S.prom.toFixed(2).replace('.',',')+' ‰</b>','Leergut <b>'+S.empties+'</b>','Korb <b>'+S.basket+'</b>','Chaos <b>'+Math.round(S.chaos)+'</b>'];
-  if(S.hang>0)bits.push('Kater <b>'+'●'.repeat(S.hang)+'</b>');if(S.mold>0)bits.push('Schimmel <b>'+S.mold+'</b>');if(S.h.police>=3)bits.push('<b style="color:var(--red)">Polizei '+S.h.police+'</b>');if(S.h.cutDays>0)bits.push('Kürzung');
+  bits.push('Gestank <b>'+Math.round(S.dirt||0)+'</b>');if(S.furn.stash)bits.push('Versteck <b>'+eur(S.stash||0)+'</b>');if(withdrawal().v>.2)bits.push('<b style="color:var(--red)">Entzug</b>');if(S.hang>0)bits.push('Kater <b>'+'●'.repeat(S.hang)+'</b>');if(S.mold>0)bits.push('Schimmel <b>'+S.mold+'</b>');if(S.h.police>=3)bits.push('<b style="color:var(--red)">Polizei '+S.h.police+'</b>');if(S.h.cutDays>0)bits.push('Kürzung');
   $('info').innerHTML=bits.join(' · ');$('bSleep').disabled=!canSleep();$('bDiary').textContent=S.diaryNew?'📖•':'📖';
   $('hint').textContent=busyUI?'':hintText()}
 // ================= LOOP =================
@@ -1113,7 +1273,7 @@ function frame(now){const dtr=Math.min(.1,(now-lastT)/1000);lastT=now;const t=no
   try{
   if(MG&&MG.step){mc.clearRect(0,0,mcv.width,mcv.height);MG.step(dtr)}
   if(!busyUI&&S.started){advance(dtr);
-    holdTick();eventTick(dtr);
+    holdTick();eventTick(dtr);moreTick(dtr);
     // TV ads / night / film
     if(tvState.film!==null){S.bo-=1.6*dtr;if(S.tot-tvState.filmStart>=56){S.st.films++;addXP(12);toast('Abspann. Großes Kino.','XP +12');tvState.film=null;checkAch()}
       if(!tvState.brandtDone&&S.tot-tvState.filmStart>20){tvState.brandtDone=true;if(Math.random()<.25){snd('knock');S.h.neighbor++;toast('Herr Brandt hämmert an die Wand: „DAS HÖRT MAN BIS HIER!“','Nachbar +1')}}}
@@ -1137,7 +1297,7 @@ function frame(now){const dtr=Math.min(.1,(now-lastT)/1000);lastT=now;const t=no
   HITS=[];cx.save();
   if(PUKE){const k=PUKE.t;const sh=k<.55?k*16:k<1.9?7:Math.max(0,7-(k-1.9)*10);cx.translate(R(-sh,sh),R(-sh,sh)+(k>.4&&k<1.9?6:0));const sq=k<.55?1-k*.04:1;cx.translate(W/2,H/2);cx.scale(1,sq);cx.translate(-W/2,-H/2)}
   if(S.prom>=1.1){const k=Math.min(1,(S.prom-1)/1.5);cx.translate(W/2,H/2);cx.rotate(Math.sin(t*.9)*.015*k);cx.translate(-W/2+Math.sin(t*.7)*6*k,-H/2)}
-  pukeTick(Math.min(.05,dtr));drawRoom(t);drawVisitor(t);drawTable(t);drawHands(t);smokeTick(t);drawOverlay(t);drawPuke(t);cx.restore();
+  pukeTick(Math.min(.05,dtr));drawRoom(t);drawVisitor(t);drawTable(t);drawHands(t);smokeTick(t);drawOverlay(t);drawPuke(t);drawFist();cx.restore();
   hud()}catch(err){console.error(err)}
   requestAnimationFrame(frame)}
 
@@ -1146,12 +1306,13 @@ $('bMenu').onclick=()=>{initAudio();snd('pop');pauseMenu()};
 $('bSnack').onclick=()=>{initAudio();if(!busyUI)eatSnack()};
 $('bShop').onclick=()=>{initAudio();snd('pop');shopMenu()};
 $('bDiary').onclick=()=>{initAudio();snd('pop');diaryMenu()};
+$('bWash').onclick=()=>{initAudio();snd('pop');if(!busyUI)washMenu()};
 $('bSleep').onclick=()=>{initAudio();if(!busyUI)sleep()};
 $('lvl').onclick=()=>{const n=performance.now();if(n-adminT>1500)adminTaps=0;adminT=n;if(++adminTaps>=5){adminTaps=0;adminMenu()}};
 window.addEventListener('resize',()=>{layout();if(VISIT)placeBubble()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){save();if(!busyUI&&S.started)pauseMenu()}});
 window.addEventListener('pagehide',save);
-layout();try{window.__dbg={L:()=>L,W:()=>W,H:()=>H}}catch(e){}
+layout();try{window.__dbg={L:()=>L,W:()=>W,H:()=>H,ev:id=>{CUR_EV=id;EVENTS.find(e=>e.id===id).run()},swat:(k,t)=>swat(k,t),S:()=>S}}catch(e){}
 loadSprites().then(()=>{});
 mainMenu();
 requestAnimationFrame(frame);
