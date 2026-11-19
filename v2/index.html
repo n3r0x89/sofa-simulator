@@ -142,7 +142,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=77;
+const APPVER=78;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -240,13 +240,13 @@ function T(k){const v=TX[k];return Array.isArray(v)?pick(v):v}
 
 // ---------- UI helpers ----------
 let toastT=0,toastQ=[],toastBusy=false,toastPrio=false;
-function toast(msg,sub,long){const item={msg:slur(msg),sub,dur:long||(msg.length>70?4200:2200),prio:!!long||msg.length>70};
+function toast(msg,sub,long){const item={msg:slur(msg),sub,dur:Math.max(long||0,Math.min(7000,2800+msg.length*45+(sub?String(sub).length*20:0))),prio:!!long||msg.length>70};
   if(toastBusy&&toastPrio){toastQ.push(item);if(toastQ.length>3)toastQ.shift();return}
   if(toastBusy&&item.prio){toastQ.unshift(item);showToast(toastQ.shift());return}
   showToast(item)}
 function visitOpen(){try{return !!(VISIT||CARD)}catch(e){return false}}
 function showToast(it){if(visitOpen()){toastQ.unshift(it);if(toastQ.length>4)toastQ.length=4;toastBusy=false;toastPrio=false;clearTimeout(toastT);toastT=setTimeout(()=>{if(toastQ.length)showToast(toastQ.shift())},900);return}const el=$('toast');el.innerHTML=it.msg+(it.sub?'<small>'+it.sub+'</small>':'');el.classList.add('on');toastBusy=true;toastPrio=it.prio;clearTimeout(toastT);
-  toastT=setTimeout(()=>{if(toastQ.length){showToast(toastQ.shift())}else{el.classList.remove('on');toastBusy=false;toastPrio=false}},toastQ.length?Math.min(it.dur,1800):it.dur)}
+  toastT=setTimeout(()=>{if(toastQ.length){showToast(toastQ.shift())}else{el.classList.remove('on');toastBusy=false;toastPrio=false}},toastQ.length?Math.min(it.dur,3000):it.dur)}
 function fxStr(o){const N={money:['Geld',v=>(v>0?'+':'−')+eur(Math.abs(v))],beer:['Bier'],snacks:['Snacks'],cigs:['Kippen'],th:['Durst'],hu:['Hunger'],bo:['Langeweile'],chaos:['Chaos'],prom:['Promille',v=>(v>0?'+':'−')+Math.abs(v).toFixed(2)+'‰'],xp:['XP'],nice:['Ruf'],neighbor:['Nachbar'],police:['Polizei'],jc:['Jobcenter'],inkasso:['Inkasso'],lf:['Vermieter'],empties:['Leergut']};
   return Object.entries(o).filter(([k,v])=>v&&N[k]).map(([k,v])=>N[k][0]+' '+(N[k][1]?N[k][1](v):(v>0?'+':'−')+Math.abs(Math.round(v*10)/10))).join(' · ')}
 function fx(o){for(const[k,v]of Object.entries(o)){if(!v)continue;
@@ -742,8 +742,8 @@ function eatSnack(){if(S.snacks<=0){toast('Keine Snacks mehr, du verfressenes Sc
 function zap(dir){if(S.right!=='remote')return;if(S.prom>=1.4&&Math.random()<.35){dir=-dir;toast('Falsche Richtung, du besoffener Daumenlutscher.')}
   stopFilm(true);S.ch=(S.ch+dir+CH.length)%CH.length;tvState.chStart=S.tot;tvState.zapFx=S.tot+.35;tvState.night=isNight()&&Math.random()<.4;tvState.nightLine++;snd('stat');
   S.bo-=6;addXP(.5);S.st.zaps.push(S.tot);S.st.zaps=S.st.zaps.filter(z=>S.tot-z<300);schnitzelT=0;clampAll();doneHint('zap');checkAch()}
-function cleanStain(s,k){s.taps=(s.taps||0)+1;snd('slap');vib(20);const need=k==='stain'?2:1;if(s.taps>=need){const a=k==='stain'?S.stains:S.splats;a.splice(a.indexOf(s),1);S.st.clean=(S.st.clean||0)+1;toast(pick(k==='stain'?['Bierfleck weggeschrubbt. Die Tapete hat trotzdem ein Trauma.','Weg ist er. Fast. Ein Schatten bleibt, wie bei dir.','Mit Spucke und Ärmel. Profi-Reinigung nach Assi-Art.']:['Fliegenleiche abgekratzt. Mit dem Fingernagel. Lecker.','Kakerlaken-Matsch weg. Den Finger leckst du hoffentlich nicht ab.','Weggewischt. Die Verwandtschaft des Opfers schaut zu.']),fx({chaos:-1,xp:1}));checkAch()}else toast('Noch einmal schrubben …')}
-function cleanPuddle(p){p.taps++;snd('slap');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;toast(pick(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.']),fx({chaos:-3,xp:2}));checkAch()}}
+function cleanStain(s,k){s.taps=(s.taps||0)+1;snd('slap');vib(20);const need=k==='stain'?2:1;if(s.taps>=need){const a=k==='stain'?S.stains:S.splats;a.splice(a.indexOf(s),1);S.st.clean=(S.st.clean||0)+1;cleanDone(['Die Bude glänzt. Also für deine Verhältnisse.','Kein Fleck, kein Matsch, keine Kotze. Deine Mutter würde weinen vor Glück.','Sauber wie nie. Die Kakerlaken ziehen beleidigt aus.'],{chaos:-1,xp:1});checkAch()}}
+function cleanPuddle(p){p.taps++;snd('slap');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;cleanDone(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.'],{chaos:-3,xp:2});checkAch()}}
 function promCheck(){
   if(S.prom>=1.1&&!S.taskDone&&!busyUI){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
   if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
@@ -790,7 +790,7 @@ function tap(id,p){
   // puddles
   for(const pd of S.puddles){if(Math.hypot(p.x-pd.x,(p.y-pd.y)*2)<46){cleanPuddle(pd);return}}
   // Taschentücher und Flecken an der Wand
-  {const th=HITS.find(h=>h.id==='tissue'&&p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h);if(th&&S.tissues>0)return tissueTap()}
+  {const th=HITS.find(h=>h.id==='tissue'&&p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h);if(th&&S.tissues>0)return tissueTap(th.ti)}
   if(!id||id==='wall'){for(const st of S.stains){if(Math.hypot(p.x-st.x,p.y-st.y)<34){return cleanStain(st,'stain')}}
     for(const sp of S.splats){if(Math.hypot(p.x-sp.x,p.y-sp.y)<24){return cleanStain(sp,'splat')}}}
   // furniture
@@ -999,14 +999,14 @@ function closeModal(){M.style.display='none';busyUI=false;if(S.right==='phone'||
 function bindAll(map){for(const[sel,fn]of Object.entries(map))M.querySelectorAll(sel).forEach(el=>el.onclick=()=>{initAudio();snd('pop');fn(el)})}
 const closeBtn='<button class="btn close" data-x>Zurück</button>';
 
-function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.naturalWidth?'<img src="sprites/splash.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':''}<div class="menuT">Assi<br>Simulator</div><div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div><div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER}</div>
+function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.naturalWidth?'<img src="sprites/splash.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':''}<div class="menuT">Assi<br>Simulator</div><div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER}</div>
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
  <button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
-  if(a==='go'){S.started=true;closeModal();showDay()}
-  if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>{const snd0=soundOn;S=fresh();S.started=true;layout();save();closeModal();toast('Tag 1. Du sitzt auf dem Sofa. Für immer.')},mainMenu);
+  if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay()});S.started=true;closeModal();showDay()}
+  if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg. Dein Name '+(assiName()||'')+' bleibt.',()=>{const snd0=soundOn;S=fresh();S.name=assiName();S.started=true;layout();save();closeModal();toast('Tag 1. Du sitzt auf dem Sofa. Für immer.')},mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='idea')ideaMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
@@ -1160,6 +1160,19 @@ function questTick(){if(!S.started||busyUI)return;if(!S.quests||!S.quests.list){
 function questMenu(back){if(!S.quests||!S.quests.list)newQuests();
   openModal(`<h2>Aufgaben</h2><p>Drei Aufgaben. Jede bringt XP und ein bisschen Geld. Sind alle drei erledigt, gibt’s einen Bonus und drei neue.</p><div class="list">${S.quests.list.map(q=>{const Q=QUESTS.find(x=>x.k===q.k),pr=Math.min(q.n,Math.max(0,Q.g()-q.base));return`<div class="row${q.done?' off':''}"><div class="t"><b>${q.done?'✔ ':''}${esc(qn(Q,q.n))}</b><span>${pr} / ${q.n} · XP +${q.xp} · ${eur(q.money)}</span></div></div>`}).join('')}</div>${S.quests.bonus?'<p><b>Bonus kassiert.</b></p>':''}<div class="list"><button class="btn" data-q="back">Zurück</button></div>`,()=>bindAll({'[data-q]':()=>back?back():closeModal()}))}
 setInterval(()=>{try{questTick()}catch(e){}},1500);
+
+// ---------- Name des Assis (bleibt fest, für das spätere Ranking) ----------
+function assiName(){let n=S&&S.name;if(!n){try{n=localStorage.getItem('sofasim_name')||''}catch(e){}if(n&&S)S.name=n}return n||''}
+function nameMenu(then){openModal(`<div class="sugg"><h2>Wie heißt dein Assi?</h2><p>Der Name steht später im Ranking und bleibt für immer. Also überleg dir was Gutes. Oder was Peinliches.</p>
+  <input id="nameIn" maxlength="20" autocomplete="off" placeholder="z. B. Kalle Kotzbrocken" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid #6a5546;background:#1d1510;color:#f4e9dc;font:800 18px Nunito,sans-serif">
+  <p id="nameErr" style="color:#e66;font-size:13px;min-height:16px"></p><div class="list"><button class="btn pri" data-n="ok">Los geht’s</button><button class="btn" data-n="rnd">Zufallsname</button></div></div>`,()=>{
+  const inp=document.getElementById('nameIn');setTimeout(()=>{try{inp.focus()}catch(e){}},200);
+  const RN=['Kalle Kotzbrocken','Dieter Dosenbier','Ronny Ranzig','Uwe Unterhemd','Heinz Hartgeld','Manni Mundgeruch','Bodo Bierbauch','Kevin Kippenkönig','Olaf Ochsenfrosch','Siggi Sofapilz','Jürgen Jogginghose','Horst Hackedicht'];
+  bindAll({'[data-n]':el=>{if(el.dataset.n==='rnd'){inp.value=pick(RN);return}
+    const v=inp.value.replace(/\s+/g,' ').trim();const err=document.getElementById('nameErr');
+    if(v.length<2){err.textContent='Mindestens 2 Zeichen, du Analphabet.';snd('bad');return}
+    if(!/^[A-Za-zÄÖÜäöüß0-9 ._\-]+$/.test(v)){err.textContent='Nur Buchstaben, Zahlen, Leerzeichen, Punkt, Strich.';snd('bad');return}
+    S.name=v;try{localStorage.setItem('sofasim_name',v)}catch(e){}save();snd('lvl');toast('Willkommen, '+v+'. Das Sofa wartet.','',3000);then&&then()}})})}
 // ================= MINIGAMES =================
 const MI=$('mini'),mcv=$('minicv'),mc=mcv.getContext('2d'),mui=$('miniui'),mbt=$('minibtns');
 let MG=null;
@@ -1240,7 +1253,7 @@ const SELF={
 const selfEl=document.createElement('div');selfEl.id='self';document.getElementById('stage').appendChild(selfEl);
 let selfT=0,selfNext=R(40,80),lastSelf='';
 function say(kind,force){if(!force&&(VISIT||CARD||busyUI||PUKE))return;let l=pick(SELF[kind]);if(l===lastSelf)l=pick(SELF[kind]);lastSelf=l;
-  selfEl.innerHTML='<b>Du:</b> '+esc(slur(l));selfEl.classList.add('on');clearTimeout(selfT);selfT=setTimeout(()=>selfEl.classList.remove('on'),3800)}
+  selfEl.innerHTML='<b>Du:</b> '+esc(slur(l));selfEl.classList.add('on');clearTimeout(selfT);selfT=setTimeout(()=>selfEl.classList.remove('on'),5200)}
 // ---------- Entzug ----------
 function withdrawal(){const b=S.tot-(S.lastBeer||0),c=S.tot-(S.lastCig||0);const wb=clamp((b-200)/120,0,1),wc=clamp((c-150)/100,0,1);return{b:wb,c:wc,v:Math.max(wb,wc)}}
 let whineT=0;
@@ -1273,7 +1286,7 @@ function drawStash(){if(!S.furn.stash||!L.stash)return;const b=L.stash;if(SP.sta
 // ---------- Schmuddelheft ----------
 function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.right!=='empty'){toast(T('busy'));return}if(S.tot<S.magCd){toast(pick(['Schon wieder? Dein Schwanz hat Urlaub beantragt.','Gib ihm ’ne Pause, der ist wund gescheuert.','Noch nicht. Selbst Kaninchen machen mal Pause.','Der Kleine liegt noch im Koma. Lass ihn schlafen.'])+' (noch '+Math.ceil((S.magCd-S.tot)/10)+' Std.)');return}
   busyUI=true;S.magCd=S.tot+60;S.magUses=(S.magUses||0)+1;MAGA={t:0,page:0,pow:0};snd('plop');const cv=document.getElementById('cv'),T0=[];const at=(ms,f)=>T0.push(setTimeout(f,ms));
-  const sx=l=>{selfEl.innerHTML='<b>Du:</b> '+esc(l);selfEl.classList.add('on');clearTimeout(selfT);selfT=setTimeout(()=>selfEl.classList.remove('on'),2600)};
+  const sx=l=>{selfEl.innerHTML='<b>Du:</b> '+esc(l);selfEl.classList.add('on');clearTimeout(selfT);selfT=setTimeout(()=>selfEl.classList.remove('on'),4200)};
   sx(pick(['Mal gucken, was der Busen-Express diesen Monat so bringt…','So. Hose auf, Hirn aus.','Kurz Druck ablassen. Medizinisch notwendig.']));
   at(1200,()=>{MAGA.page=1;snd('plop');sx(pick(['Seite 34… Gisela, 71, aus Castrop-Rauxel. Ohhh Gisela…','Uiii, die Doppelseite. Mit Ausklapper.','Die Lesebrille… wo ist die Lesebrille… egal, Fantasie reicht.']))});
   at(2000,()=>{cv.classList.add('jig');MAGA.pow=1;vib([30,60,30,60,30])});
@@ -1286,9 +1299,9 @@ function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.r
       const fl=document.createElement('div');fl.className='flash';document.getElementById('stage').appendChild(fl);setTimeout(()=>fl.remove(),700);
       sx(pick(['UUUAAAHHH!','Hach… Gisela…','HALLELUJA!']))});
   at(6200,()=>{MAGA=null;const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
-  setTimeout(()=>{advance(2.5);S.tissues=Math.min(9,(S.tissues||0)+RI(2,4));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
+  setTimeout(()=>{advance(2.5);addTissues(RI(2,4));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
     toast(pick(['Fertig. Die Taschentücher kleben am Tisch fest.','Erledigt. Das war das Produktivste heute.','Kowalski klopft an die Wand: „Gesundheit!“','Gekommen, gesehen, Taschentuch verbraucht.','Der Fernseher hat weggeguckt. Die Kakerlaken nicht.','Seite 34 klebt jetzt an Seite 35. Für immer.']),fx({bo:-60,xp:4}));S.dirt=clamp(S.dirt+6,0,100);
-    if((S.magUses||0)>=4){setTimeout(()=>{S.mag=false;S.magUses=0;snd('plop');toast(pick(['Das Heft ist durch. Die Seiten kleben zu einem Ziegelstein zusammen. Ab in den Müll.','Busen-Express Nr. 47 hat fertig. Würdevoll im Mülleimer bestattet.','Die Gisela erkennt man nicht mehr. Heft weggeworfen, neues gibt’s am Kiosk.']),'Neues Heft im Shop kaufen',4500)},4200)}setTimeout(()=>{selfEl.innerHTML='<b>Du:</b> '+esc(pick(['Jetzt ’ne Kippe. Das gehört sich so.','Ich bin so müde, ich könnt im Stehen pennen. Gut, dass ich sitz.','Wenn das die Gisela wüsste…']));selfEl.classList.add('on');setTimeout(()=>selfEl.classList.remove('on'),3500)},900)},2600)})}
+    if((S.magUses||0)>=4){setTimeout(()=>{S.mag=false;S.magUses=0;snd('plop');toast(pick(['Das Heft ist durch. Die Seiten kleben zu einem Ziegelstein zusammen. Ab in den Müll.','Busen-Express Nr. 47 hat fertig. Würdevoll im Mülleimer bestattet.','Die Gisela erkennt man nicht mehr. Heft weggeworfen, neues gibt’s am Kiosk.']),'Neues Heft im Shop kaufen',4500)},4200)}setTimeout(()=>{selfEl.innerHTML='<b>Du:</b> '+esc(pick(['Jetzt ’ne Kippe. Das gehört sich so.','Ich bin so müde, ich könnt im Stehen pennen. Gut, dass ich sitz.','Wenn das die Gisela wüsste…']));selfEl.classList.add('on');setTimeout(()=>selfEl.classList.remove('on'),5000)},900)},2600)})}
 let MAGA=null;
 function drawMagAnim(t){if(!MAGA)return;MAGA.t+=1/60;const pw=MAGA.pow||0,sp=pw===2?44:28,am=pw===2?.022:pw?.012:0,k=Math.min(1,MAGA.t/.4),w=W*.62,h=w*1.3,x=W/2,y=H*1.15-(H*.55)*k+Math.sin(t*sp)*H*am;
   cx.save();cx.translate(x,y);cx.rotate(-.05+Math.sin(t*sp)*am*1.6);const ak=MAGA.page===0?magKey():'mag_open';if(SP[ak]&&SP[ak].naturalWidth){const im=SP[ak],ww=MAGA.page===0?w:W*.94,hh=ww*im.naturalHeight/im.naturalWidth;cx.drawImage(im,-ww/2,-hh/2,ww,hh);if(MAGA.page){cx.fillStyle='#ffe14d';cx.strokeStyle='#000';cx.lineWidth=5;cx.textAlign='center';cx.font='900 '+Math.round(W*.07)+'px "Lilita One",sans-serif';const tx=MAGA.page===1?'SEITE 34 · GISELA (71)':'DOPPELSEITE!';cx.strokeText(tx,0,-hh/2-W*.03);cx.fillText(tx,0,-hh/2-W*.03)}cx.restore()}else{rr(-w/2,-h/2,w,h,8,MAGA.page===0?'#e8417a':MAGA.page===1?'#c2185b':'#ad1457');cx.fillStyle='#ffe14d';cx.textAlign='center';
@@ -1299,8 +1312,17 @@ function drawMagAnim(t){if(!MAGA)return;MAGA.t+=1/60;const pw=MAGA.pow||0,sp=pw=
     for(let i=0;i<14;i++){const a=i*2.4,r=p*W*.5;cx.fillStyle=['#ffe14d','#e8417a','#7fd3ff','#9be36b'][i%4];cx.fillRect(W/2+Math.cos(a)*r,H*.32+Math.sin(a)*r+p*p*H*.2,8,14)}}}}
 function magKey(){const n=S.magUses||0;return n>=3&&SP.mag_sticky?'mag_sticky':n>=2&&SP.mag_worn?'mag_worn':'mag'}
 function drawMag(){if(!L.roomMode)return;const m=L.mm;if(S.mag){const p=m(782,1132),w=L.bottleH*.85,h=w*1.25;cx.save();cx.translate(p.x,p.y);cx.rotate(.18);const mk=magKey();if(SP[mk]&&SP[mk].naturalWidth){spr(mk,{x:-w*.65,y:-h*1.05,w:w*1.3,h:h*1.05});cx.restore()}else{rr(-w/2,-h,w,h,3,'#e8417a');cx.fillStyle='#ffe14d';cx.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('BUSEN',0,-h*.78);cx.fillText('EXPRESS',0,-h*.6);cx.fillStyle='#111';cx.fillRect(-w*.32,-h*.45,w*.64,h*.12);cx.fillStyle='#fff';cx.font='800 '+Math.round(w*.11)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,-h*.36);cx.restore()}L.magR={x:p.x-w*.6,y:p.y-h,w:w*1.2,h:h};hit('mag',L.magR)}else L.magR=null;
-  for(let i=0;i<(S.tissues||0);i++){const p=m(700+(i*41)%120,1170+(i*29)%25),r=L.bottleH*.16;if(SP.tissue_used&&SP.tissue_used.naturalWidth){spr('tissue_used',{x:p.x-r*1.5,y:p.y-r*1.2,w:r*3,h:r*2.3});hit('tissue',{x:p.x-r*1.6,y:p.y-r*1.4,w:r*3.2,h:r*2.8});continue}cx.fillStyle='#f4f1ea';cx.beginPath();for(let k=0;k<7;k++){const a=k/7*Math.PI*2,rr2=r*(.7+((i*7+k*13)%5)/10);cx.lineTo(p.x+Math.cos(a)*rr2,p.y+Math.sin(a)*rr2*.7)}cx.fill();cx.strokeStyle='#c9c4b8';cx.lineWidth=1;cx.stroke();hit('tissue',{x:p.x-r*1.6,y:p.y-r*1.4,w:r*3.2,h:r*2.8})}}
-function tissueTap(){S.tissues=Math.max(0,(S.tissues||0)-1);snd('pop');toast(pick(['Taschentuch entsorgt. Mit spitzen Fingern.','Weg damit. Das Ding war schon steif.','Ab in den Müll, du Ferkel.']),fx({chaos:-1}))}
+  syncTissues();for(let i=0;i<S.tissuePos.length;i++){const tp=S.tissuePos[i],p=m(tp.x,tp.y),sc=tp.z==='b'?.75:tp.z==='f'?1.15:1,r=L.bottleH*.16*sc;
+    if(SP.tissue_used&&SP.tissue_used.naturalWidth){cx.save();cx.translate(p.x,p.y);cx.rotate(tp.a||0);if(tp.z==='b')cx.filter='brightness(.8)';spr('tissue_used',{x:-r*1.5,y:-r*1.2,w:r*3,h:r*2.3});cx.restore()}
+    else{cx.fillStyle='#f4f1ea';cx.beginPath();cx.ellipse(p.x,p.y,r*1.2,r*.8,0,0,7);cx.fill()}
+    HITS.push({id:'tissue',x:p.x-r*1.7,y:p.y-r*1.5,w:r*3.4,h:r*3,ti:i})}}
+const TZ={t:[[190,1062,370,1115],[490,1062,760,1115]],b:[[340,945,640,990]],f:[[300,1290,385,1335],[640,1290,705,1335]]};
+function tissueSpot(){const r=Math.random(),z=r<.45?'t':r<.7?'b':'f',zs=TZ[z],b=zs[Math.floor(Math.random()*zs.length)];return{x:R(b[0],b[2]),y:R(b[1],b[3]),z,a:R(-.6,.6)}}
+function syncTissues(){if(!Array.isArray(S.tissuePos))S.tissuePos=[];const n=S.tissues||0;while(S.tissuePos.length<n)S.tissuePos.push(tissueSpot());if(S.tissuePos.length>n)S.tissuePos.length=n}
+function addTissues(n){syncTissues();for(let i=0;i<n&&S.tissuePos.length<12;i++)S.tissuePos.push(tissueSpot());S.tissues=S.tissuePos.length}
+function tissueTap(idx){syncTissues();if(!S.tissuePos.length)return;const k=(idx!=null&&S.tissuePos[idx])?idx:S.tissuePos.length-1;S.tissuePos.splice(k,1);S.tissues=S.tissuePos.length;snd('pop');cleanDone(['Alle Wichstücher entsorgt. Mit spitzen Fingern.','Die letzten Taschentücher sind im Müll. Endlich wieder Platz zum Sündigen.'],{chaos:-1})}
+// Meldung beim Putzen nur, wenn alles sauber ist
+function cleanDone(msgs,fo){const sub=fx(fo);const left=(S.stains||[]).length+(S.splats||[]).length+(S.puddles||[]).length+(S.tissues||0);if(!left)toast('Alles sauber! '+pick(msgs),sub,3500)}
 // ---------- Faustschlag ----------
 const PUNCHABLE={landlord:1,bailiff:1,police:1,salesman:1,pizza:1};
 let FIST=null;
