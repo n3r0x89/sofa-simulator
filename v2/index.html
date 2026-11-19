@@ -890,7 +890,7 @@ const EVENTS=[
  {id:'jessica',c:()=>S.day>=2&&S.day-S.h.jessLast>=3,run:()=>{S.h.jessLast=S.day;visit('jessica',pick(['Na, Schlappschwanz? Immer noch am Sofa festgewachsen? Mein Neuer kann’s übrigens dreimal am Abend.','Ich war zufällig in der Gegend. Mit meinem Neuen. Der hat Auto, Arbeit und einen, den man ohne Lupe findet.','Hast du noch mein Glätteisen? Und Bier? Bier war ja das Einzige, was bei dir je steif war. Die Flasche.']),[
    {t:'Reinlassen',f:()=>{const tvSwap=(S.furn.tv43||S.furn.tv55)&&!S.h.jessTv;const r=tvSwap?0:RI(1,2);
      if(r===0){S.h.jessTv=true;return{say:'Ich nehm den alten Röhrenfernseher mit. Der war das Einzige hier mit Ausdauer. Tschüssi, Minipimmel!',fx:fx({bo:-5}),pose:'tv'}}
-     if(r===1)return{say:'Sie säuft zwei deiner Bier, erzählt im Detail, was ihr Neuer im Bett draufhat, und wirft dir zum Abschied eine mitleidige Kusshand zu.',fx:fx({beer:-Math.min(2,S.beer),bo:-25}),pose:'kiss'};
+     if(r===1)return{say:'Sie säuft zwei von deinen Bieren, erzählt im Detail, was ihr Neuer im Bett draufhat, und wirft dir zum Abschied eine mitleidige Kusshand zu.',fx:fx({beer:-Math.min(2,S.beer),bo:-25}),pose:'kiss'};
      return{say:'Sie macht ein Selfie mit dir im Hintergrund. Bildunterschrift: „Warum ich jetzt einen Richtigen hab“.',fx:fx({bo:-10}),pose:'selfie'}}},
    {t:'Was willst du?',f:()=>({say:'Nur gucken, ob du noch lebst. HAHAHA, und immer noch dieselbe Wampe. Ich hab damals echt nur mit dir geschlafen, weil’s dunkel war.',fx:fx({bo:5}),pose:'laugh'})},
    {t:'Verpiss dich',f:()=>{rude();return{say:'Leck mich, du Sofakartoffel mit Minischwanz!',pose:3}}}],0)}},
