@@ -137,7 +137,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=71;
+const APPVER=72;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -277,7 +277,7 @@ function advance(dt,mult=1){ // dt real seconds of game time passing
 function powerOut(){return S.tot<S.powerOutUntil}
 function newDay(){S.day++;let lines=[];
   const st=S.h.cutDays>0?3:6;S.money+=st;lines.push('Stütze +'+eur(st)+(S.h.cutDays>0?' (gekürzt)':''));if(S.h.cutDays>0)S.h.cutDays--;
-  if(S.h.police>0)S.h.police--;
+  if(S.h.police>0){S.h.police--;lines.push('Ruhiger Tag: Polizei −1')}
   if(S.h.cake){S.snacks+=2;S.h.cake=false;lines.push('Kuchen von Frau Kowalski: +2 Snacks')}
   if(S.diary<DIARY.length){S.diary++;S.diaryNew=true;lines.push('Neuer Tagebucheintrag')}
   if(S.prom>1.6){S.hang=4;lines.push('Schwerer Kater')}else if(S.prom>0.8){S.hang=Math.max(S.hang,2);lines.push('Kater')}
@@ -999,8 +999,8 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="img">Bilder laden</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
-  if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Tagesaufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
+  if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
   if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>{S=fresh();S.started=true;layout();save();closeModal();toast('Neues Spiel. Gleiches Sofa.')},pauseMenu)}}))}
 function confirmBox(q,yes,no){openModal(`<h2>Sicher?</h2><p>${esc(q)}</p><div class="list"><button class="btn red" data-y>Ja, weg damit</button><button class="btn" data-n>Nein</button></div>`,()=>bindAll({'[data-y]':yes,'[data-n]':no}))}
@@ -1052,12 +1052,15 @@ const JOBS=[
  {k:'schwarz',n:'Schwarzarbeit',d:3,r:()=>R(16,22),risk:.15,fine:20},
  {k:'klau',n:'Supermarkt-Klau',d:1,r:()=>0,risk:.25,fine:10,c:()=>S.tot>S.h.banUntil,cl:'Hausverbot',ex:()=>fx({beer:6,snacks:2})},
  {k:'rad',n:'Fahrrad klauen',d:2,r:()=>R(30,42),risk:.3,fine:40},
+ {k:'sozial',n:'Sozialstunden ableisten',d:3,r:()=>0,risk:0,legal:1,lbl:'kein Geld · Polizei −2',c:()=>S.h.police>0,cl:'Polizei kennt dich nicht',ex:()=>{S.h.police=Math.max(0,S.h.police-2);addXP(6);return'Polizei −2 · XP +6'}},
+ {k:'bribe',n:'Dorfsheriff schmieren',d:1,r:()=>0,risk:0,lbl:'25 € · Polizei −3 (riskant)',c:()=>S.h.police>0&&S.money>=25,cl:'kein Geld oder keine Akte'},
  {k:'kabel',n:'Kupferkabel',d:4,r:()=>R(80,120),risk:.4,fine:60,c:()=>S.hour>=21||S.hour<5,cl:'nur 21 bis 5 Uhr'}];
 function jobRisk(j){if(!j.risk)return 0;return Math.min(.95,j.risk+.04*S.h.police+(S.prom>=.8?.15:0)+(S.h.kowNo>=3?.05:0))}
 function openPhone(){if(CALL){busyUI=false;return answerCall()}
   openModal(`<h2>Handy</h2><p>${eur(S.money)} · ${hourStr()} Uhr · Polizei-Interesse ${S.h.police}</p><h4>Jobs</h4><div class="list">
-  ${JOBS.map((j,i)=>{const cd=(S.jobCd[j.k]||0)>S.tot,bad=j.c&&!j.c();const rk=jobRisk(j);return`<div class="row${cd||bad?' off':''}"><div class="t"><b>${j.n}</b><span>${j.d} Std. · ${j.k==='klau'?'Sixpack + 2 Snacks':j.k==='plasma'?'6,00 €':eur(j.k==='pfand'?2:j.k==='zeitung'?4.5:j.k==='floh'?3.2:j.k==='schwarz'?16:j.k==='rad'?30:80)+' +'}${rk?' · Risiko '+Math.round(rk*100)+' % / '+eur(j.fine):''}${bad?' · '+j.cl:''}${cd?' · Abkühlzeit':''}</span></div><button class="btn pri" data-j="${i}" ${cd||bad?'disabled':''}>Los</button></div>`}).join('')}</div>${closeBtn}`,()=>bindAll({'[data-j]':el=>doJob(JOBS[+el.dataset.j]),'[data-x]':()=>{closeModal()}}))}
+  ${JOBS.map((j,i)=>{const cd=(S.jobCd[j.k]||0)>S.tot,bad=j.c&&!j.c();const rk=jobRisk(j);return`<div class="row${cd||bad?' off':''}"><div class="t"><b>${j.n}</b><span>${j.d} Std. · ${j.lbl?j.lbl:j.k==='klau'?'Sixpack + 2 Snacks':j.k==='plasma'?'6,00 €':eur(j.k==='pfand'?2:j.k==='zeitung'?4.5:j.k==='floh'?3.2:j.k==='schwarz'?16:j.k==='rad'?30:80)+' +'}${rk?' · Risiko '+Math.round(rk*100)+' % / '+eur(j.fine):''}${bad?' · '+j.cl:''}${cd?' · Abkühlzeit':''}</span></div><button class="btn pri" data-j="${i}" ${cd||bad?'disabled':''}>Los</button></div>`}).join('')}</div>${closeBtn}`,()=>bindAll({'[data-j]':el=>doJob(JOBS[+el.dataset.j]),'[data-x]':()=>{closeModal()}}))}
 function doJob(j){closeModal();S.right='empty';stopFilm(true);for(let i=0;i<j.d*10;i++)advance(1);S.jobCd[j.k]=S.tot+j.d*20+40;
+  if(j.k==='bribe'){S.money-=25;if(Math.random()<.3){S.h.police+=2;S.h.caught++;snd('fail');toast('Der Beamte nimmt das Geld – und dich gleich mit aufs Revier. Bestechung, du Vollpfosten!','−25,00 € · Polizei +2',4500)}else{S.h.police=Math.max(0,S.h.police-3);snd('cash');addXP(5);toast(pick(['Ein Kasten Bier und ein Fuffi unterm Tisch – deine Akte ist plötzlich verschwunden.','Der Wachtmeister zwinkert. Deine Akte hat jetzt Kaffeeflecken. Unlesbar.','Geld weg, Akte dünner. So funktioniert Deutschland.']),'−25,00 € · Polizei −3 · XP +5',4500)}checkAch();showDay();return}
   const rk=jobRisk(j);if(j.risk)S.h.crimes++;
   if(j.risk&&Math.random()<rk){S.h.caught++;const f=Math.min(S.money,j.fine);S.money-=f;S.h.police+=2;if(j.k==='klau')S.h.banUntil=S.tot+480;snd('fail');toast('ERWISCHT bei: '+j.n+'. Du Amateur.','Strafe −'+eur(f)+' · Polizei +2',4000);checkAch();showDay();return}
   const m=Math.round(j.r()*100)/100;let extra=j.ex?j.ex():'';if(j.legal)S.h.legal++;else S.h.crimesOk++;if(j.risk)S.h.police+=1;
@@ -1124,6 +1127,27 @@ function ideaMenu(back){let draft='';try{draft=localStorage.getItem('sofasim_ide
     if(a==='copy'){try{navigator.clipboard.writeText(v+info);toast('Kopiert. Jetzt einfach irgendwo einfügen.')}catch(e){toast('Kopieren ging nicht. Markier den Text von Hand.')}return}
     if(a==='send'){const title='Vorschlag: '+v.split('\n')[0].slice(0,60);const url='https://github.com/n3r0x89/sofa-simulator/issues/new?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(v+info);
       window.open(url,'_blank');try{localStorage.removeItem('sofasim_idea')}catch(e){}toast('Danke! GitHub ist offen, dort noch auf „Submit“ tippen.','',3500);(back?back:closeModal)()}}})})}
+
+// ---------- Tagesaufgaben (XP verdienen) ----------
+const QUESTS=[
+ {k:'beer',n:'Trink {n} Bier',r:[3,6],g:()=>S.st.beers,xp:4},
+ {k:'cig',n:'Rauch {n} {Kippe|Kippen}',r:[3,6],g:()=>S.butts,xp:3},
+ {k:'clean',n:'Putz {n} {Sauerei|Sauereien} weg',r:[2,4],g:()=>S.st.clean||0,xp:6},
+ {k:'pfand',n:'Bring {n} {Pfandflasche|Pfandflaschen} weg',r:[4,9],g:()=>S.st.pfandBottles,xp:3},
+ {k:'tasks',n:'Erledige {n} {Suff-Aufgabe|Suff-Aufgaben}',r:[1,2],g:()=>S.st.tasks,xp:12},
+ {k:'film',n:'Guck {n} Film zu Ende',r:[1,1],g:()=>S.st.films,xp:15},
+ {k:'job',n:'Mach {n} {ehrlichen Job|ehrliche Jobs}',r:[1,2],g:()=>S.h.legal,xp:12},
+ {k:'game',n:'Spiel {n} {Konsolen-Spiel|Konsolen-Spiele}',r:[1,3],g:()=>S.st.games,xp:8},
+ {k:'throw',n:'Wirf {n} {Flasche|Flaschen} an die Wand',r:[2,4],g:()=>S.st.throws,xp:4},
+ {k:'tv',n:'Glotz {n} {Stunde|Stunden} Fernsehen',r:[2,4],g:()=>Math.floor(S.st.tvH),xp:5}];
+function qn(Q,n){return Q.n.replace('{n}',n).replace(/\{([^|}]*)\|([^}]*)\}/g,(m,s,pl)=>n===1?s:pl)}
+function newQuests(){const pool=QUESTS.slice().sort(()=>Math.random()-.5).slice(0,3);S.quests={day:S.day,list:pool.map(q=>{const n=RI(q.r[0],q.r[1]);return{k:q.k,n,base:q.g(),xp:Math.round(10+n*q.xp),money:Math.round(RI(2,6)),done:false}})}}
+function questTick(){if(!S.started||busyUI)return;if(!S.quests||S.quests.day!==S.day){newQuests();setTimeout(()=>toast('Neue Tagesaufgaben','Menü ☰ → Tagesaufgaben',3500),2500)}
+  for(const q of S.quests.list){if(q.done)continue;const Q=QUESTS.find(x=>x.k===q.k);if(Q&&Q.g()-q.base>=q.n){q.done=true;addXP(q.xp);S.money+=q.money;snd('lvl');toast('Tagesaufgabe geschafft: '+qn(Q,q.n),'XP +'+q.xp+' · Geld +'+eur(q.money),4000)}}
+  const all=S.quests.list.every(q=>q.done);if(all&&!S.quests.bonus){S.quests.bonus=true;addXP(40);S.money+=10;toast('Alle Tagesaufgaben erledigt! Fast schon produktiv.','Bonus: XP +40 · Geld +10,00 €',4500)}}
+function questMenu(back){if(!S.quests||S.quests.day!==S.day)newQuests();
+  openModal(`<h2>Tagesaufgaben</h2><p>Jeden Tag drei neue. Bringt XP und ein bisschen Geld. Alle drei: Bonus.</p><div class="list">${S.quests.list.map(q=>{const Q=QUESTS.find(x=>x.k===q.k),pr=Math.min(q.n,Math.max(0,Q.g()-q.base));return`<div class="row${q.done?' off':''}"><div class="t"><b>${q.done?'✔ ':''}${esc(qn(Q,q.n))}</b><span>${pr} / ${q.n} · XP +${q.xp} · ${eur(q.money)}</span></div></div>`}).join('')}</div>${S.quests.bonus?'<p><b>Bonus kassiert.</b></p>':''}<div class="list"><button class="btn" data-q="back">Zurück</button></div>`,()=>bindAll({'[data-q]':()=>back?back():closeModal()}))}
+setInterval(()=>{try{questTick()}catch(e){}},1500);
 // ================= MINIGAMES =================
 const MI=$('mini'),mcv=$('minicv'),mc=mcv.getContext('2d'),mui=$('miniui'),mbt=$('minibtns');
 let MG=null;
