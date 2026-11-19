@@ -132,7 +132,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=60;
+const APPVER=61;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -717,6 +717,7 @@ function eatSnack(){if(S.snacks<=0){toast('Keine Snacks mehr, du verfressenes Sc
 function zap(dir){if(S.right!=='remote')return;if(S.prom>=1.4&&Math.random()<.35){dir=-dir;toast('Falsche Richtung, du besoffener Daumenlutscher.')}
   stopFilm(true);S.ch=(S.ch+dir+CH.length)%CH.length;tvState.chStart=S.tot;tvState.zapFx=S.tot+.35;tvState.night=isNight()&&Math.random()<.4;tvState.nightLine++;snd('stat');
   S.bo-=6;addXP(.5);S.st.zaps.push(S.tot);S.st.zaps=S.st.zaps.filter(z=>S.tot-z<300);schnitzelT=0;clampAll();doneHint('zap');checkAch()}
+function cleanStain(s,k){s.taps=(s.taps||0)+1;snd('slap');vib(20);const need=k==='stain'?2:1;if(s.taps>=need){const a=k==='stain'?S.stains:S.splats;a.splice(a.indexOf(s),1);S.st.clean=(S.st.clean||0)+1;toast(pick(k==='stain'?['Bierfleck weggeschrubbt. Die Tapete hat trotzdem ein Trauma.','Weg ist er. Fast. Ein Schatten bleibt, wie bei dir.','Mit Spucke und Ärmel. Profi-Reinigung nach Assi-Art.']:['Fliegenleiche abgekratzt. Mit dem Fingernagel. Lecker.','Kakerlaken-Matsch weg. Den Finger leckst du hoffentlich nicht ab.','Weggewischt. Die Verwandtschaft des Opfers schaut zu.']),fx({chaos:-1,xp:1}));checkAch()}else toast('Noch einmal schrubben …')}
 function cleanPuddle(p){p.taps++;snd('slap');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;toast(pick(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.']),fx({chaos:-3,xp:2}));checkAch()}}
 function promCheck(){
   if(S.prom>=1.1&&!S.taskDone&&!busyUI){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
@@ -758,6 +759,10 @@ function holdTick(){if(!PD||busyUI)return;const now=performance.now();if(now-PD.
 function tap(id,p){
   // puddles
   for(const pd of S.puddles){if(Math.hypot(p.x-pd.x,(p.y-pd.y)*2)<46){cleanPuddle(pd);return}}
+  // Taschentücher und Flecken an der Wand
+  {const th=HITS.find(h=>h.id==='tissue'&&p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h);if(th&&S.tissues>0)return tissueTap()}
+  if(!id||id==='wall'){for(const st of S.stains){if(Math.hypot(p.x-st.x,p.y-st.y)<34){return cleanStain(st,'stain')}}
+    for(const sp of S.splats){if(Math.hypot(p.x-sp.x,p.y-sp.y)<24){return cleanStain(sp,'splat')}}}
   // furniture
   const inB=b=>b&&p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h;
   if(S.mag&&L.magR&&inB(L.magR)&&(id==='right'||id==='lefthand')&&S.right!=='cig'&&!S.bottle)return magTap();
