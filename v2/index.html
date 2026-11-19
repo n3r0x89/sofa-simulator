@@ -8,7 +8,7 @@
 <title>Assi Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
-<style>
+<style>#bQuest{position:relative}#bQuest small{position:absolute;right:3px;bottom:1px;font:800 10px Nunito,sans-serif;color:#f2c14e}
 .sideBtns{position:absolute;bottom:2.5%;display:flex;flex-direction:column;gap:10px;z-index:6;pointer-events:none}
 .sideBtns.l{left:8px}.sideBtns.r{right:8px}
 .sideBtns .btn.sm{pointer-events:auto;width:46px;height:46px;min-width:0;padding:0;border-radius:50%;font-size:22px;line-height:46px;background:rgba(28,19,13,.42);border:1px solid rgba(255,220,170,.18);box-shadow:0 2px 8px rgba(0,0,0,.25);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:.82}
@@ -116,7 +116,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
     </div>
     <button class="btn sm" id="bSnack" aria-label="Snack essen">🥨</button>
     <button class="btn sm" id="bShop" aria-label="Shop">🛒</button>
-    <button class="btn sm" id="bDiary" aria-label="Tagebuch">📖</button>
+    <button class="btn sm" id="bQuest" aria-label="Aufgaben">🎯</button><button class="btn sm" id="bDiary" aria-label="Tagebuch">📖</button>
     <button class="btn sm" id="bWash" aria-label="Körperpflege">🚿</button>
     <button class="btn sm" id="bSleep" aria-label="Schlafen">🛏</button>
     <button class="btn sm" id="bMenu" aria-label="Pause">☰</button>
@@ -142,7 +142,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=74;
+const APPVER=75;
 // ================= CORE =================
 const $=id=>document.getElementById(id);
 const R=(a,b)=>a+Math.random()*(b-a);
@@ -1004,7 +1004,7 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Tagesaufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
   if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>{S=fresh();S.started=true;layout();save();closeModal();toast('Neues Spiel. Gleiches Sofa.')},pauseMenu)}}))}
@@ -1146,12 +1146,12 @@ const QUESTS=[
  {k:'throw',n:'Wirf {n} {Flasche|Flaschen} an die Wand',r:[2,4],g:()=>S.st.throws,xp:4},
  {k:'tv',n:'Glotz {n} {Stunde|Stunden} Fernsehen',r:[2,4],g:()=>Math.floor(S.st.tvH),xp:5}];
 function qn(Q,n){return Q.n.replace('{n}',n).replace(/\{([^|}]*)\|([^}]*)\}/g,(m,s,pl)=>n===1?s:pl)}
-function newQuests(){const pool=QUESTS.slice().sort(()=>Math.random()-.5).slice(0,3);S.quests={day:S.day,list:pool.map(q=>{const n=RI(q.r[0],q.r[1]);return{k:q.k,n,base:q.g(),xp:Math.round(10+n*q.xp),money:Math.round(RI(2,6)),done:false}})}}
-function questTick(){if(!S.started||busyUI)return;if(!S.quests||S.quests.day!==S.day){newQuests();setTimeout(()=>toast('Neue Tagesaufgaben','Menü ☰ → Tagesaufgaben',3500),2500)}
+function newQuests(){const prev=S.quests?S.quests.list.map(q=>q.k):[];const pool=QUESTS.filter(q=>!prev.includes(q.k)).sort(()=>Math.random()-.5).slice(0,3);S.quests={set:((S.quests&&S.quests.set)||0)+1,list:pool.map(q=>{const n=RI(q.r[0],q.r[1]);return{k:q.k,n,base:q.g(),xp:Math.round(10+n*q.xp),money:Math.round(RI(2,6)),done:false}})}}
+function questTick(){if(!S.started||busyUI)return;if(!S.quests||!S.quests.list){newQuests()}
   for(const q of S.quests.list){if(q.done)continue;const Q=QUESTS.find(x=>x.k===q.k);if(Q&&Q.g()-q.base>=q.n){q.done=true;addXP(q.xp);S.money+=q.money;snd('lvl');toast('Tagesaufgabe geschafft: '+qn(Q,q.n),'XP +'+q.xp+' · Geld +'+eur(q.money),4000)}}
-  const all=S.quests.list.every(q=>q.done);if(all&&!S.quests.bonus){S.quests.bonus=true;addXP(40);S.money+=10;toast('Alle Tagesaufgaben erledigt! Fast schon produktiv.','Bonus: XP +40 · Geld +10,00 €',4500)}}
-function questMenu(back){if(!S.quests||S.quests.day!==S.day)newQuests();
-  openModal(`<h2>Tagesaufgaben</h2><p>Jeden Tag drei neue. Bringt XP und ein bisschen Geld. Alle drei: Bonus.</p><div class="list">${S.quests.list.map(q=>{const Q=QUESTS.find(x=>x.k===q.k),pr=Math.min(q.n,Math.max(0,Q.g()-q.base));return`<div class="row${q.done?' off':''}"><div class="t"><b>${q.done?'✔ ':''}${esc(qn(Q,q.n))}</b><span>${pr} / ${q.n} · XP +${q.xp} · ${eur(q.money)}</span></div></div>`}).join('')}</div>${S.quests.bonus?'<p><b>Bonus kassiert.</b></p>':''}<div class="list"><button class="btn" data-q="back">Zurück</button></div>`,()=>bindAll({'[data-q]':()=>back?back():closeModal()}))}
+  const all=S.quests.list.every(q=>q.done);if(all&&!S.quests.bonus){S.quests.bonus=true;addXP(40);S.money+=10;toast('Alle drei Aufgaben erledigt! Fast schon produktiv.','Bonus: XP +40 · Geld +10,00 € · 3 neue Aufgaben warten',4500);setTimeout(()=>{newQuests();snd('pop');toast('3 neue Aufgaben','Tippe oben auf 🎯',3500)},5000)}}
+function questMenu(back){if(!S.quests||!S.quests.list)newQuests();
+  openModal(`<h2>Aufgaben</h2><p>Drei Aufgaben. Jede bringt XP und ein bisschen Geld. Sind alle drei erledigt, gibt’s einen Bonus und drei neue.</p><div class="list">${S.quests.list.map(q=>{const Q=QUESTS.find(x=>x.k===q.k),pr=Math.min(q.n,Math.max(0,Q.g()-q.base));return`<div class="row${q.done?' off':''}"><div class="t"><b>${q.done?'✔ ':''}${esc(qn(Q,q.n))}</b><span>${pr} / ${q.n} · XP +${q.xp} · ${eur(q.money)}</span></div></div>`}).join('')}</div>${S.quests.bonus?'<p><b>Bonus kassiert.</b></p>':''}<div class="list"><button class="btn" data-q="back">Zurück</button></div>`,()=>bindAll({'[data-q]':()=>back?back():closeModal()}))}
 setInterval(()=>{try{questTick()}catch(e){}},1500);
 // ================= MINIGAMES =================
 const MI=$('mini'),mcv=$('minicv'),mc=mcv.getContext('2d'),mui=$('miniui'),mbt=$('minibtns');
@@ -1379,7 +1379,7 @@ function hud(){if(S.lvl>=20&&!S.furn.lava)S.furn.lava=true;if(S.lvl>=50&&!S.furn
   setNeed('nTh',S.th);setNeed('nHu',S.hu);setNeed('nBo',S.bo);const b=S.bottle;setNeed('nBe',b?b.sips/3*100:0,b?(b.sips?Math.round(b.sips/3*100)+'%':'leer'):'–');
   const bits=['<b>'+eur(S.money)+'</b>','Bier <b>'+S.beer+'</b>','Snacks <b>'+S.snacks+'</b>','Kippen <b>'+S.cigs+'</b>','Tag <b>'+S.day+'</b> <b>'+hourStr()+'</b>','<b>'+S.prom.toFixed(2).replace('.',',')+' ‰</b>','Leergut <b>'+S.empties+'</b>','Korb <b>'+S.basket+'</b>','Chaos <b>'+Math.round(S.chaos)+'</b>'];
   bits.push('Gestank <b>'+Math.round(S.dirt||0)+'</b>');if(S.furn.stash)bits.push('Versteck <b>'+eur(S.stash||0)+'</b>');if(withdrawal().v>.2)bits.push('<b style="color:var(--red)">Entzug</b>');if(S.hang>0)bits.push('Kater <b>'+'●'.repeat(S.hang)+'</b>');if(S.mold>0)bits.push('Schimmel <b>'+S.mold+'</b>');if(S.h.police>=3)bits.push('<b style="color:var(--red)">Polizei '+S.h.police+'</b>');if(S.h.cutDays>0)bits.push('Kürzung');
-  $('info').innerHTML=bits.join(' · ');$('bSleep').disabled=!canSleep();$('bDiary').textContent=S.diaryNew?'📖•':'📖';
+  $('info').innerHTML=bits.join(' · ');$('bSleep').disabled=!canSleep();$('bDiary').textContent=S.diaryNew?'📖•':'📖';if(S.quests){const d=S.quests.list.filter(q=>q.done).length;$('bQuest').innerHTML='🎯<small>'+d+'/3</small>'}
   $('hint').textContent=busyUI?'':hintText()}
 // ================= LOOP =================
 let lastT=performance.now(),acc=0,idleFart=R(50,150),saveT=0;
@@ -1420,6 +1420,7 @@ $('bMenu').onclick=()=>{initAudio();snd('pop');pauseMenu()};
 $('bSnack').onclick=()=>{initAudio();if(!busyUI)eatSnack()};
 $('bShop').onclick=()=>{initAudio();snd('pop');shopMenu()};
 $('bDiary').onclick=()=>{initAudio();snd('pop');diaryMenu()};
+$('bQuest').onclick=()=>{initAudio();snd('pop');questMenu()};
 $('bWash').onclick=()=>{initAudio();snd('pop');if(!busyUI)washMenu()};
 $('bSleep').onclick=()=>{initAudio();if(!busyUI)sleep()};
 $('lvl').onclick=()=>{const n=performance.now();if(n-adminT>1500)adminTaps=0;adminT=n;if(++adminTaps>=5){adminTaps=0;adminMenu()}};
