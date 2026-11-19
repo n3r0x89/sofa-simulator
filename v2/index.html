@@ -382,7 +382,7 @@ function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Mat
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
    lh:m(30,1105,440,1395),rh:m(501,1105,911,1395),
    visitor:m(0,200,330,965),puddleZone:m(330,912,860,950),
-   mold:m(275,140,470,380),basket:m(436,1286,560,1392),stainZone:m(290,120,680,620),
+   mold:m(275,140,470,380),basket:m(392,1228,632,1433),basketOcc:m(370,1219,660,1277),stainZone:m(290,120,680,620),
    vcr:m(420,700,610,758),console:m(425,765,605,852),lava:m(296,555,348,688),stereo:m(14,520,238,598)};
   const tw=S.furn.tv55?470:S.furn.tv43?380:265;const ti=SP[tvKey()];const th=ti&&ti.naturalWidth?tw*ti.naturalHeight/ti.naturalWidth:tw*.9;
   L.mm=(x,y)=>({x:ox+x*k*s,y:oy+y*k*s});L.bottleH=118*k*s;L.slots=null;
@@ -516,8 +516,8 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
 
   // basket
   const bk=L.basket;if(bk){const TH=[0,1,3,5,8,12,16,20];let st=0;for(let i=0;i<TH.length;i++)if(S.basket>=TH[i])st=i;const bkk='basket_'+st;
-    if(SP[bkk]&&SP[bkk].naturalWidth)spr(bkk,bk);else if(S.basket>0)spr('basket',bk);
-    hit('basket',bk)}
+    if(SP[bkk]&&SP[bkk].naturalWidth)spr(bkk,bk);else if(S.basket>0)spr('basket',bk);if(L.basketOcc&&L0&&SP.room&&SP.room.naturalWidth){const o=L.basketOcc,kk=L0.iw/941,s=L0.s;cx.drawImage(SP.room,(o.x-L0.ox)/s,(o.y-L0.oy)/s,o.w/s,o.h/s,o.x,o.y,o.w,o.h)}
+    hit('basket',L.basketOcc?{x:bk.x,y:L.basketOcc.y+L.basketOcc.h,w:bk.w,h:bk.y+bk.h-L.basketOcc.y-L.basketOcc.h}:bk)}
   // crate
   const c=L.crate;const sk=S.beer>0?'sixpack_'+Math.min(6,S.beer):(SP.sixpack_trash&&SP.sixpack_trash.naturalWidth?'sixpack_trash':'sixpack_0');const six=SP[sk];if(!(six&&six.naturalWidth&&spr(sk,c))&&!spr('crate',c)){rr(c.x,c.y+16,c.w,c.h-16,5,'#e7b52a');cx.fillStyle='#b88a14';for(let i=0;i<4;i++)cx.fillRect(c.x+8+i*22,c.y+24,14,c.h-34);for(let i=0;i<Math.min(S.beer,8);i++){cx.fillStyle='#5a2f0e';cx.fillRect(c.x+10+(i%4)*22,c.y+4+(i>3?8:0),8,22)}}
   if(S.beer>6){cx.font='800 13px Nunito,sans-serif';cx.textAlign='center';const tx='×'+S.beer;cx.fillStyle='#0009';cx.fillRect(c.x+c.w-34,c.y+4,32,18);cx.fillStyle='#fff';cx.fillText(tx,c.x+c.w-18,c.y+18)}hit('crate',c);
@@ -742,7 +742,7 @@ function hintText(){if(S.lvl>4)return'';for(const[k,t]of HINTS)if(!S.hintsDone[k
 // ================= INPUT =================
 let PUKE=null,PD=null,burpT=0,burpCnt=0,burpNext=RI(1,5),coughCnt=0,coughNext=RI(1,7);
 function lp(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}}
-function hitAt(p){for(let i=HITS.length-1;i>=0;i--){const h=HITS[i];if(p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h)return h.id}return null}
+function hitAt(p){const kb=HITS.find(h=>h.id==='basket');if(kb&&p.x>=kb.x&&p.x<=kb.x+kb.w&&p.y>=kb.y&&p.y<=kb.y+kb.h)return 'basket';for(let i=HITS.length-1;i>=0;i--){const h=HITS[i];if(p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h)return h.id}return null}
 cv.addEventListener('pointerdown',e=>{initAudio();if(busyUI||PUKE)return;const p=lp(e);PD={p,t:performance.now(),id:hitAt(p),last:performance.now(),acted:false};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
 cv.addEventListener('pointermove',e=>{if(!PD)return;PD.cur=lp(e)});
 cv.addEventListener('pointerup',e=>{if(!PD)return;const p=lp(e),dt=performance.now()-PD.t,dx=p.x-PD.p.x,dy=p.y-PD.p.y;const id=PD.id;const acted=PD.acted;PD=null;if(busyUI)return;
