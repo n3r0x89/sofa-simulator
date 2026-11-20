@@ -143,7 +143,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=84;
+const APPVER=85;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -564,7 +564,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
     if(ring){cx.globalAlpha=.55+.35*Math.sin(t*12);cx.fillStyle='#7fb2ff';cx.fillRect(ph.x+ph.w*.18,ph.y+ph.h*.12,ph.w*.64,ph.h*.66);cx.globalAlpha=1}cx.restore();hit('phone',ph)}
   // catalog
   const k=L.catalog;if(!spr('catalog',k)){rr(k.x,k.y,k.w,k.h,3,'#e8e2d0');rr(k.x+6,k.y+6,k.w-12,k.h-18,2,'#b5552c');cx.fillStyle='#333';cx.font='800 8px Nunito,sans-serif';cx.fillText('MÖBEL',k.x+k.w/2,k.y+k.h-4)}hit('catalog',k);
-  drawMag();
+  drawMag();drawPoop();
   // controller
   if(S.furn.console&&S.right!=='ctrl'){const g=L.ctrl;if(!spr('controller',g)){rr(g.x,g.y,g.w,g.h,12,'#1a1a1a');ell(g.x+14,g.y+12,4,4,'#555');ell(g.x+g.w-14,g.y+12,4,4,'#555')}hit('ctrl',g)}
   drawEmpties(t,'front');
@@ -709,7 +709,7 @@ function drawOverlay(t){
   // drunk vignette
   if(S.prom>=.8){const g=cx.createRadialGradient(W/2,H/2,H*.25,W/2,H/2,H*.75);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(40,0,30,'+Math.min(.5,(S.prom-.7)*.3)+')');cx.fillStyle=g;cx.fillRect(0,0,W,H)}
   // pigeon/ufo
-  if(FX.pigeon>S.tot){const w=L.win;if(!spr('pigeon',{x:w.x+w.w-60,y:w.y+w.h-56,w:56,h:56})){ell(w.x+w.w-34,w.y+w.h-20,18,12,'#8a8f99');ell(w.x+w.w-22,w.y+w.h-34,8,8,'#7a7f89')}}
+  if(FX.pigeon>S.tot){const w=L.win,pa=L.mm(696,516),pb=L.mm(776,590),pr={x:pa.x,y:pa.y,w:pb.x-pa.x,h:pb.y-pa.y};if(!spr('pigeon',pr)){ell(w.x+w.w-34,w.y+w.h-20,18,12,'#8a8f99');ell(w.x+w.w-22,w.y+w.h-34,8,8,'#7a7f89')}}
   if(FX.ufo>S.tot){const w=L.win,ux=w.x+w.w/2+Math.sin(t*2)*40;if(!spr('ufo',{x:ux-30,y:w.y+10,w:60,h:50})){ell(ux,w.y+30,28,8,'#c8c8d0');ell(ux,w.y+24,12,8,'#9fd')}cx.fillStyle='rgba(120,255,160,.25)';cx.beginPath();cx.moveTo(ux-10,w.y+36);cx.lineTo(ux+10,w.y+36);cx.lineTo(ux+30,w.y+w.h);cx.lineTo(ux-30,w.y+w.h);cx.fill()}
   if(FX.roach>S.tot){const x=((S.tot*80)%(W+100))-50;for(let i=0;i<3;i++){const rx=x-i*40,ry=L.wall+60+i*14;if(!spr('roach',{x:rx-14,y:ry-10,w:28,h:20}))ell(rx,ry,10,5,'#4a2a10')}}
 }
@@ -791,6 +791,7 @@ function tap(id,p){
   // puddles
   for(const pd of S.puddles){if(Math.hypot(p.x-pd.x,(p.y-pd.y)*2)<46){cleanPuddle(pd);return}}
   // Taschentücher und Flecken an der Wand
+  {const ph=HITS.filter(h=>h.id==='poop'&&p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h).pop();if(ph)return poopTap(ph.pi)}
   {const th=HITS.find(h=>h.id==='tissue'&&p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h);if(th&&S.tissues>0)return tissueTap(th.ti)}
   if(!id||id==='wall'){for(const st of S.stains){if(Math.hypot(p.x-st.x,p.y-st.y)<34){return cleanStain(st,'stain')}}
     for(const sp of S.splats){if(Math.hypot(p.x-sp.x,p.y-sp.y)<24){return cleanStain(sp,'splat')}}}
@@ -958,7 +959,10 @@ const EVENTS=[
    {t:'Vorführen lassen',f:()=>({say:'Sehen Sie? Sauber! …Er ist explodiert. Ich muss los.',fx:fx({bo:-15,chaos:5}),pose:2})},
    {t:'Rauswerfen',f:()=>{rude();return{say:'Ihr Teppich hätte es verdient gehabt!',pose:0}}}])},
  {id:'mold',c:()=>S.mold>=1,run:()=>showCard('Schimmel in der Ecke','In der Ecke wächst was Grünes. Es hat mehr Persönlichkeit als du und heißt Gerhard.',[{t:'Lüften',f:()=>({say:'Frische Luft! Die Kakerlaken frieren.',fx:fx({chaos:-5,bo:5})})},{t:'Gerhard begrüßen',f:()=>({say:'Gerhard grüßt zurück. Glaubst du.',fx:fx({bo:-5})})}])},
- {id:'pigeon',c:()=>S.hour>=6&&S.hour<20,run:()=>{FX.pigeon=S.tot+20;snd('coo');showCard('Taube am Fenster','Eine Taube guckt rein, sieht dich und scheißt vor Ekel ans Fenster.',[{t:'Chips verfüttern',f:()=>{if(S.snacks<1)return{say:'Keine Chips. Die Taube geht. Sie hat Standards.'};return{say:'Die Taube frisst und kackt aufs Fensterbrett. Danke auch.',fx:fx({snacks:-1,nice:1})}}},{t:'Gegen die Scheibe klopfen',f:()=>({say:'Die Taube bleibt. Sie hat mehr Durchhaltevermögen als du.'})}])}},
+ {id:'pigeon',c:()=>S.hour>=6&&S.hour<20,run:()=>{FX.pigeon=S.tot+25;snd('coo');showCard('Taube am Fenster','Eine fette Taube sitzt auf dem Fensterbrett und glotzt dich an. Das Fenster ist gekippt.',[
+  {t:'Chips verfüttern',f:()=>{if(S.snacks<1)return{say:'Keine Chips. Die Taube flattert rein, sucht selber und kackt dabei die ganze Bude voll.',fx:(pigeonPoop(RI(14,20)),fx({chaos:8}))};return{say:'Die Taube frisst, kommt rein, frisst weiter – und kackt aus Dankbarkeit überall hin.',fx:(pigeonPoop(RI(12,18)),fx({snacks:-1,nice:1,chaos:6}))}}},
+  {t:'Gegen die Scheibe klopfen',f:()=>Math.random()<.5?{say:'Die Taube erschrickt, flattert panisch durchs Zimmer und lässt alles fallen, was sie hat. ALLES.',fx:(pigeonPoop(RI(16,24)),fx({chaos:10}))}:{say:'Die Taube bleibt sitzen und scheißt demonstrativ aufs Fensterbrett.',fx:(pigeonPoop(RI(4,7),true),fx({chaos:3}))}},
+  {t:'Fenster zumachen',f:()=>({say:'Fenster zu. Die Taube kackt von außen an die Scheibe. Gewonnen. Irgendwie.',fx:fx({bo:-2})})}])}},
  {id:'roach',c:()=>S.chaos>20,run:()=>{FX.roach=S.tot+12;showCard('Kakerlaken-Rennen','Drei Kakerlaken flitzen über den Boden. Einsatz: 1 Euro.',[1,2,3].map(n=>({t:'Auf Nr. '+n+' setzen',f:()=>{if(!canPay(1))return{say:'Nicht mal 1 Euro. Die Kakerlaken lachen.'};const w=RI(1,3);return w===n?{say:'Nr. '+n+' gewinnt! Du bist stolz auf ein Insekt.',fx:fx({money:2,bo:-10})}:{say:'Nr. '+w+' gewinnt. Deine bleibt im Teppich hängen.',fx:fx({money:-1,bo:-8})}}})))}},
  {id:'sofa',c:()=>true,run:()=>{const m=Math.round(R(.5,3)*2)/2;showCard('Fund im Sofa','Zwischen den verkrusteten Polstern: '+eur(m)+', ein Kronkorken und ein Taschentuch, das hart wie Pappe ist. Frag nicht.',[{t:'Einstecken',f:()=>({say:'Reich!',fx:fx({money:m})})}])}},
  {id:'singer',c:()=>true,run:()=>showCard('Falsch singender Nachbar','Von oben dröhnt „Atemlos“, so schief, dass selbst dein Tinnitus kündigt.',[{t:'Mitsingen',f:()=>({say:'Jetzt singen zwei falsch. Herr Brandt klopft.',fx:fx({bo:-10,neighbor:1})})},{t:'Gegen die Decke hauen',f:()=>({say:'Ruhe. Für drei Minuten.',fx:fx({bo:-3})})}])},
@@ -1152,14 +1156,15 @@ const QUESTS=[
  {k:'clean',n:'Putz {n} {Sauerei|Sauereien} weg',r:[2,4],g:()=>S.st.clean||0,xp:6},
  {k:'pfand',n:'Bring {n} {Pfandflasche|Pfandflaschen} weg',r:[4,9],g:()=>S.st.pfandBottles,xp:3},
  {k:'tasks',n:'Erledige {n} {Suff-Aufgabe|Suff-Aufgaben}',r:[1,2],g:()=>S.st.tasks,xp:12},
- {k:'film',n:'Guck {n} Film zu Ende',r:[1,1],g:()=>S.st.films,xp:15},
+ {k:'film',n:'Guck {n} Film zu Ende',r:[1,1],g:()=>S.st.films,xp:15,ok:()=>!!S.furn.vcr},
  {k:'job',n:'Mach {n} {ehrlichen Job|ehrliche Jobs}',r:[1,2],g:()=>S.h.legal,xp:12},
- {k:'game',n:'Spiel {n} {Konsolen-Spiel|Konsolen-Spiele}',r:[1,3],g:()=>S.st.games,xp:8},
+ {k:'game',n:'Spiel {n} {Konsolen-Spiel|Konsolen-Spiele}',r:[1,3],g:()=>S.st.games,xp:8,ok:()=>!!S.furn.console},
  {k:'throw',n:'Wirf {n} {Flasche|Flaschen} an die Wand',r:[2,4],g:()=>S.st.throws,xp:4},
  {k:'tv',n:'Glotz {n} {Stunde|Stunden} Fernsehen',r:[2,4],g:()=>Math.floor(S.st.tvH),xp:5}];
 function qn(Q,n){return Q.n.replace('{n}',n).replace(/\{([^|}]*)\|([^}]*)\}/g,(m,s,pl)=>n===1?s:pl)}
-function newQuests(){const prev=S.quests?S.quests.list.map(q=>q.k):[];const pool=QUESTS.filter(q=>!prev.includes(q.k)).sort(()=>Math.random()-.5).slice(0,3);S.quests={set:((S.quests&&S.quests.set)||0)+1,list:pool.map(q=>{const n=RI(q.r[0],q.r[1]);return{k:q.k,n,base:q.g(),xp:Math.round(10+n*q.xp),money:Math.round(RI(2,6)),done:false}})}}
+function newQuests(){const prev=S.quests?S.quests.list.map(q=>q.k):[];const pool=QUESTS.filter(q=>!prev.includes(q.k)&&(!q.ok||q.ok())).sort(()=>Math.random()-.5).slice(0,3);S.quests={set:((S.quests&&S.quests.set)||0)+1,list:pool.map(q=>{const n=RI(q.r[0],q.r[1]);return{k:q.k,n,base:q.g(),xp:Math.round(10+n*q.xp),money:Math.round(RI(2,6)),done:false}})}}
 function questTick(){if(!S.started||busyUI)return;if(!S.quests||!S.quests.list){newQuests()}
+  for(let i=0;i<S.quests.list.length;i++){const q=S.quests.list[i],Q=QUESTS.find(x=>x.k===q.k);if(!q.done&&Q&&Q.ok&&!Q.ok()){const used=S.quests.list.map(x=>x.k);const alt=QUESTS.filter(x=>!used.includes(x.k)&&(!x.ok||x.ok())).sort(()=>Math.random()-.5)[0];if(alt){const n=RI(alt.r[0],alt.r[1]);S.quests.list[i]={k:alt.k,n,base:alt.g(),xp:Math.round(10+n*alt.xp),money:RI(2,6),done:false}}}}
   for(const q of S.quests.list){if(q.done)continue;const Q=QUESTS.find(x=>x.k===q.k);if(Q&&Q.g()-q.base>=q.n){q.done=true;addXP(q.xp);S.money+=q.money;snd('lvl');toast('Tagesaufgabe geschafft: '+qn(Q,q.n),'XP +'+q.xp+' · Geld +'+eur(q.money),4000)}}
   const all=S.quests.list.every(q=>q.done);if(all&&!S.quests.bonus){S.quests.bonus=true;addXP(40);S.money+=10;toast('Alle drei Aufgaben erledigt! Fast schon produktiv.','Bonus: XP +40 · Geld +10,00 € · 3 neue Aufgaben warten',4500);setTimeout(()=>{newQuests();snd('pop');toast('3 neue Aufgaben','Tippe oben auf 🎯',3500)},5000)}}
 function questMenu(back){if(!S.quests||!S.quests.list)newQuests();
@@ -1328,7 +1333,7 @@ function syncTissues(){if(!Array.isArray(S.tissuePos))S.tissuePos=[];const n=S.t
 function addTissues(n){syncTissues();for(let i=0;i<n&&S.tissuePos.length<12;i++)S.tissuePos.push(tissueSpot());S.tissues=S.tissuePos.length}
 function tissueTap(idx){syncTissues();if(!S.tissuePos.length)return;const k=(idx!=null&&S.tissuePos[idx])?idx:S.tissuePos.length-1;S.tissuePos.splice(k,1);S.tissues=S.tissuePos.length;snd('pop');cleanDone(['Alle Wichstücher entsorgt. Mit spitzen Fingern.','Die letzten Taschentücher sind im Müll. Endlich wieder Platz zum Sündigen.'],{chaos:-1})}
 // Meldung beim Putzen nur, wenn alles sauber ist
-function cleanDone(msgs,fo){const sub=fx(fo);const left=(S.stains||[]).length+(S.splats||[]).length+(S.puddles||[]).length+(S.tissues||0);if(!left)toast('Alles sauber! '+pick(msgs),sub,3500)}
+function cleanDone(msgs,fo){const sub=fx(fo);const left=(S.stains||[]).length+(S.splats||[]).length+(S.puddles||[]).length+(S.tissues||0)+((S.poop||[]).length);if(!left)toast('Alles sauber! '+pick(msgs),sub,3500)}
 // ---------- Faustschlag ----------
 const PUNCHABLE={landlord:1,bailiff:1,police:1,salesman:1,pizza:1};
 let FIST=null;
@@ -1404,6 +1409,17 @@ function drawSwatTool(kind,x,y,since){const base=kind==='roach'?'newspaper':'swa
   const ax=base==='swatter'?(hitNow?.86:.74):(hitNow?.9:.78),ay=base==='swatter'?(hitNow?.3:.24):(hitNow?.22:.2);
   mc.save();mc.translate(x,y);if(!hitNow)mc.rotate(-.05);mc.drawImage(im,-w*ax,-h*ay,w,h);mc.restore()}
 function splatKey(kind,v){const k=(kind==='roach'?'splat_roach_':'splat_fly_')+(v||1);return SP[k]&&SP[k].naturalWidth?k:null}
+
+// ---------- Taubenkacke überall ----------
+const POOPZ=[[690,560,770,590,'s'],[300,925,860,1000,'f'],[240,1062,700,1150,'t'],[120,330,640,700,'w'],[640,700,760,760,'w']];
+function pigeonPoop(n,sillOnly){if(!Array.isArray(S.poop))S.poop=[];for(let i=0;i<n&&S.poop.length<40;i++){const z=sillOnly?POOPZ[0]:POOPZ[i===0?0:1+Math.floor(Math.random()*(POOPZ.length-1))];S.poop.push({x:R(z[0],z[2]),y:R(z[1],z[3]),z:z[4],s:R(.7,1.25),a:R(0,6.3)})}S.chaos=clamp(S.chaos+n*.3,0,100);S.dirt=clamp((S.dirt||0)+n*.4,0,100)}
+function drawPoop(){if(!L.roomMode||!Array.isArray(S.poop))return;const m=L.mm,base=L.bottleH*.16;
+  for(let i=0;i<S.poop.length;i++){const p=S.poop[i],q=m(p.x,p.y),r=base*p.s*(p.z==='f'?.85:p.z==='w'?1.05:1);cx.save();cx.translate(q.x,q.y);cx.rotate(p.a);if(p.z==='f'||p.z==='t'||p.z==='s')cx.scale(1,.6);
+    cx.fillStyle='rgba(240,238,228,.95)';cx.beginPath();for(let k=0;k<9;k++){const ang=k/9*Math.PI*2,rr=r*(.75+((i*7+k*5)%4)*.12);cx.lineTo(Math.cos(ang)*rr,Math.sin(ang)*rr)}cx.closePath();cx.fill();
+    cx.fillStyle='rgba(205,200,185,.9)';cx.beginPath();cx.arc(r*.2,-r*.15,r*.42,0,7);cx.fill();cx.fillStyle='#4a4436';cx.beginPath();cx.arc(-r*.12,r*.08,r*.28,0,7);cx.fill();cx.fillStyle='#6b6450';cx.beginPath();cx.arc(r*.25,r*.25,r*.14,0,7);cx.fill();
+    if(p.z==='w'){cx.fillStyle='rgba(235,232,220,.85)';cx.fillRect(-r*.08,r*.5,r*.16,r*.8)}cx.restore();
+    HITS.push({id:'poop',x:q.x-r*1.6,y:q.y-r*1.6,w:r*3.2,h:r*3.2,pi:i})}}
+function poopTap(i){if(!Array.isArray(S.poop)||!S.poop[i])return;S.poop.splice(i,1);S.st.clean=(S.st.clean||0)+1;snd('slap');vib(15);cleanDone(['Die ganze Taubenkacke ist weg. Du hast sie mit dem Ärmel abgekratzt.','Kein Vogelschiss mehr. Die Taube plant schon den nächsten Angriff.'],{chaos:-1,xp:1})}
 // ================= TELEFONIEREN: Kontakte anrufen =================
 const CONTACTS=[
  {k:'kevin',n:'Kevin',img:'kevin_0',hi:['Ey Digga, was geht? Ich bin grad im Netto. Also… vor dem Netto.','Bruder! Ich wollt dich auch grad anrufen. Wegen Geld. Egal.'],a:[
@@ -1459,14 +1475,41 @@ async function rankSend(force){try{if(!S.started||!assiName())return;const now=D
   const body=JSON.stringify({v:1,id:playerId(),n:assiName().slice(0,20),l:S.lvl,x:Math.floor(S.xp),d:S.day,t:now});await fetch(RANK_URL,{method:'POST',body})}catch(e){}}
 async function rankLoad(){const r=await fetch(RANK_URL+'/json?poll=1&since=12h',{cache:'no-store'});if(!r.ok)throw new Error('http '+r.status);const tx=await r.text();const P={};
   for(const line of tx.split('\n')){if(!line.trim())continue;let m;try{m=JSON.parse(line)}catch(e){continue}if(m.event!=='message')continue;let p;try{p=JSON.parse(m.message)}catch(e){continue}
-    if(!p||typeof p.id!=='string'||typeof p.n!=='string')continue;p.n=p.n.slice(0,20);p.l=Math.max(1,Math.min(999,+p.l||1));p.x=Math.max(0,+p.x||0);p.d=Math.max(1,+p.d||1);p.seen=(m.time||0)*1000;
-    if(!P[p.id]||P[p.id].seen<p.seen)P[p.id]=p}
+    if(!p||p.type||typeof p.id!=='string'||typeof p.n!=='string')continue;p.n=p.n.slice(0,20);p.l=Math.max(1,Math.min(999,+p.l||1));p.x=Math.max(0,+p.x||0);p.d=Math.max(1,+p.d||1);p.seen=(m.time||0)*1000;
+    p.ord=(+p.t||0);if(!P[p.id]||P[p.id].seen<p.seen||(P[p.id].seen===p.seen&&P[p.id].ord<=p.ord))P[p.id]=p}
   return Object.values(P).sort((a,b)=>b.l-a.l||b.x-a.x||b.d-a.d)}
 async function rankMenu(back){openModal(`<h2>Rangliste</h2><p>Alle Assis, die in den letzten 12 Stunden gespielt haben. 🟢 = gerade online.</p><div id="rankBox" class="list"><p>Lade …</p></div><p style="font-size:12px;color:var(--dim)">Dein Name, Level und Tag sind dafür öffentlich sichtbar.</p><div class="list"><button class="btn" data-r="back">Zurück</button></div>`,()=>bindAll({'[data-r]':()=>back?back():closeModal()}));
   await rankSend(true);let list=[];let err=false;try{list=await rankLoad()}catch(e){err=true}
   const me=playerId();if(!list.some(p=>p.id===me)&&assiName())list.push({id:me,n:assiName(),l:S.lvl,x:Math.floor(S.xp),d:S.day,seen:Date.now()});list.sort((a,b)=>b.l-a.l||b.x-a.x||b.d-a.d);
   const box=document.getElementById('rankBox');if(!box)return;const now=Date.now();
-  box.innerHTML=(err?'<p style="color:#e88">Rangliste gerade nicht erreichbar. Du siehst nur dich selbst.</p>':'')+list.slice(0,50).map((p,i)=>`<div class="row"${p.id===me?' style="outline:2px solid #f2c14e"':''}><div class="t"><b>${i+1}. ${now-p.seen<10*60000?'🟢 ':''}${esc(p.n)}${p.id===me?' (du)':''}</b><span>Level ${p.l} · ${p.x} XP · Tag ${p.d}</span></div></div>`).join('')}
+  const canPrank=list.length>2&&!err;RANK_LIST=list;
+  box.innerHTML=(err?'<p style="color:#e88">Rangliste gerade nicht erreichbar. Du siehst nur dich selbst.</p>':'')+(list.length<=2?'<p style="font-size:13px;color:var(--dim)">Streiche gehen erst, wenn mehr als 2 Assis in der Liste stehen.</p>':'')+list.slice(0,50).map((p,i)=>{const cd=prankCdLeft(p.id);return`<div class="row"${p.id===me?' style="outline:2px solid #f2c14e"':''}><div class="t"><b>${i+1}. ${now-p.seen<10*60000?'🟢 ':''}${esc(p.n)}${p.id===me?' (du)':''}</b><span>Level ${p.l} · ${p.x} XP · Tag ${p.d}${p.id!==me&&canPrank&&cd?' · Streich wieder in '+cd:''}</span></div>${p.id!==me&&canPrank?`<button class="btn pri" data-pr="${i}" ${cd?'disabled':''}>😈</button>`:''}</div>`}).join('');
+  bindAll({'[data-pr]':el=>prankMenu(RANK_LIST[+el.dataset.pr],back),'[data-r]':()=>back?back():closeModal()})}
+// ================= STREICHE gegen andere Assis =================
+let RANK_LIST=[];const PRANK_CD=48*3600*1000;
+const PRANKS=[
+ {k:'fart',n:'💨 Anfurzen',d:'Durchs Treppenhaus direkt in seine Bude.',me:{xp:6},you:{xp:-4},sndA:'fart',msg:n=>n+' hat dich durchs Schlüsselloch angefurzt. Deine Augen tränen.'},
+ {k:'beer',n:'🍺 Bier klauen',d:'Zwei Flaschen aus seinem Sixpack. Merkt der eh nicht.',me:{beer:2,xp:3},you:{beer:-2},sndA:'clink',msg:n=>n+' hat dir zwei Bier aus dem Sixpack geklaut, du Penner.'},
+ {k:'puke',n:'🤮 Vor die Tür kotzen',d:'Einmal Döner von gestern auf seine Fußmatte.',me:{xp:5},you:{chaos:8},sndA:'retch',msg:n=>n+' hat dir vor die Tür gekotzt. Riecht nach Döner von vorgestern.'},
+ {k:'bell',n:'🔔 Klingelstreich',d:'Dreimal klingeln, wegrennen, kichern.',me:{xp:3,bo:-10},you:{bo:12},sndA:'bell',msg:n=>n+' hat dreimal geklingelt und ist weggerannt. Kindisch. Aber es hat genervt.'},
+ {k:'pizza',n:'🍕 Pizza auf seine Kosten',d:'Bestellt, gegessen, Rechnung geht an ihn.',me:{money:4,hu:-25,xp:2},you:{money:-4},sndA:'cash',msg:n=>n+' hat auf deine Kosten Pizza bestellt. 4 € weg.'},
+ {k:'pigeon',n:'🐦 Taube reinschicken',d:'Mit Brotkrumen eine Taube in seine Bude locken.',me:{xp:5},you:{},sndA:'coo',msg:n=>n+' hat dir eine Taube in die Bude gelockt. Sie hat ALLES vollgekackt.'}];
+function prankCdMap(){try{return JSON.parse(localStorage.getItem('sofasim_prankcd')||'{}')}catch(e){return{}}}
+function prankCdLeft(id){const t=prankCdMap()[id];if(!t)return'';const left=t+PRANK_CD-Date.now();if(left<=0)return'';const h=Math.ceil(left/3600000);return h>=24?Math.ceil(h/24)+' Tagen':h+' Std.'}
+function prankMenu(p,back){if(!p)return;openModal(`<h2>Streich gegen ${esc(p.n)}</h2><p>Einmal aussuchen. Danach hat ${esc(p.n)} zwei Tage Ruhe vor dir.</p><div class="list">${PRANKS.map((x,i)=>`<div class="row"><div class="t"><b>${x.n}</b><span>${esc(x.d)} · Du: ${fxStr(x.me).join?fxStr(x.me).join(', '):fxStr(x.me)}</span></div><button class="btn pri" data-pk="${i}">Los</button></div>`).join('')}</div><div class="list"><button class="btn" data-pb>Zurück</button></div>`,()=>bindAll({'[data-pk]':el=>doPrank(p,PRANKS[+el.dataset.pk],back),'[data-pb]':()=>rankMenu(back)}))}
+async function doPrank(p,x,back){if(prankCdLeft(p.id)){toast('Den hast du schon geärgert. Gönn ihm eine Pause.');return}
+  const m=prankCdMap();m[p.id]=Date.now();try{localStorage.setItem('sofasim_prankcd',JSON.stringify(m))}catch(e){}
+  try{await fetch(RANK_URL,{method:'POST',body:JSON.stringify({v:1,type:'prank',k:x.k,from:playerId(),fn:assiName().slice(0,20),to:p.id,t:Date.now()})})}catch(e){}
+  closeModal();snd(x.sndA);const sub=fx(x.me);toast(x.n.replace(/^\S+\s/,'')+' bei '+p.n+': erledigt.',sub,4000);checkAch()}
+// eingehende Streiche abholen
+async function prankPoll(){try{if(!S.started)return;const r=await fetch(RANK_URL+'/json?poll=1&since=12h',{cache:'no-store'});if(!r.ok)return;const tx=await r.text();const me=playerId();let done=[];try{done=JSON.parse(localStorage.getItem('sofasim_prankdone')||'[]')}catch(e){}
+  for(const line of tx.split('\n')){if(!line.trim())continue;let mm;try{mm=JSON.parse(line)}catch(e){continue}if(mm.event!=='message')continue;let q;try{q=JSON.parse(mm.message)}catch(e){continue}
+    if(!q||q.type!=='prank'||q.to!==me||done.includes(mm.id))continue;const x=PRANKS.find(y=>y.k===q.k);if(!x)continue;done.push(mm.id);
+    const you=Object.assign({},x.you);if(you.beer)you.beer=-Math.min(S.beer,-you.beer);if(you.money)you.money=-Math.min(Math.max(0,S.money),-you.money);if(you.xp)you.xp=-Math.min(Math.floor(S.xp),-you.xp);
+    if(x.k==='pigeon')pigeonPoop(RI(10,16));if(x.k==='puke'&&L.puddleZone){const z=L.puddleZone;S.puddles.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:1})}
+    const fn=String(q.fn||'Irgendein Assi').slice(0,20);snd(x.sndA);const sub=fx(you);toast('😈 '+x.msg(fn),sub,5000)}
+  if(done.length>200)done=done.slice(-200);try{localStorage.setItem('sofasim_prankdone',JSON.stringify(done))}catch(e){}}catch(e){}}
+setInterval(()=>{if(!document.hidden)prankPoll()},60000);setTimeout(prankPoll,6000);
 setInterval(()=>{if(!document.hidden)rankSend(false)},60000);
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
