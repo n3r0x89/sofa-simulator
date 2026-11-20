@@ -8,7 +8,10 @@
 <title>Assi Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
-<style>#pname{flex:1;min-width:0;text-align:center;font:900 13.5px Nunito,sans-serif;color:#f2c14e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px;text-shadow:0 1px 2px #000}#bQuest{position:relative}#bQuest small{position:absolute;right:3px;bottom:1px;font:800 10px Nunito,sans-serif;color:#f2c14e}
+<style>#guestB{position:absolute;left:8px;top:34%;z-index:7;display:none;cursor:pointer;animation:gbob 2.6s ease-in-out infinite}
+#guestB .gh{width:66px;height:66px;border-radius:50%;background-color:#fff3dc;background-size:240%;background-position:50% 4%;background-repeat:no-repeat;border:3px solid #f2c14e;box-shadow:0 3px 10px rgba(0,0,0,.45)}
+#guestB .gn{margin-top:3px;text-align:center;font:900 11px Nunito,sans-serif;color:#fff;text-shadow:0 1px 3px #000;max-width:80px}
+@keyframes gbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}#pname{flex:1;min-width:0;text-align:center;font:900 13.5px Nunito,sans-serif;color:#f2c14e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px;text-shadow:0 1px 2px #000}#bQuest{position:relative}#bQuest small{position:absolute;right:3px;bottom:1px;font:800 10px Nunito,sans-serif;color:#f2c14e}
 .sideBtns{position:absolute;bottom:2.5%;display:flex;flex-direction:column;gap:10px;z-index:6;pointer-events:none}
 .sideBtns.l{left:8px}.sideBtns.r{right:8px}
 .sideBtns .btn.sm{pointer-events:auto;width:46px;height:46px;min-width:0;padding:0;border-radius:50%;font-size:22px;line-height:46px;background:rgba(28,19,13,.42);border:1px solid rgba(255,220,170,.18);box-shadow:0 2px 8px rgba(0,0,0,.25);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:.82}
@@ -143,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=86;
+const APPVER=87;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -997,7 +1000,7 @@ function missCall(){if(!CALL)return;const c=CALL.c;CALL=null;clearInterval(callT
 function answerCall(){const c=CALL.c;CALL=null;clearInterval(callTimer);S.h.calls++;
   showCard(c.n,c.t,c.o.map(([t,f])=>({t,f})));checkAch()}
 // ---------- Scheduler ----------
-function eventTick(dt){if(VISIT||CARD||CALL||busyUI||PUKE||toastBusy||toastQ.length)return;evTimer-=dt;if(evTimer>0)return;
+function eventTick(dt){if(VISIT||CARD||CALL||busyUI||PUKE||toastBusy||toastQ.length||S.guest)return;evTimer-=dt;if(evTimer>0)return;
   const ok=EVENTS.filter(e=>e.id!==lastEv&&e.c());const pr=ok.filter(e=>e.prio);const np=ok.filter(e=>!e.prio);const e=pr.length?pr[0]:(np.length?pickEvent(np):null);if(!e){evTimer=10;return}noteEvent(e);CUR_EV=e.id;
   lastEv=e.id;evTimer=R(25,45);e.run()}
 // ================= MENUS =================
@@ -1423,17 +1426,17 @@ function poopTap(i){if(!Array.isArray(S.poop)||!S.poop[i])return;S.poop.splice(i
 // ================= TELEFONIEREN: Kontakte anrufen =================
 const CONTACTS=[
  {k:'kevin',n:'Kevin',img:'kevin_0',hi:['Ey Digga, was geht? Ich bin grad im Netto. Also… vor dem Netto.','Bruder! Ich wollt dich auch grad anrufen. Wegen Geld. Egal.'],a:[
-  {t:'Komm rüber',f:()=>{callVisit('kevin',20);return{say:'Bin in zehn Minuten da. Oder in drei Stunden. Mal gucken.'}}},
+  {t:'Komm rüber',f:()=>{callVisit('kevin',20,1);return{say:'Bin in zehn Minuten da. Ich bring was zu trinken mit.'}}},
   {t:'Leih mir 10 €',f:()=>Math.random()<.4?{say:'Hier, aber ich will’s zurück. Mit Zinsen. In Bier.',fx:{money:10,xp:2}}:{say:'Ich? Geld? Ich hab grad 40 Cent und ’ne Packung Kaugummi. Benutzt.',fx:{bo:-5}}},
   {t:'Bring Bier mit (5 €)',c:()=>S.money>=5,f:()=>{S.money-=5;later(20,()=>{S.beer+=6;snd('clink');toast('Kevin stellt dir ein Sixpack vor die Tür und rennt weg.','Bier +6')});return{say:'Klar. Ich hol’s. Ganz legal. Fast.'}}}]},
  {k:'uwe',n:'Uwe',img:'uwe_0',hi:['Moin. Uwe hier. Hast du Leergut? Ich hör’s klimpern.','Wer stört? Ich sortier grad Flaschen nach Farbe.'],a:[
   {t:'Hol mein Leergut ab',c:()=>(S.basket||0)>0,f:()=>{const n=S.basket,m=Math.round(n*.12*100)/100;S.basket=0;S.money+=m;snd('clink');return{say:'Ich nehm alles. Du kriegst die Hälfte vom Pfand. Plus meinen Segen.',fx:{xp:2},extra:'Geld +'+eur(m)+' für '+n+' Flaschen'}}},
-  {t:'Komm vorbei',f:()=>{callVisit('uwe',15);return{say:'Bin unterwegs. Mit Einkaufswagen.'}}}]},
+  {t:'Komm vorbei',f:()=>{callVisit('uwe',15,1);return{say:'Bin unterwegs. Mit Einkaufswagen für dein Leergut.'}}}]},
  {k:'pizza',n:'Pizza Fista',img:'pizza_0',hi:['Pizza Fista, was willst du? Wieder Salami mit extra Fett?','Fista. Wenn’s wieder du bist, kostet’s doppelt. Spaß. Oder nicht.'],a:[
   {t:'Pizza bestellen',f:()=>{callVisit('pizza',25);return{say:'Kommt in 30 Minuten. Oder kalt in 60.'}}},
   {t:'30 Pizzen an Herrn Brandt',f:()=>{const caught=Math.random()<.3;return caught?{say:'Moment… DU schon wieder? Ich hab deine Nummer. Ich ruf die Polizei.',fx:{police:1,bo:-10}}:{say:'Dreißig Familienpizzen an Brandt, bar bei Lieferung. Wird gemacht, Chef.',fx:{neighbor:1,bo:-25,xp:3}}}}]},
  {k:'kowalski',n:'Frau Kowalski',img:'kowalski_0',hi:['Schätzchen! Ich wusste, dass du anrufst. Ich hab schon die Stützstrümpfe aus.','Kowalski. Wer da? Ach DU, mein Hengst.'],a:[
-  {t:'Süßholz raspeln',f:()=>{callVisit('kowflirt',20);return{say:'Ich komm rüber. Ich bring Eierlikör und schlechte Absichten.',fx:{bo:-5}}}},
+  {t:'Süßholz raspeln',f:()=>{callVisit('kowalski',20,1);return{say:'Ich komm rüber. Ich bring Eierlikör und schlechte Absichten.',fx:{bo:-5}}}},
   {t:'Kuchen schnorren',f:()=>Math.random()<.6?(S.h.cake=true,{say:'Morgen steht ein Kuchen vor deiner Tür. Mit Liebe gebacken. Und Haaren.',fx:{xp:2}}):{say:'Kuchen gibt’s nur gegen Gegenleistung, Bärchen.',fx:{bo:-3}}},
   {t:'Beleidigen',f:()=>{S.h.kowNo++;return{say:'DU UNDANKBARES FERKEL! Ich schreib dich in mein Tagebuch. Ganz unten.',fx:{bo:-10}}}}]},
  {k:'brandt',n:'Herr Brandt',img:'brandt_0',hi:['Brandt. Ich hoffe, es ist wichtig. Ich messe gerade die Ruhe.','WER RUFT HIER UM DIESE ZEIT AN? Ach, Sie.'],a:[
@@ -1443,17 +1446,17 @@ const CONTACTS=[
  {k:'jessica',n:'Jessica (Ex)',img:'jessica_0',hi:['Was willst du? Ich hab dich doch blockiert. Neues Handy?','Oh nein. Nicht du. Mein Neuer liegt neben mir.'],a:[
   {t:'Zurückbetteln',f:()=>({say:'HAHAHA. Nein. Aber danke, das schick ich als Sprachnachricht an alle.',fx:{bo:5}})},
   {t:'Besoffen anrufen',c:()=>S.prom>=1,f:()=>({say:'Du lallst „Ich liebe dich, Kevin“. Sie legt auf. Kevin ruft verwirrt zurück.',fx:{bo:-20,xp:3}})},
-  {t:'Komm vorbei',f:()=>Math.random()<.5?(callVisit('jessica',30),{say:'Na gut. Aber nur um zu gucken, ob du noch lebst.'}):{say:'Lieber lass ich mir die Zähne ziehen.',fx:{bo:3}}}]},
+  {t:'Komm vorbei',f:()=>Math.random()<.5?(callVisit('jessica',30,1),{say:'Na gut. Aber nur um zu gucken, ob du noch lebst.'}):{say:'Lieber lass ich mir die Zähne ziehen.',fx:{bo:3}}}]},
  {k:'landlord',n:'Vermieter',img:'landlord_0',hi:['Hausverwaltung. Wenn’s um den Schimmel geht: Der gehört zur Wohnung.','Ja? Wenn Sie zahlen wollen, ich hör zu. Sonst nicht.'],a:[
   {t:'Schimmel melden',c:()=>S.mold>0,f:()=>Math.random()<.5?(S.mold=Math.max(0,S.mold-1),{say:'Ich schick den Hausmeister. Mit ’nem Lappen und viel Fantasie.',fx:{xp:2}}):{say:'Lüften Sie halt mal, Sie Höhlenmensch.',fx:{bo:3}}},
-  {t:'Auf ein Bier einladen',f:()=>{callVisit('lfriend',30);return{say:'Bier? Gratis? Bin gleich da. Erzählen Sie’s keinem.'}}}]},
+  {t:'Auf ein Bier einladen',f:()=>{callVisit('landlord',30,1);return{say:'Bier? Gratis? Bin gleich da. Erzählen Sie’s keinem.'}}}]},
  {k:'police',n:'Polizei (110)',img:'police_0',hi:['Polizei, Notruf. Was ist passiert?','Notrufzentrale. Bitte sprechen Sie.'],a:[
   {t:'Herrn Brandt anzeigen',c:()=>S.h.police>0,f:()=>({say:'Ruhestörung beim Nachbarn? Danke für Ihre Mithilfe, Bürger. Wir vermerken das. Positiv.',fx:{police:-1,neighbor:2,xp:2}})},
   {t:'Scherzanruf',f:()=>{setTimeout(()=>snd('fail'),400);return{say:'Wir haben Ihre Nummer. Und Ihre Adresse. Bis gleich.',fx:{police:2,bo:-20}}}}]}];
 let CALL_UI=null;
 function later(sec,fn){const due=S.tot+sec;const tk=setInterval(()=>{if(S.tot>=due&&!busyUI){clearInterval(tk);fn()}},500)}
-function callVisit(id,sec){S.callVisit={id,at:S.tot+sec}}
-setInterval(()=>{try{const cv=S.callVisit;if(!cv||!S.started||S.tot<cv.at||VISIT||CARD||CALL||busyUI||PUKE||toastBusy)return;const e=EVENTS.find(x=>x.id===cv.id);S.callVisit=null;if(e){CUR_EV=e.id;noteEvent(e);e.run()}}catch(e){}},1000);
+function callVisit(id,sec,guest){S.callVisit={id,at:S.tot+sec,guest:!!guest}}
+setInterval(()=>{try{const cv=S.callVisit;if(!cv||!S.started||S.tot<cv.at||VISIT||CARD||CALL||busyUI||PUKE||toastBusy||S.guest)return;S.callVisit=null;if(cv.guest){startGuest(cv.id);return}const e=EVENTS.find(x=>x.id===cv.id);if(e){CUR_EV=e.id;noteEvent(e);e.run()}}catch(e){}},1000);
 function contactsHtml(){return`<h4>Anrufen</h4><div class="list">${CONTACTS.map((c,i)=>{const cd=(S.callCd&&S.callCd[c.k]||0)>S.tot;return`<div class="row${cd?' off':''}"><img src="sprites/${c.img}.webp" alt="" style="width:38px;height:44px;object-fit:cover;object-position:top;border-radius:8px;margin-right:8px"><div class="t"><b>${c.n}</b><span>${cd?'hat gerade keinen Bock auf dich':'anrufen'}</span></div><button class="btn pri" data-call="${i}" ${cd?'disabled':''}>📞</button></div>`}).join('')}</div>`}
 function callContact(c){if(!S.callCd)S.callCd={};S.callCd[c.k]=S.tot+30;
   openModal(`<div style="text-align:center"><img src="sprites/${c.img}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p id="callSt">Klingelt …</p></div>`,()=>{});
@@ -1511,6 +1514,50 @@ async function prankPoll(){try{if(!S.started)return;const r=await fetch(RANK_URL
   if(done.length>200)done=done.slice(-200);try{localStorage.setItem('sofasim_prankdone',JSON.stringify(done))}catch(e){}}catch(e){}}
 setInterval(()=>{if(!document.hidden)prankPoll()},60000);setTimeout(prankPoll,6000);
 setInterval(()=>{if(!document.hidden)rankSend(false)},60000);
+
+// ================= GAST IN DER WOHNUNG (Kopf-Blase) =================
+const GUESTS={
+ kevin:{n:'Kevin',img:'kevin_0',arrive:()=>{S.beer+=2;return{t:'Kevin kommt rein, wirft dir zwei Bier hin und fläzt sich neben dich.',fx:'Bier +2'}},
+  talk:['Digga, ich hab grad ’nen Hund gesehen, der sah aus wie du.','Weißt du, was geil wär? Ein Sofa mit Klo drin.','Ich hab heute schon drei Sachen geklaut. Und eine bezahlt. Aus Versehen.','Bruder, deine Bude riecht wie mein Leben.'],
+  own:[{t:'🎮 Zocken',c:()=>S.furn.console,f:()=>({say:'Kevin verliert, schmeißt den Controller und behauptet, du hast gecheatet.',fx:{bo:-25,xp:4}})},
+       {t:'🤝 Krummes Ding planen',f:()=>Math.random()<.5?{say:'Ihr klaut zusammen Pfand vom Netto. 8 Euro für jeden. Ehrenmann.',fx:{money:8,police:1,xp:5}}:{say:'Ihr werdet beim Planen schon erwischt. Vom Hausmeister. Kevin rennt weg.',fx:{police:1}}}],
+  tick:()=>{if(Math.random()<.12&&S.beer>0){S.beer--;toast('Kevin hat sich heimlich ein Bier genommen. Natürlich.','Bier −1')}}},
+ uwe:{n:'Uwe',img:'uwe_0',arrive:()=>{const n=S.basket||0;if(n>0){const m=Math.round(n*.12*100)/100;S.basket=0;S.money+=m;snd('clink');return{t:'Uwe kommt mit Einkaufswagen und lädt dein Leergut ein. Du kriegst die Hälfte vom Pfand.',fx:'Geld +'+eur(m)}}return{t:'Uwe kommt rein, findet kein Leergut und guckt dich enttäuscht an.'}},
+  talk:['Weißt du, was die Leute alles wegschmeißen? Gestern: ein ganzes Toastbrot. Halb.','Ich hab mal ’ne Pfandflasche aus der Donau gefischt. Österreichisch. Gilt nicht.','Mein Einkaufswagen heißt Gisela.'],
+  own:[{t:'🧾 Pfand-Tipps holen',f:()=>({say:'„Hinterm Bahnhof, Mülleimer drei. Montags.“ Du fühlst dich weiser.',fx:{xp:5,bo:-10}})}],
+  tick:()=>{S.dirt=clamp((S.dirt||0)+1.5,0,100)}},
+ kowalski:{n:'Frau Kowalski',img:'kowalski_0',arrive:()=>{S.prom+=.25;return{t:'Frau Kowalski kommt mit Eierlikör und schlechten Absichten. Ihr kippt direkt einen.',fx:'Promille +0,25'}},
+  talk:['Mein Heinz hatte auch so ein Sofa. Er ist drauf gestorben. Glücklich.','Schätzchen, du hast so starke Hände. Zum Bierhalten.','Ich hab heute meine guten Stützstrümpfe an. Nur für dich.','Früher war ich Miss Castrop-Rauxel. 1971. Zweite.'],
+  own:[{t:'🫂 Kuscheln',f:()=>({say:'Sie kuschelt sich an. Riecht nach Melissengeist und Katze. Gemütlich. Irgendwie.',fx:{bo:-25,nice:1}})},
+       {t:'🥃 Noch’n Eierlikör',f:()=>({say:'Prost, Bärchen. Auf uns. Und auf Heinz.',fx:{prom:.2,bo:-10}})}],
+  sticky:true},
+ landlord:{n:'Vermieter',img:'landlord_0',arrive:()=>{if(S.beer>0)S.beer--;return{t:'Der Vermieter kommt rein, schnappt sich sein Gratis-Bier und setzt sich in deinen Sessel.',fx:'Bier −1'}},
+  talk:['Ich sag’s ehrlich: Ich vermiete nur an Leute wie Sie, weil keiner sonst einzieht.','Wenn Sie wüssten, was ich in anderen Wohnungen gesehen habe. Ach, Sie wissen es.','Der Schimmel ist eigentlich denkmalgeschützt.'],
+  own:[{t:'🍄 Schimmel ansprechen',c:()=>S.mold>0,f:()=>Math.random()<.6?(S.mold=Math.max(0,S.mold-1),{say:'Mit Bier im Bauch ist er großzügig: Er schickt morgen den Hausmeister.',fx:{xp:3}}):{say:'Schimmel? Das ist Patina.',fx:{bo:3}}},
+       {t:'💶 Strafen erlassen',f:()=>({say:'Na gut. Die nächste Beschwerde überhör ich. Vielleicht.',fx:{lf:-1,neighbor:-1,xp:3}})}]},
+ jessica:{n:'Jessica',img:'jessica_0',arrive:()=>(S.bo=Math.max(0,S.bo-10),{t:'Jessica stöckelt rein, rümpft die Nase und setzt sich ganz vorne auf die Kante.',fx:'Langeweile −10'}),
+  talk:['Mein Neuer hat ’nen Thermomix.','Hast du die Tapete immer noch nicht gewechselt? Ich hab sie 2019 schon gehasst.','Ich bin nur hier, weil mein Neuer beim Fußball ist.'],
+  own:[{t:'🗯️ Über ihren Neuen lästern',f:()=>({say:'Ihr lästert eine halbe Stunde. Es fühlt sich fast an wie früher. Fast.',fx:{bo:-20,xp:4}})},
+       {t:'💋 Alte Zeiten?',f:()=>Math.random()<.15?{say:'Sie zögert … dann lacht sie dir ins Gesicht. Aber sie bleibt noch.',fx:{bo:-10}}:{say:'Sie kippt dir dein Bier über die Hose und geht.',fx:{bo:5},leave:true}}]}};
+const GUEST_COMMON=[
+ {t:'🍺 Bier anbieten',c:()=>S.beer>0,f:g=>{S.beer--;g.mood++;return{say:pick(['Prost! Auf nix!','Endlich jemand mit Manieren.','Ex und hopp.']),fx:{bo:-10,xp:3,nice:1}}}},
+ {t:'🚬 Kippe anbieten',c:()=>S.cigs>0,f:g=>{S.cigs--;g.mood++;return{say:pick(['Gelbe Lunge? Edel.','Danke. Meine Lunge sagt nein, ich sag ja.']),fx:{bo:-6,xp:2}}}},
+ {t:'💬 Quatschen',f:g=>({say:pick(GUESTS[g.who].talk),fx:{bo:-12,xp:1}})},
+ {t:'📺 Zusammen glotzen',f:g=>{advance(10);return{say:'Ihr glotzt eine Stunde zusammen Fernsehen und lästert über alle.',fx:{bo:-18,xp:2}}}},
+ {t:'🍻 Wettsaufen',c:()=>S.beer>=2,f:g=>{S.beer-=2;S.prom+=.38;const win=Math.random()<.5;return win?{say:'Du gewinnst! Er rülpst, gibt auf und zahlt die Wettschulden.',fx:{money:3,xp:8,bo:-15}}:{say:'Du verlierst, rülpst und musst eine Runde schmeißen. Peinlich.',fx:{bo:-8,xp:2}}}},
+ {t:'🚪 Rausschmeißen',f:g=>GUESTS[g.who].sticky&&Math.random()<.5?{say:'„Ach Schätzchen, ich bleib noch ein bisschen.“ Sie bleibt einfach sitzen.',fx:{}}:{say:'Raus mit dir! Tür zu.',fx:{},leave:true}}];
+const gEl=document.createElement('div');gEl.id='guestB';document.getElementById('stage').appendChild(gEl);
+function startGuest(who){const G=GUESTS[who];if(!G)return;snd(Math.random()<.5?'knock':'bell');S.guest={who,until:S.tot+45,mood:0,talkAt:S.tot+R(6,10)};const r=G.arrive();toast(r.t,r.fx||'',5000);addXP(2);guestDraw()}
+function guestLeave(msg){if(!S.guest)return;const n=GUESTS[S.guest.who].n;S.guest=null;guestDraw();toast(msg||n+' geht wieder. Die Tür knallt.','',3500)}
+function guestDraw(){const g=S.guest;if(!g||!GUESTS[g.who]){gEl.style.display='none';return}const G=GUESTS[g.who];gEl.style.display='block';gEl.innerHTML=`<div class="gh" style="background-image:url(sprites/${G.img}.webp)"></div><div class="gn">${esc(G.n)}</div>`}
+gEl.onclick=()=>{initAudio();snd('pop');guestMenu()};
+function guestMenu(){const g=S.guest;if(!g)return;const G=GUESTS[g.who];const acts=[...(G.own||[]),...GUEST_COMMON].filter(a=>!a.c||a.c());
+  openModal(`<div style="text-align:center"><img src="sprites/${G.img}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)} ist zu Besuch</h2><p style="color:var(--dim);font-size:13px">bleibt noch etwa ${Math.max(1,Math.round((g.until-S.tot)/10))} Std.</p></div><div class="list">${acts.map((a,i)=>`<button class="btn${i<(G.own||[]).filter(x=>!x.c||x.c()).length?' pri':''}" data-g="${i}">${esc(a.t)}</button>`).join('')}<button class="btn" data-gx>Zurück</button></div>`,()=>bindAll({'[data-g]':el=>{const a=acts[+el.dataset.g];const r=a.f(g)||{};const sub=r.fx?fx(r.fx):'';checkAch();
+    M.innerHTML=`<div style="text-align:center"><img src="sprites/${G.img}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)}</h2><p>„${esc(r.say||'…')}“</p>${sub?'<p style="color:#f2c14e;font-weight:800">'+esc(sub)+'</p>':''}</div><div class="list"><button class="btn" data-gx>Weiter</button></div>`;
+    if(r.leave){S.guest=null;guestDraw()}else g.until=Math.min(g.until+6,S.tot+60);
+    bindAll({'[data-gx]':()=>{closeModal();if(r.leave)toast(G.n+' ist weg.')}})},'[data-gx]':()=>closeModal()}))}
+setInterval(()=>{try{const g=S.guest;if(!g){if(gEl.style.display!=='none')guestDraw();return}if(gEl.style.display==='none')guestDraw();if(!S.started||busyUI)return;
+  if(S.tot>=g.until){guestLeave();return}const G=GUESTS[g.who];if(S.tot>=g.talkAt){g.talkAt=S.tot+R(9,15);if(!toastBusy&&!VISIT&&!CARD)toast(G.n+': „'+pick(G.talk)+'“','',4500);G.tick&&G.tick()}}catch(e){}},1000);
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
