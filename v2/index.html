@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=87;
+const APPVER=88;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -393,7 +393,7 @@ function tvFromSprite(){const k=tvKey(),i=SP[k];if(!(i&&i.complete&&i.naturalWid
 function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Math.max(W/iw,H/(ih+170*k)),ox=(W-iw*s)/2,oy=H-ih*s;L0={iw,ih,s,ox,oy};const m=(x0,y0,x1,y1)=>({x:ox+x0*k*s,y:oy+y0*k*s,w:(x1-x0)*k*s,h:(y1-y0)*k*s});
   L={roomMode:true,wall:oy+900*k*s,
    shelf:m(0,120,270,930),win:m(765,150,941,585),cab:m(278,660,748,895),
-   neon:m(420,190,610,330),plant:m(790,430,905,597),lamp:m(708,345,965,905),fridge:m(196,778,344,962),massage:m(735,560,1075,995),gold:m(495,705,765,1005),stash:m(104,200,128,300),
+   neon:m(425,172,605,340),plant:m(790,430,905,597),lamp:m(708,345,965,905),fridge:m(196,778,344,962),massage:m(735,560,1075,995),gold:m(495,705,765,1005),stash:m(104,200,128,300),
    table:{y0:oy+1000*k*s,y1:oy+1215*k*s},tableHit:m(0,995,941,1222),
    crate:m(95,905,300,1085),cigpack:m(318,995,385,1095),lighter:m(386,1003,412,1060),ash:m(395,1035,525,1112),remote:m(525,1045,670,1130),phone:m(396,1118,471,1231),catalog:m(625,962,759,1087),
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
@@ -450,7 +450,7 @@ function drawRoom(t){const wall=L.wall;
   for(const st of S.stains){if(!spr('wallstain',{x:st.x-30,y:st.y-30,w:60,h:60})){ell(st.x,st.y,22,16,'#8a6a2a88');ell(st.x+8,st.y+12,6,14,'#8a6a2a66')}}
   for(const sp of S.splats){const sk=(sp.k==='fly'||sp.k==='roach'||sp.k==='mosquito')?splatKey(sp.k,sp.v):null;if(sk){const s=sp.k==='roach'?24:18;spr(sk,{x:sp.x-s/2,y:sp.y-s/2,w:s,h:s*SP[sk].naturalHeight/SP[sk].naturalWidth});continue}if(!spr('splat',{x:sp.x-10,y:sp.y-10,w:20,h:20})){ell(sp.x,sp.y,5,4,'#2a1a10');ell(sp.x+4,sp.y+2,2,2,'#5a1a10')}}
   // neon
-  if(S.furn.neon){const n=L.neon,on=!powerOut();if(!spr(on?'neon_on':'neon_off',n)){cx.save();if(on){cx.shadowColor='#ff5fb0';cx.shadowBlur=18}cx.strokeStyle=on?'#ff7ac4':'#777';cx.lineWidth=5;cx.beginPath();cx.arc(n.x+n.w/2,n.y+n.h*.55,34,0,Math.PI);cx.stroke();cx.strokeStyle=on?'#5fffe0':'#666';cx.lineWidth=3;for(let i=0;i<3;i++){cx.beginPath();cx.moveTo(n.x+30+i*20,n.y+n.h*.55);cx.bezierCurveTo(n.x+40+i*20,n.y+10,n.x+20+i*20,n.y+20,n.x+35+i*20,n.y);cx.stroke()}cx.restore()}}
+  if(S.furn.neon){const n=L.neon,on=!powerOut();if(on&&SP.neon_on&&SP.neon_on.naturalWidth){cx.save();cx.globalCompositeOperation='lighter';const g=cx.createRadialGradient(n.x+n.w/2,n.y+n.h/2,4,n.x+n.w/2,n.y+n.h/2,n.w*.9);g.addColorStop(0,'rgba(255,60,190,.22)');g.addColorStop(.5,'rgba(60,200,255,.10)');g.addColorStop(1,'rgba(60,200,255,0)');cx.fillStyle=g;cx.fillRect(n.x-n.w,n.y-n.h,n.w*3,n.h*3);cx.restore()}if(!spr(on?'neon_on':'neon_off',n)){cx.save();if(on){cx.shadowColor='#ff5fb0';cx.shadowBlur=18}cx.strokeStyle=on?'#ff7ac4':'#777';cx.lineWidth=5;cx.beginPath();cx.arc(n.x+n.w/2,n.y+n.h*.55,34,0,Math.PI);cx.stroke();cx.strokeStyle=on?'#5fffe0':'#666';cx.lineWidth=3;for(let i=0;i<3;i++){cx.beginPath();cx.moveTo(n.x+30+i*20,n.y+n.h*.55);cx.bezierCurveTo(n.x+40+i*20,n.y+10,n.x+20+i*20,n.y+20,n.x+35+i*20,n.y);cx.stroke()}cx.restore()}}
   // plant
   if(S.furn.plant){const p=L.plant;if(!spr('plant',p)){rr(p.x+8,p.y+p.h-40,30,40,4,'#b5552c');for(let i=0;i<7;i++){cx.save();cx.translate(p.x+23,p.y+p.h-40);cx.rotate(-1.2+i*.4+Math.sin(t*.8+i)*.03);ell(0,-50,12,34,i%2?'#3f7d3a':'#2f6a2e');cx.restore()}}}
   // lamp
@@ -709,6 +709,7 @@ function drawOverlay(t){
     if(S.tvOn&&!powerOut()){const s=L.scr,fl=.5+Math.sin(t*9)*.08+Math.sin(t*23)*.06;const g=cx.createRadialGradient(s.x+s.w/2,s.y+s.h/2,10,s.x+s.w/2,s.y+s.h/2,H*.7);g.addColorStop(0,'rgba(150,185,255,'+(dark*fl*1.1)+')');g.addColorStop(1,'rgba(140,180,255,0)');cx.globalCompositeOperation='lighter';cx.fillStyle=g;cx.fillRect(0,0,W,H);cx.globalCompositeOperation='source-over'}
   }
   if(lampLit)drawLampLight(dark,t);
+  if(dark>0&&L.roomMode&&S.furn.neon&&!powerOut()&&SP.neon_on&&SP.neon_on.naturalWidth){cx.save();cx.globalAlpha=Math.min(1,dark*1.4);spr('neon_on',L.neon);cx.globalCompositeOperation='lighter';cx.globalAlpha=Math.min(.6,dark*.8);spr('neon_on',L.neon);cx.restore()}
   // drunk vignette
   if(S.prom>=.8){const g=cx.createRadialGradient(W/2,H/2,H*.25,W/2,H/2,H*.75);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(40,0,30,'+Math.min(.5,(S.prom-.7)*.3)+')');cx.fillStyle=g;cx.fillRect(0,0,W,H)}
   // pigeon/ufo
