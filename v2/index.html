@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=88;
+const APPVER=89;
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -754,13 +754,13 @@ function promCheck(){
   if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
   if(S.prom>=3&&!busyUI){filmriss();return}
   if(S.prom>=S.pukeAt&&S.prom<3)puke()}
-function puke(){snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};S.dirt=Math.min(100,S.dirt+12);setTimeout(()=>say('afterPuke',true),3200);if(S.right==='cig'){S.right='empty';S.butts++;S.ash++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(3.3,3.7);S.sickSaid=false;clampAll();
+function puke(){if(S.guest&&GUESTS[S.guest.who]){const gn=GUESTS[S.guest.who].n;if(Math.random()<.5||S.guest.who==='jessica'){S.guest=null;guestDraw();setTimeout(()=>toast(gn+' springt angewidert auf und haut ab.','',3500),3800)}else setTimeout(()=>toast(gn+': „Boah, du Sau! … Gib mal ’n Bier, ich hab jetzt Platz.“','',3500),3800)}snd('retch');vib([100,60,200,80,300]);const z=L.puddleZone;const pd={x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:0};S.puddles.push(pd);PUKE={t:0,pd,parts:[],splat:[]};S.dirt=Math.min(100,S.dirt+12);setTimeout(()=>say('afterPuke',true),3200);if(S.right==='cig'){S.right='empty';S.butts++;S.ash++}S.prom=Math.max(0,S.prom-.9);S.hu+=40;S.st.puke++;S.pukeAt=R(3.3,3.7);S.sickSaid=false;clampAll();
   toast(T('puke'),'Promille −0,90 · Hunger +40');S.lastPuke=S.tot;checkAch()}
-function filmriss(){if(busyUI)return;busyUI=true;PUKE=null;S.st.filmriss++;stopFilm(true);S.right='empty';
+function filmriss(){if(busyUI)return;busyUI=true;const gWas=S.guest&&GUESTS[S.guest.who]?GUESTS[S.guest.who].n:'';if(S.guest){S.guest=null;guestDraw()}PUKE=null;S.st.filmriss++;stopFilm(true);S.right='empty';
   if(S.bottle&&S.bottle.sips<=0){S.bottle=null;S.empties++;S.pfandStock++}
   snd('groan');vib([200,100,400]);const f=document.createElement('div');f.className='fade';f.innerHTML='<div style="text-align:center">FILMRISS<br><small style="font:600 16px Nunito,sans-serif;opacity:.8">Sechs Stunden später …</small></div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
   setTimeout(()=>{const tot0=S.tot;for(let i=0;i<60;i++)advance(1,.75);const slept=S.tot-tot0;S.lastBeer=(S.lastBeer||0)+slept;S.lastCig=(S.lastCig||0)+slept;S.prom=Math.min(S.prom,.6);S.pukeAt=R(2.1,2.5);S.hang=Math.max(S.hang,2);clampAll();
-    setTimeout(()=>{f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;snd('wake');toast(T('filmriss'),'Kater · 6 Stunden weg',5000);checkAch();showDay()},1800)},900)}
+    setTimeout(()=>{f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;snd('wake');toast(T('filmriss')+(gWas?' '+gWas+' ist natürlich längst weg.':''),'Kater · 6 Stunden weg',5000);checkAch();showDay()},1800)},900)}
 function putDown(){if(S.right!=='empty'){if(S.right==='phone'&&CALL){missCall();}S.right='empty';snd('pop');toast(pick(['Abgelegt. Wahnsinn, du Genie. Nobelpreis kommt per Post.','Weggelegt. Das ist mehr Arbeit, als du letzte Woche gemacht hast.']));doneHint('put');return}
   if(S.bottle&&S.bottle.sips<=0){S.bottle=null;S.empties++;S.pfandStock++;snd('clink');checkAch()}}
 function massage(){if(S.tot<S.massageAt){toast('Der Sessel muss sich von deinem Fettarsch erholen. Noch '+Math.ceil((S.massageAt-S.tot)/10)+' Std.');return}
@@ -1520,7 +1520,7 @@ setInterval(()=>{if(!document.hidden)rankSend(false)},60000);
 const GUESTS={
  kevin:{n:'Kevin',img:'kevin_0',arrive:()=>{S.beer+=2;return{t:'Kevin kommt rein, wirft dir zwei Bier hin und fläzt sich neben dich.',fx:'Bier +2'}},
   talk:['Digga, ich hab grad ’nen Hund gesehen, der sah aus wie du.','Weißt du, was geil wär? Ein Sofa mit Klo drin.','Ich hab heute schon drei Sachen geklaut. Und eine bezahlt. Aus Versehen.','Bruder, deine Bude riecht wie mein Leben.'],
-  own:[{t:'🎮 Zocken',c:()=>S.furn.console,f:()=>({say:'Kevin verliert, schmeißt den Controller und behauptet, du hast gecheatet.',fx:{bo:-25,xp:4}})},
+  own:[{t:'🎮 Zocken',c:()=>S.furn.console,f:()=>{advance(8);S.st.games++;return{say:'Kevin verliert, schmeißt den Controller und behauptet, du hast gecheatet.',fx:{bo:-25,xp:4}}}},
        {t:'🤝 Krummes Ding planen',f:()=>Math.random()<.5?{say:'Ihr klaut zusammen Pfand vom Netto. 8 Euro für jeden. Ehrenmann.',fx:{money:8,police:1,xp:5}}:{say:'Ihr werdet beim Planen schon erwischt. Vom Hausmeister. Kevin rennt weg.',fx:{police:1}}}],
   tick:()=>{if(Math.random()<.12&&S.beer>0){S.beer--;toast('Kevin hat sich heimlich ein Bier genommen. Natürlich.','Bier −1')}}},
  uwe:{n:'Uwe',img:'uwe_0',arrive:()=>{const n=S.basket||0;if(n>0){const m=Math.round(n*.12*100)/100;S.basket=0;S.money+=m;snd('clink');return{t:'Uwe kommt mit Einkaufswagen und lädt dein Leergut ein. Du kriegst die Hälfte vom Pfand.',fx:'Geld +'+eur(m)}}return{t:'Uwe kommt rein, findet kein Leergut und guckt dich enttäuscht an.'}},
@@ -1529,26 +1529,27 @@ const GUESTS={
   tick:()=>{S.dirt=clamp((S.dirt||0)+1.5,0,100)}},
  kowalski:{n:'Frau Kowalski',img:'kowalski_0',arrive:()=>{S.prom+=.25;return{t:'Frau Kowalski kommt mit Eierlikör und schlechten Absichten. Ihr kippt direkt einen.',fx:'Promille +0,25'}},
   talk:['Mein Heinz hatte auch so ein Sofa. Er ist drauf gestorben. Glücklich.','Schätzchen, du hast so starke Hände. Zum Bierhalten.','Ich hab heute meine guten Stützstrümpfe an. Nur für dich.','Früher war ich Miss Castrop-Rauxel. 1971. Zweite.'],
-  own:[{t:'🫂 Kuscheln',f:()=>({say:'Sie kuschelt sich an. Riecht nach Melissengeist und Katze. Gemütlich. Irgendwie.',fx:{bo:-25,nice:1}})},
+  own:[{t:'🫂 Kuscheln',f:()=>{S.dirt=clamp((S.dirt||0)+8,0,100);return{say:'Sie kuschelt sich an. Riecht nach Melissengeist und Katze. Jetzt riechst du auch so.',fx:{bo:-25,nice:1}}}},
        {t:'🥃 Noch’n Eierlikör',f:()=>({say:'Prost, Bärchen. Auf uns. Und auf Heinz.',fx:{prom:.2,bo:-10}})}],
   sticky:true},
  landlord:{n:'Vermieter',img:'landlord_0',arrive:()=>{if(S.beer>0)S.beer--;return{t:'Der Vermieter kommt rein, schnappt sich sein Gratis-Bier und setzt sich in deinen Sessel.',fx:'Bier −1'}},
   talk:['Ich sag’s ehrlich: Ich vermiete nur an Leute wie Sie, weil keiner sonst einzieht.','Wenn Sie wüssten, was ich in anderen Wohnungen gesehen habe. Ach, Sie wissen es.','Der Schimmel ist eigentlich denkmalgeschützt.'],
   own:[{t:'🍄 Schimmel ansprechen',c:()=>S.mold>0,f:()=>Math.random()<.6?(S.mold=Math.max(0,S.mold-1),{say:'Mit Bier im Bauch ist er großzügig: Er schickt morgen den Hausmeister.',fx:{xp:3}}):{say:'Schimmel? Das ist Patina.',fx:{bo:3}}},
-       {t:'💶 Strafen erlassen',f:()=>({say:'Na gut. Die nächste Beschwerde überhör ich. Vielleicht.',fx:{lf:-1,neighbor:-1,xp:3}})}]},
+       {t:'💶 Strafen erlassen (1 Bier)',c:()=>S.beer>0,f:()=>{S.beer--;S.empties++;return{say:'Na gut. Mit noch ’nem Bier überhör ich die nächste Beschwerde. Vielleicht.',fx:{lf:-1,neighbor:-1,xp:3}}}}]},
  jessica:{n:'Jessica',img:'jessica_0',arrive:()=>(S.bo=Math.max(0,S.bo-10),{t:'Jessica stöckelt rein, rümpft die Nase und setzt sich ganz vorne auf die Kante.',fx:'Langeweile −10'}),
   talk:['Mein Neuer hat ’nen Thermomix.','Hast du die Tapete immer noch nicht gewechselt? Ich hab sie 2019 schon gehasst.','Ich bin nur hier, weil mein Neuer beim Fußball ist.'],
   own:[{t:'🗯️ Über ihren Neuen lästern',f:()=>({say:'Ihr lästert eine halbe Stunde. Es fühlt sich fast an wie früher. Fast.',fx:{bo:-20,xp:4}})},
        {t:'💋 Alte Zeiten?',f:()=>Math.random()<.15?{say:'Sie zögert … dann lacht sie dir ins Gesicht. Aber sie bleibt noch.',fx:{bo:-10}}:{say:'Sie kippt dir dein Bier über die Hose und geht.',fx:{bo:5},leave:true}}]}};
 const GUEST_COMMON=[
- {t:'🍺 Bier anbieten',c:()=>S.beer>0,f:g=>{S.beer--;g.mood++;return{say:pick(['Prost! Auf nix!','Endlich jemand mit Manieren.','Ex und hopp.']),fx:{bo:-10,xp:3,nice:1}}}},
- {t:'🚬 Kippe anbieten',c:()=>S.cigs>0,f:g=>{S.cigs--;g.mood++;return{say:pick(['Gelbe Lunge? Edel.','Danke. Meine Lunge sagt nein, ich sag ja.']),fx:{bo:-6,xp:2}}}},
- {t:'💬 Quatschen',f:g=>({say:pick(GUESTS[g.who].talk),fx:{bo:-12,xp:1}})},
- {t:'📺 Zusammen glotzen',f:g=>{advance(10);return{say:'Ihr glotzt eine Stunde zusammen Fernsehen und lästert über alle.',fx:{bo:-18,xp:2}}}},
- {t:'🍻 Wettsaufen',c:()=>S.beer>=2,f:g=>{S.beer-=2;S.prom+=.38;const win=Math.random()<.5;return win?{say:'Du gewinnst! Er rülpst, gibt auf und zahlt die Wettschulden.',fx:{money:3,xp:8,bo:-15}}:{say:'Du verlierst, rülpst und musst eine Runde schmeißen. Peinlich.',fx:{bo:-8,xp:2}}}},
+ {t:'🍺 Zusammen ein Bier',c:()=>S.beer>=2,f:g=>{S.beer-=2;S.empties+=2;S.pfandStock=(S.pfandStock||0)+2;S.st.beers++;S.lastBeer=S.tot;g.mood++;return{say:pick(['Prost! Auf nix!','Endlich jemand mit Manieren.','Ex und hopp.']),fx:{bo:-10,th:-20,prom:.19,chaos:2,xp:3,nice:1}}}},
+ {t:'🍺 Ihm ein Bier geben',c:()=>S.beer>0,f:g=>{S.beer--;S.empties++;S.pfandStock=(S.pfandStock||0)+1;g.mood++;return{say:pick(['Danke, Kollege. Du bist ein Guter.','Kalt wär besser gewesen. Egal.']),fx:{bo:-6,xp:2,nice:1}}}},
+ {t:'🚬 Zusammen eine rauchen',c:()=>S.cigs>=2,f:g=>{S.cigs-=2;S.butts+=2;S.ash+=2;S.lastCig=S.tot;smokeLevel=Math.min(2,smokeLevel+.8);g.mood++;if(Math.random()<.35)setTimeout(()=>snd('cough'),600);return{say:pick(['Gelbe Lunge? Edel.','Danke. Meine Lunge sagt nein, ich sag ja.','Die Bude wird zur Räucherkammer. Gemütlich.']),fx:{bo:-8,xp:2,chaos:1}}}},
+ {t:'💬 Quatschen',f:g=>{advance(4);return{say:pick(GUESTS[g.who].talk),fx:{bo:-12,xp:1}}}},
+ {t:'📺 Zusammen glotzen',c:()=>S.tvOn&&!powerOut(),f:g=>{advance(10);S.st.tvH+=1;return{say:'Ihr glotzt eine Stunde zusammen Fernsehen und lästert über alle. Durst und Hunger steigen trotzdem.',fx:{bo:-18,xp:2}}}},
+ {t:'🍻 Wettsaufen (4 Bier)',c:()=>S.beer>=4,f:g=>{S.beer-=4;S.empties+=4;S.pfandStock=(S.pfandStock||0)+4;S.st.beers+=2;S.lastBeer=S.tot;setTimeout(()=>snd('burp'),500);const win=Math.random()<Math.max(.15,.6-S.prom*.15);return win?{say:'Du kippst zwei Flaschen auf Ex und gewinnst! Er rülpst, gibt auf und zahlt die Wettschulden.',fx:{prom:.45,th:-40,chaos:4,money:3,xp:8,bo:-15}}:{say:'Du verschluckst dich, verlierst und musst eine Runde schmeißen. Dir ist leicht schlecht.',fx:{prom:.45,th:-40,chaos:4,money:-2,bo:-8,xp:2}}}},
  {t:'🚪 Rausschmeißen',f:g=>GUESTS[g.who].sticky&&Math.random()<.5?{say:'„Ach Schätzchen, ich bleib noch ein bisschen.“ Sie bleibt einfach sitzen.',fx:{}}:{say:'Raus mit dir! Tür zu.',fx:{},leave:true}}];
 const gEl=document.createElement('div');gEl.id='guestB';document.getElementById('stage').appendChild(gEl);
-function startGuest(who){const G=GUESTS[who];if(!G)return;snd(Math.random()<.5?'knock':'bell');S.guest={who,until:S.tot+45,mood:0,talkAt:S.tot+R(6,10)};const r=G.arrive();toast(r.t,r.fx||'',5000);addXP(2);guestDraw()}
+function startGuest(who){const G=GUESTS[who];if(!G)return;snd(Math.random()<.5?'knock':'bell');S.guest={who,until:S.tot+45,mood:0,talkAt:S.tot+R(6,10)};const r=G.arrive();clampAll();toast(r.t,r.fx||'',5000);addXP(2);guestDraw();setTimeout(()=>{try{promCheck()}catch(e){}},2500)}
 function guestLeave(msg){if(!S.guest)return;const n=GUESTS[S.guest.who].n;S.guest=null;guestDraw();toast(msg||n+' geht wieder. Die Tür knallt.','',3500)}
 function guestDraw(){const g=S.guest;if(!g||!GUESTS[g.who]){gEl.style.display='none';return}const G=GUESTS[g.who];gEl.style.display='block';gEl.innerHTML=`<div class="gh" style="background-image:url(sprites/${G.img}.webp)"></div><div class="gn">${esc(G.n)}</div>`}
 gEl.onclick=()=>{initAudio();snd('pop');guestMenu()};
@@ -1556,7 +1557,7 @@ function guestMenu(){const g=S.guest;if(!g)return;const G=GUESTS[g.who];const ac
   openModal(`<div style="text-align:center"><img src="sprites/${G.img}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)} ist zu Besuch</h2><p style="color:var(--dim);font-size:13px">bleibt noch etwa ${Math.max(1,Math.round((g.until-S.tot)/10))} Std.</p></div><div class="list">${acts.map((a,i)=>`<button class="btn${i<(G.own||[]).filter(x=>!x.c||x.c()).length?' pri':''}" data-g="${i}">${esc(a.t)}</button>`).join('')}<button class="btn" data-gx>Zurück</button></div>`,()=>bindAll({'[data-g]':el=>{const a=acts[+el.dataset.g];const r=a.f(g)||{};const sub=r.fx?fx(r.fx):'';checkAch();
     M.innerHTML=`<div style="text-align:center"><img src="sprites/${G.img}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)}</h2><p>„${esc(r.say||'…')}“</p>${sub?'<p style="color:#f2c14e;font-weight:800">'+esc(sub)+'</p>':''}</div><div class="list"><button class="btn" data-gx>Weiter</button></div>`;
     if(r.leave){S.guest=null;guestDraw()}else g.until=Math.min(g.until+6,S.tot+60);
-    bindAll({'[data-gx]':()=>{closeModal();if(r.leave)toast(G.n+' ist weg.')}})},'[data-gx]':()=>closeModal()}))}
+    bindAll({'[data-gx]':()=>{closeModal();clampAll();if(r.leave)toast(G.n+' ist weg.');setTimeout(()=>{try{promCheck()}catch(e){}},400)}})},'[data-gx]':()=>closeModal()}))}
 setInterval(()=>{try{const g=S.guest;if(!g){if(gEl.style.display!=='none')guestDraw();return}if(gEl.style.display==='none')guestDraw();if(!S.started||busyUI)return;
   if(S.tot>=g.until){guestLeave();return}const G=GUESTS[g.who];if(S.tot>=g.talkAt){g.talkAt=S.tot+R(9,15);if(!toastBusy&&!VISIT&&!CARD)toast(G.n+': „'+pick(G.talk)+'“','',4500);G.tick&&G.tick()}}catch(e){}},1000);
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
