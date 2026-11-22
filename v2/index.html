@@ -146,7 +146,8 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=94;
+const APPVER=95;
+const IDEA_MAIL='n3r0x89@gmail.com';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
@@ -1170,15 +1171,15 @@ function supportMenu(back){openModal(`<h2>🍺 Spendier dem Assi ein Bier</h2><p
 function ideaMenu(back){let draft='';try{draft=localStorage.getItem('sofasim_idea')||''}catch(e){}
   openModal(`<div class="sugg"><h2>Verbesserungsvorschlag</h2><p>Was soll besser, lustiger oder fieser werden? Fehler gefunden? Schreib’s rein.</p><textarea id="ideaTx" placeholder="Zum Beispiel: Der Pizzabote soll öfter kommen …">${esc(draft)}</textarea>
   <div class="list"><button class="btn pri" data-i="send">Abschicken</button><button class="btn" data-i="copy">Text kopieren</button><button class="btn" data-i="back">Zurück</button></div>
-  <p style="font-size:12px;color:var(--dim)">„Abschicken“ öffnet GitHub mit deinem Text als neuen Eintrag. Dort nur noch auf „Submit“ tippen.</p></div>`,()=>{
+  <p style="font-size:12px;color:var(--dim)">„Abschicken“ öffnet dein E-Mail-Programm mit fertigem Text an den Entwickler. Dort nur noch auf „Senden“ tippen.</p></div>`,()=>{
   const tx=document.getElementById('ideaTx');tx.addEventListener('input',()=>{try{localStorage.setItem('sofasim_idea',tx.value)}catch(e){}});
   bindAll({'[data-i]':el=>{const a=el.dataset.i,v=tx.value.trim();
     if(a==='back')return back?back():closeModal();
     if(!v){toast('Erst was reinschreiben, du Schreibfaulpelz.');snd('bad');return}
     const info='\n\n---\nVersion '+APPVER+' · Level '+S.lvl+' · Tag '+S.day+' · '+navigator.userAgent;
     if(a==='copy'){try{navigator.clipboard.writeText(v+info);toast('Kopiert. Jetzt einfach irgendwo einfügen.')}catch(e){toast('Kopieren ging nicht. Markier den Text von Hand.')}return}
-    if(a==='send'){const title='Vorschlag: '+v.split('\n')[0].slice(0,60);const url='https://github.com/n3r0x89/sofa-simulator/issues/new?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(v+info);
-      window.open(url,'_blank');try{localStorage.removeItem('sofasim_idea')}catch(e){}toast('Danke! GitHub ist offen, dort noch auf „Submit“ tippen.','',3500);(back?back:closeModal)()}}})})}
+    if(a==='send'){const title='Vorschlag: '+v.split('\n')[0].slice(0,60);const url='mailto:'+IDEA_MAIL+'?subject='+encodeURIComponent('Assi Simulator – '+title)+'&body='+encodeURIComponent(v+info);
+      location.href=url;try{localStorage.removeItem('sofasim_idea')}catch(e){}toast('Danke! Jetzt in der E-Mail noch auf „Senden“ tippen.','Kein E-Mail-Programm? Text kopieren und an '+IDEA_MAIL+' schicken.',5000);(back?back:closeModal)()}}})})}
 
 // ---------- Tagesaufgaben (XP verdienen) ----------
 const QUESTS=[
