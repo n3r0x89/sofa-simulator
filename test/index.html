@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 99</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 100</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=99;
+const APPVER=100;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1705,7 +1705,7 @@ const XCAL=[
  ['5 € von Oma im Umschlag: „Kauf dir was Vernünftiges.“',{money:5}],
  ['Ein Duftbaum „Tannenfrische“. Hilft gegen nix.',{chaos:-3}],
  ['Eine Schachtel Kippen mit Weihnachtsmann-Aufkleber.',{cigs:5}],
- ['Großes Türchen: ein Sixpack Assibräu mit Schleife. Frohe Weihnachten, du Penner!',{beer:6,xp:50}]];
+ ['Großes Türchen: ZWEI Sixpacks Assibräu und zwei Schachteln Kippen, mit Schleife drum. Frohe Weihnachten, du versoffene Lametta-Leiche! Sauf nicht alles auf einmal. Oder doch, ist eh egal.',{beer:12,cigs:40,xp:50}]];
 function xcalState(z){if(!S.xcal||S.xcal.y!==z.y)S.xcal={y:z.y,open:[]};return S.xcal}
 function xcalDue(){const z=xSeason();if(!z||!z.cal||z.after)return 0;const c=xcalState(z);let n=0;for(let i=1;i<=Math.min(24,z.day);i++)if(!c.open.includes(i))n++;return n}
 function xcalMenu(){const z=xSeason();if(!z||!z.cal)return;if(z.after)return toast('Alle Türchen leer gefressen. Nächstes Jahr wieder, du Vielfraß.');const c=xcalState(z);const last=Math.min(24,z.day);
