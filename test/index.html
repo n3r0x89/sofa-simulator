@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 102</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 103</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=102;
+const APPVER=103;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1683,6 +1683,8 @@ CONTACTS.push({k:'toni',n:'Tattoo-Toni',img:'toni_0',hi:['Toni, Tattoo und Pierc
   {t:'Was kostet’n so was?',f:()=>({say:'Herz mit MAMA 15 Öcken. Groß auf’m Handrücken 25. Bar. Und ich will ’n Bier.',fx:{bo:-3}})}]});
 
 // ================= WEIHNACHTEN (nach echtem Datum) =================
+// Nur in der Testversion: ?datum=2026-12-15 spielt ein anderes Datum vor, ?datum=heute schaltet zurück
+try{const q=new URLSearchParams(location.search).get('datum');if(q&&/\/test\//.test(location.pathname)){if(q==='heute')localStorage.removeItem('sofatest_fakedate');else if(/^\d{4}-\d\d-\d\d$/.test(q))localStorage.setItem('sofatest_fakedate',q)}}catch(e){}
 function xNow(){let f=null;try{f=localStorage.getItem('sofatest_fakedate')}catch(e){}const d=f?new Date(f+'T12:00:00'):new Date();d.setHours(12,0,0,0);return d}
 function xAdvent1(y){const d=new Date(y,11,24,12);while(d.getDay()!==0)d.setDate(d.getDate()-1);d.setDate(d.getDate()-21);return d}
 function xSeason(){const d=xNow(),y=d.getMonth()===0?d.getFullYear()-1:d.getFullYear(),a1=xAdvent1(y),end=new Date(y+1,0,7,0);
