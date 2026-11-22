@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<age-declaration>
+  <ageblock-basic>
+    <age-issuer>self-d</age-issuer>
+    <last-change>2026-11-22</last-change>
+    <country>de</country>
+    <label-version>1.0</label-version>
+    <revisit-after>7days</revisit-after>
+  </ageblock-basic>
+  <ageblock-labeltype>
+    <xmlfile>true</xmlfile>
+    <httpheader>false</httpheader>
+    <htmlmeta>false</htmlmeta>
+    <label-z>false</label-z>
+    <default-age>16</default-age>
+  </ageblock-labeltype>
+</age-declaration>

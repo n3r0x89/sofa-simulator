@@ -147,7 +147,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=91;
+const APPVER=92;
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
@@ -1014,7 +1014,7 @@ function closeModal(){M.style.display='none';busyUI=false;if(S.right==='phone'||
 function bindAll(map){for(const[sel,fn]of Object.entries(map))M.querySelectorAll(sel).forEach(el=>el.onclick=()=>{initAudio();snd('pop');fn(el)})}
 const closeBtn='<button class="btn close" data-x>Zurück</button>';
 
-function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.naturalWidth?'<img src="sprites/splash.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':''}<div class="menuT">Assi<br>Simulator</div><div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER}</div>
+function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.naturalWidth?'<img src="sprites/splash.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':''}<div class="menuT">Assi<br>Simulator</div><div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER} · Freigegeben ab 16 Jahren</div>
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
  <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
