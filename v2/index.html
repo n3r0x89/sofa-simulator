@@ -17,6 +17,7 @@
 .sideBtns .btn.sm{pointer-events:auto;width:46px;height:46px;min-width:0;padding:0;border-radius:50%;font-size:22px;line-height:46px;background:rgba(28,19,13,.42);border:1px solid rgba(255,220,170,.18);box-shadow:0 2px 8px rgba(0,0,0,.25);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:.82}
 .sideBtns .btn.sm:active{opacity:1;transform:scale(.94)}
 
+.btn.sup{background:linear-gradient(#f2c14e,#d99a1e)!important;color:#2a1a00!important;font-weight:900}
 .btn.upd{background:#d33!important;color:#fff!important;font-weight:900;animation:updPulse 1s ease-in-out infinite}
 @keyframes updPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(221,51,51,.7)}50%{transform:scale(1.03);box-shadow:0 0 0 8px rgba(221,51,51,0)}}
 #bMenu.updDot{position:relative}#bMenu.updDot::after{content:'';position:absolute;top:6px;right:6px;width:11px;height:11px;border-radius:50%;background:#e33;box-shadow:0 0 0 2px #2a1d16;animation:updPulse 1s infinite}
@@ -146,7 +147,8 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=90;
+const APPVER=91;
+const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
 const $=id=>document.getElementById(id);
@@ -1016,16 +1018,16 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
  <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button>
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay()});S.started=true;closeModal();showDay()}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
-  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);
+  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
-  if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
+  if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='sup')supportMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
   if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>newGameWithName('Neues Spiel. Gleiches Sofa.'),pauseMenu)}}))}
 function confirmBox(q,yes,no){openModal(`<h2>Sicher?</h2><p>${esc(q)}</p><div class="list"><button class="btn red" data-y>Ja, weg damit</button><button class="btn" data-n>Nein</button></div>`,()=>bindAll({'[data-y]':yes,'[data-n]':no}))}
@@ -1140,6 +1142,8 @@ async function doUpdate(){const b=document.querySelector('[data-a="upd"]');if(b)
 setTimeout(checkUpdate,8000);setInterval(checkUpdate,5*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
 // ---------- Verbesserungsvorschlag ----------
+function supportMenu(back){openModal(`<h2>🍺 Spendier dem Assi ein Bier</h2><p>Das Spiel ist kostenlos und bleibt es auch. Keine nervige Werbung, keine Abzocke.</p><p>Wenn du trotzdem was in die Kasse werfen willst, damit es weitergeht: Jeder Euro hilft – für neue Bilder, Töne, Besucher und die eigene Domain.</p><p style="font-size:12px;color:var(--dim)">Freiwillig. Du bekommst dafür nichts im Spiel – in der Rangliste sind alle gleich. Bezahlt wird sicher über PayPal, das Spiel sieht davon nichts.</p>
+  <div class="list"><button class="btn pri" data-s="pay">Mit PayPal unterstützen</button><button class="btn" data-s="back">Zurück</button></div>`,()=>bindAll({'[data-s]':el=>{const a=el.dataset.s;if(a==='pay'){window.open(PAYPAL,'_blank','noopener');snd('cash')}if(a==='back')back()}}))}
 function ideaMenu(back){let draft='';try{draft=localStorage.getItem('sofasim_idea')||''}catch(e){}
   openModal(`<div class="sugg"><h2>Verbesserungsvorschlag</h2><p>Was soll besser, lustiger oder fieser werden? Fehler gefunden? Schreib’s rein.</p><textarea id="ideaTx" placeholder="Zum Beispiel: Der Pizzabote soll öfter kommen …">${esc(draft)}</textarea>
   <div class="list"><button class="btn pri" data-i="send">Abschicken</button><button class="btn" data-i="copy">Text kopieren</button><button class="btn" data-i="back">Zurück</button></div>
