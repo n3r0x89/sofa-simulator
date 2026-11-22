@@ -1,0 +1,70 @@
+# V3 persistence – verification checklist
+
+V3 is connected to the persistence module. The browser test lab at `v3/tests/storage.test.html` uses a dedicated test database and should be run before any release.
+
+## Automated checks
+- [x] Playwright runs the isolated IndexedDB tests and fresh-game/job/daily-goal/sound-toggle/sleep/reload smoke test in Chromium.
+- [x] GitHub Actions JavaScript module syntax check passes.
+- [x] Manifest JSON and required V3 files pass the workflow.
+- [x] All 197 manifest-listed media files (162 sprites and 35 audio files) can be fetched after offline reload in headless Chromium.
+- [x] Sound preference remains off after reload and can be switched on again.
+
+## Browser test lab
+- [x] Open `/v3/tests/storage.test.html` over HTTP(S) in headless Chromium.
+- [x] Confirm all isolated storage tests pass in headless Chromium.
+- [x] Confirm the test code targets only `sofa-simulator-v3-test-browser` (the production DB is not opened by the test module).
+
+## Static/API checks
+- [x] Core persistence module parses as an ES module in Chromium.
+- [ ] All exported functions are present and documented.
+- [ ] V2 defaults match the current `fresh()` structure in `v2/index.html`.
+- [ ] Runtime-only UI/animation state is excluded from persisted data.
+- [ ] V3 game loads with a fresh save and with a migrated V2 save.
+- [x] Jobs, shop, clean, eat, shower, TV, sleep, diary and menu actions respond in the headless Chromium smoke test.
+- [x] Hunger, hygiene and energy meters update after eat, shower and clean in the headless Chromium smoke test.
+- [x] Daily job goal grants its bonus only once per day; Chromium smoke test now verifies a second job does not repeat the bonus and sleeping resets the goal.
+
+## Migration checks (use a copied V2 save only)
+- [ ] Valid V2 save migrates and preserves all known and unknown payload fields.
+- [x] The exact original `localStorage["sofasim_v2"]` string remains unchanged (isolated migration test).
+- [x] Migration record contains the exact original string and its SHA-256 when Web Crypto is available (isolated Chromium test).
+- [x] Migration backup is separate from the five rotating backup slots (isolated rotation test).
+- [x] Running migration a second time returns `already-migrated` and does not overwrite the V3 current save.
+- [x] Missing V2 save returns `no-v2-save`.
+- [x] Malformed JSON and non-object V2 structures are rejected without writing a V3 save or modifying V2.
+
+## Save and backup checks
+- [x] Current save survives reload in the Chromium smoke test.
+- [x] A daily backup is created when the in-game day advances (isolated storage test).
+- [x] A new game starting on the same day number triggers a checkpoint via `{ newGame: true }` (isolated storage test).
+- [x] A day-counter reset is detected as a new run even if the explicit signal is missed.
+- [x] Regular autosaves do not create extra backups (same-day repeat-save test).
+- [x] At most five rotating backups remain; the V2 migration checkpoint is retained separately (isolated storage test).
+- [x] Restore validates the selected snapshot and creates a pre-restore recovery point (isolated storage test).
+- [ ] Import validates the file and creates a pre-import recovery point.
+- [ ] Invalid or oversized imports do not change the current save.
+- [ ] Storage quota and IndexedDB failures are surfaced to the caller (never silently reported as success).
+
+## Export/import checks
+- [ ] Exported JSON can be imported into a clean V3 database.
+- [x] Corrupted payloads and mismatched SHA-256 checksums are rejected (isolated Chromium test).
+- [ ] A browser without Web Crypto still performs structural validation; checksum protection is unavailable there.
+
+## Browser/device checks
+- [ ] iOS Safari (current supported iOS release).
+- [ ] Android Chrome.
+- [ ] Desktop Chrome/Edge and Firefox.
+- [x] Offline reload is controlled by the service worker; all 197 manifest-listed media files remain fetchable in the Chromium workflow.
+- [ ] Multiple open tabs and blocked database upgrades.
+- [ ] Browser storage cleared: recovery guidance is clear and no cloud-backup claim is made.
+
+## Media checks
+- [x] V3 room background image is available offline in headless Chromium.
+- [x] A local MP3 sound effect is available offline in headless Chromium.
+- [x] Sound toggle responds to on/off interaction in the game smoke test.
+- [x] Sound preference persistence across reload is verified in headless Chromium.
+- [x] All 162 sprites and 35 audio files are verified in the offline cache.
+- [ ] iOS Safari and Android Chrome audio autoplay restrictions are verified on devices.
+
+## Release gate
+Do not merge or deploy until the open checks above have been executed against representative copied V2 saves and the results have been reviewed. Never test destructive restore/import flows against the user's only live save.
