@@ -6,8 +6,7 @@
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Assi Sim">
 <meta name="theme-color" content="#1c1410">
 <title>Assi Simulator</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>@font-face{font-family:'Nunito';src:url(fonts/nunito.woff) format('woff');font-weight:200 1000;font-display:swap}@font-face{font-family:'Lilita One';src:url(fonts/lilita.woff) format('woff');font-weight:400;font-display:swap}</style>
 <style>#bPrank{position:relative}#bPrank.new::after{content:'';position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:#e33;box-shadow:0 0 0 2px #2a1d16}#guestB{position:absolute;left:8px;top:34%;z-index:7;display:none;cursor:pointer;animation:gbob 2.6s ease-in-out infinite}
 #guestB .gh{width:66px;height:66px;border-radius:50%;background-color:#fff3dc;background-size:240%;background-position:50% 4%;background-repeat:no-repeat;border:3px solid #f2c14e;box-shadow:0 3px 10px rgba(0,0,0,.45)}
 #guestB .gn{margin-top:3px;text-align:center;font:900 11px Nunito,sans-serif;color:#fff;text-shadow:0 1px 3px #000;max-width:80px}
@@ -147,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=93;
+const APPVER=94;
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
@@ -1033,14 +1032,14 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
  <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
- ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
+ ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay()});S.started=true;closeModal();showDay()}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);if(a==='code')codeMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='sup')supportMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
   if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>newGameWithName('Neues Spiel. Gleiches Sofa.'),pauseMenu)}}))}
