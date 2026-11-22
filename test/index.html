@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 101</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 102</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=101;
+const APPVER=102;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1661,12 +1661,16 @@ TAT_ANCHOR.lh_full=TAT_ANCHOR.lh_empty;TAT_ANCHOR.lh_open=TAT_ANCHOR.lh_empty;
 function armTat(arm){const tt=S.tat;return!!tt&&TATS.some(T=>T.arm===arm&&tt[T.id])}
 function bareKey(arm,key){if(!armTat(arm))return key;const b=key+'_bare',i=SP[b];return i&&i.naturalWidth?b:key}
 function sprRect(key,b){const i=SP[key];if(!i||!i.naturalWidth)return null;const s=Math.min(b.w/i.naturalWidth,b.h/i.naturalHeight),w=i.naturalWidth*s,h=i.naturalHeight*s;return{x:b.x+(b.w-w)/2,y:b.y+b.h-h,w,h}}
+let tatOC=null;
 function drawTattoos(arm,key,b){const tt=S.tat;if(!tt)return;const an=TAT_ANCHOR[key]||TAT_ANCHOR[key.replace('_bare','')];if(!an)return;const r=sprRect(key,b);if(!r)return;
-  for(const T of TATS){if(T.arm!==arm||!tt[T.id])continue;const a=an[+T.id[1]-1];if(!a)continue;const x=r.x+r.w*a[0],y=r.y+r.h*a[1],sz=r.w*a[2];
-    cx.save();cx.translate(x,y);cx.rotate(a[3]);cx.globalCompositeOperation='multiply';cx.globalAlpha=.82;const im=SP['tat_'+T.id];
-    if(im&&im.naturalWidth){const h=sz*im.naturalHeight/im.naturalWidth;cx.drawImage(im,-sz/2,-h/2,sz,h)}
-    else{cx.fillStyle='#24406e';cx.font='900 '+Math.max(7,sz*(T.txt.length>4?.22:.34))+'px Nunito,sans-serif';cx.textAlign='center';cx.textBaseline='middle';cx.fillText(T.txt,0,0)}
-    cx.restore()}}
+  const list=TATS.filter(T=>T.arm===arm&&tt[T.id]&&an[+T.id[1]-1]);if(!list.length)return;
+  // Tattoos erst auf eine eigene Fläche malen und auf die Hand zuschneiden, damit nichts in die Luft ragt
+  const w=Math.ceil(r.w),h=Math.ceil(r.h);if(!tatOC)tatOC=document.createElement('canvas');tatOC.width=w;tatOC.height=h;const o=tatOC.getContext('2d');o.clearRect(0,0,w,h);
+  for(const T of list){const a=an[+T.id[1]-1],x=w*a[0],y=h*a[1],sz=w*a[2];o.save();o.translate(x,y);o.rotate(a[3]);const im=SP['tat_'+T.id];
+    if(im&&im.naturalWidth){const ih=sz*im.naturalHeight/im.naturalWidth;o.drawImage(im,-sz/2,-ih/2,sz,ih)}
+    else{o.fillStyle='#24406e';o.font='900 '+Math.max(7,sz*(T.txt.length>4?.22:.34))+'px Nunito,sans-serif';o.textAlign='center';o.textBaseline='middle';o.fillText(T.txt,0,0)}o.restore()}
+  o.globalCompositeOperation='destination-in';o.drawImage(SP[key],0,0,w,h);o.globalCompositeOperation='source-over';
+  cx.save();cx.globalCompositeOperation='multiply';cx.globalAlpha=.85;cx.drawImage(tatOC,r.x,r.y,r.w,r.h);cx.restore()}
 function tattooMenu(visit){const tt=S.tat||(S.tat={});const rows=TATS.map(T=>{const has=tt[T.id];return`<div class="row${has?' off':''}"><img src="sprites/tat_${T.id}.webp" alt="" onerror="this.style.visibility='hidden'" style="width:44px;height:44px;object-fit:contain;background:#fff;border-radius:8px;margin-right:8px"><div class="t"><b>${T.n}</b><span>${has?'hast du schon':T.w+' · '+eur(T.p)}</span></div>${has?'':`<button class="btn pri" data-t="${T.id}" ${S.money<T.p?'disabled':''}>Stechen</button>`}</div>`}).join('');
   openModal(`<div style="text-align:center"><img src="sprites/toni_0.webp" alt="" onerror="this.style.display='none'" style="height:140px;margin:0 auto 4px;display:block"><h2 style="margin:4px 0">🖋️ Tattoo-Toni</h2><p>${visit?'„So, Meister. Wo soll’s hin? Ich hab ’ne ruhige Hand. Meistens.“':'„Was darf’s sein?“'}</p></div><div class="list">${rows}</div><div class="list"><button class="btn" data-t="x">Lieber doch nicht</button></div>`,()=>bindAll({'[data-t]':el=>{const id=el.dataset.t;
     if(id==='x'){closeModal();return toast(visit?'Toni packt beleidigt seine Maschine ein. „Weichei.“':'Toni legt auf.')}
@@ -1718,7 +1722,7 @@ function xcalMenu(){const z=xSeason();if(!z||!z.cal)return;if(z.after)return toa
     if(c.open.includes(n)||n>last)return;c.open.push(n);const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
     openModal(`<div class="sugg" style="text-align:center"><h2>Türchen ${n}</h2><p style="font-size:17px">${txt}</p><p style="color:var(--dim)">${fxStr(f)||'Sonst nix.'}</p><div class="list"><button class="btn pri" data-q="more">${xcalDue()?'Noch eins aufmachen':'Zum Kalender'}</button><button class="btn" data-q="x">Weiterglotzen</button></div></div>`,()=>bindAll({'[data-q]':e2=>{if(e2.dataset.q==='more')xcalMenu();else closeModal()}}))}}))}
 function xLayout(){const m=L.mm;if(!m)return null;const r=(x0,y0,x1,y1)=>{const a=m(x0,y0),b=m(x1,y1);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}};
-  return{cal:r(296,212,404,372),wreath:r(440,930,600,1036),tree:r(-10,420,250,945)}}
+  return{cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(55,425,305,945)}}
 function xFit(key,b){const i=SP[key];if(!i||!i.naturalWidth)return false;return spr(key,b)}
 function drawXmasBack(t){if(!L.roomMode)return;const z=xSeason();if(!z)return;const X=xLayout();if(!X)return;L.xmas=X;
   // Weihnachtsbaum (ab 3. Advent)
