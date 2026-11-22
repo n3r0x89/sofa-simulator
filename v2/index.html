@@ -147,7 +147,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=92;
+const APPVER=93;
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
 // ================= CORE =================
@@ -177,8 +177,22 @@ function fresh(){return{
 }}
 let S=null;
 function load(){try{const t=localStorage.getItem(SAVE);if(t){const o=JSON.parse(t);if(!o.vhsV2){o.vhs=[];o.vhsV2=1}const f=fresh();for(const k in f)if(o[k]===undefined)o[k]=f[k];for(const k in f.h)if(o.h[k]===undefined)o.h[k]=f.h[k];for(const k in f.st)if(o.st[k]===undefined)o.st[k]=f.st[k];if(o.ash===undefined||o.ash===0&&o.butts)o.ash=Math.min(o.butts||0,20);return o}}catch(e){}return null}
-function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
+let NOSAVE=false;
+function save(){if(NOSAVE)return;try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
 function hasSave(){try{return !!localStorage.getItem(SAVE)}catch(e){return false}}
+// Umzug auf eigene Domain: Spielstand mitnehmen
+const NEWHOST='assi-simulator.de';
+function dumpLS(){const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('sofasim'))o[k]=localStorage.getItem(k)}}catch(e){}return o}
+function encSave(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o))))}
+function decSave(t){return JSON.parse(decodeURIComponent(escape(atob(t.trim()))))}
+function saveScore(t){try{const o=JSON.parse(t);return o&&o.started?(o.lvl||1)*1e7+(o.day||1)*1e4+(o.xp||0):-1}catch(e){return -1}}
+function applySave(o,force){if(!o||typeof o!=='object'||!o[SAVE])return false;let cur=null;try{cur=localStorage.getItem(SAVE)}catch(e){}
+  if(!force&&saveScore(cur)>=saveScore(o[SAVE]))return false;try{for(const k in o)if(k.startsWith('sofasim'))localStorage.setItem(k,o[k]);return true}catch(e){return false}}
+let IMPORTED=false;
+(function(){const m=location.hash.match(/#import=([^&]+)/);if(!m)return;try{IMPORTED=applySave(decSave(decodeURIComponent(m[1])),false)}catch(e){}try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}})();
+(async function(){if(!/github\.io$/.test(location.hostname))return;try{const r=await fetch(location.pathname+'?probe='+Date.now(),{redirect:'manual',cache:'no-store'});
+  if(r.type==='opaqueredirect'||r.redirected){const d=encSave(dumpLS());try{const rs=await navigator.serviceWorker.getRegistrations();await Promise.all(rs.map(x=>x.unregister()))}catch(e){}
+    location.replace('https://'+NEWHOST+'/v2/#import='+encodeURIComponent(d))}}catch(e){}})();
 S=load()||fresh();
 
 // ---------- Audio (synth) ----------
@@ -1018,11 +1032,11 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
  <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay()});S.started=true;closeModal();showDay()}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
-  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);
+  if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);if(a==='code')codeMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
@@ -1142,6 +1156,16 @@ async function doUpdate(){const b=document.querySelector('[data-a="upd"]');if(b)
 setTimeout(checkUpdate,8000);setInterval(checkUpdate,5*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
 // ---------- Verbesserungsvorschlag ----------
+function codeMenu(back){save();const code=encSave(dumpLS());
+  openModal(`<div class="sugg"><h2>💾 Spielstand sichern/laden</h2><p>Dein Code enthält deinen ganzen Assi. Kopier ihn dir irgendwohin (Notizen, WhatsApp an dich selbst). Auf einem anderen Handy oder einer anderen Adresse fügst du ihn unten wieder ein.</p>
+  <textarea id="codeOut" readonly style="height:70px">${code}</textarea><div class="list"><button class="btn pri" data-c="copy">Code kopieren</button></div>
+  <p style="margin-top:14px">Code von woanders laden:</p><textarea id="codeIn" placeholder="Code hier einfügen …" style="height:70px"></textarea>
+  <div class="list"><button class="btn" data-c="load">Code laden</button><button class="btn" data-c="back">Zurück</button></div></div>`,()=>bindAll({'[data-c]':el=>{const a=el.dataset.c;
+   if(a==='copy'){const t=document.getElementById('codeOut');t.select();try{navigator.clipboard.writeText(code).then(()=>toast('Code kopiert','Gut aufheben!',2000),()=>{document.execCommand('copy');toast('Code kopiert','Gut aufheben!',2000)})}catch(e){document.execCommand('copy')}}
+   if(a==='load'){const v=document.getElementById('codeIn').value;let o=null;try{o=decSave(v)}catch(e){}
+     if(!o||!o[SAVE]){snd('bad');toast('Code kaputt','Ganz kopiert? Nochmal versuchen.',2500);return}
+     confirmBox('Diesen Spielstand laden? Dein jetziger Assi hier wird überschrieben.',()=>{if(applySave(o,true)){NOSAVE=true;location.reload()}else{snd('bad');toast('Ging nicht','Speicher voll oder gesperrt.',2500)}},()=>codeMenu(back))}
+   if(a==='back')back()}}))}
 function supportMenu(back){openModal(`<h2>🍺 Spendier dem Assi ein Bier</h2><p>Das Spiel ist kostenlos und bleibt es auch. Keine nervige Werbung, keine Abzocke.</p><p>Wenn du trotzdem was in die Kasse werfen willst, damit es weitergeht: Jeder Euro hilft – für neue Bilder, Töne, Besucher und die eigene Domain.</p><p style="font-size:12px;color:var(--dim)">Freiwillig. Du bekommst dafür nichts im Spiel – in der Rangliste sind alle gleich. Bezahlt wird sicher über PayPal, das Spiel sieht davon nichts.</p>
   <div class="list"><button class="btn pri" data-s="pay">Mit PayPal unterstützen</button><button class="btn" data-s="back">Zurück</button></div>`,()=>bindAll({'[data-s]':el=>{const a=el.dataset.s;if(a==='pay'){window.open(PAYPAL,'_blank','noopener');snd('cash')}if(a==='back')back()}}))}
 function ideaMenu(back){let draft='';try{draft=localStorage.getItem('sofasim_idea')||''}catch(e){}
@@ -1632,3 +1656,4 @@ try{if('serviceWorker' in navigator&&location.protocol==='https:'&&!/claude/.tes
 </script>
 </body>
 </html>
+if(IMPORTED)setTimeout(()=>toast('Willkommen auf assi-simulator.de!','Dein Spielstand ist mitgezogen.',3500),1500);
