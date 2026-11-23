@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 116</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 117</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=116;
+const APPVER=117;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -613,13 +613,13 @@ function smokeTick(t){const dt=Math.min(.1,t-(smkLast||t));smkLast=t;
   for(const p of SMK){const al=p.a*(1-p.life/p.max);const g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);g.addColorStop(0,'rgba(225,228,235,'+al+')');g.addColorStop(1,'rgba(225,228,235,0)');cx.fillStyle=g;cx.fillRect(p.x-p.r,p.y-p.r,p.r*2,p.r*2)}}
 function exhale(){for(let k=0;k<14;k++)SMK.push({x:W*.5+R(-30,30),y:H*.98,vx:R(-30,30),vy:R(-110,-70),r:R(8,16),a:.38,life:0,max:R(2.5,4)})}
 const SLOTDEF=[ // [x,y,lying] in room-image coords, filled in this order
- [470,1030,0],[880,1075,1],[255,1128,0],[605,1036,0],[485,1140,1],[700,1150,0],[160,1145,1],[560,1155,0],
- [330,960,0],[45,965,1],[420,975,1],[790,955,0],[500,950,0],[880,975,1],[300,688,0],[700,690,0],
- [560,980,1],[835,925,0],[905,590,0],[60,598,1],[350,690,1],[380,935,0],[930,1040,0],
- [210,447,0],[760,592,1],[455,925,0],[670,690,0],[30,925,0],[860,890,1],[230,722,0],[530,925,1],
- [120,960,0],[820,1000,0],[400,1150,0],[640,955,1],[300,1000,1],[700,1005,0],[455,1000,0],[190,1000,1],[930,600,0],[150,598,0],[100,447,1],[60,720,0]];
-function emptySlots(){const xt=xTreeUp();const fk=['massage','fridge','lamp','gold','stash'].map(k=>S.furn[k]?1:0).join('')+(xt?'T':'');if(L.slots&&L.slotsW===W&&L.slotsH===H&&L.slotsF===fk)return L.slots;const m=L.mm;if(!m)return[];
-  const block=[];if(S.furn.massage)block.push([735,560,1075,1000]);if(S.furn.fridge)block.push([196,722,344,910]);if(S.furn.lamp)block.push([640,350,756,910]);if(S.furn.gold)block.push([-110,620,250,1015]);if(xt)block.push([645,415,895,945]);
+ [470,1030,0],[815,1085,1],[255,1128,0],[605,1036,0],[485,1140,1],[700,1150,0],[160,1145,1],[560,1155,0],
+ [330,960,0],[420,975,1],[790,955,0],[500,950,0],[840,975,1],[300,688,0],[700,690,0],
+ [560,980,1],[835,925,0],[905,590,0],[350,690,1],[380,935,0],[845,1060,0],
+ [210,447,0],[760,592,1],[455,925,0],[670,690,0],[860,890,1],[230,722,0],[530,925,1],
+ [120,960,0],[820,1000,0],[400,1150,0],[640,955,1],[300,1000,1],[700,1005,0],[455,1000,0],[190,1000,1],[930,600,0],[150,598,0],[100,447,1]];
+function emptySlots(){const xt=xTreeUp(),xw=!!xSeason();const fk=['massage','fridge','lamp','gold','stash'].map(k=>S.furn[k]?1:0).join('')+(xt?'T':'')+(xw?'W':'');if(L.slots&&L.slotsW===W&&L.slotsH===H&&L.slotsF===fk)return L.slots;const m=L.mm;if(!m)return[];
+  const block=[];if(S.furn.massage)block.push([735,560,1075,1000]);if(S.furn.fridge)block.push([196,722,344,910]);if(S.furn.lamp)block.push([640,350,756,910]);if(S.furn.gold)block.push([-110,620,250,1015]);if(xt)block.push([645,415,895,945]);if(xw)block.push([415,860,615,1050]);
   let seed=97;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
   const res=SLOTDEF.filter(([x,y])=>!block.some(k=>x>k[0]-15&&x<k[2]+15&&y>k[1]&&y<k[3]+10)).map(([x,y,ly])=>{const p=m(x+(rnd()-.5)*10,y);const dep=clamp(.42+.58*(y-600)/580,.45,1);return{x:p.x,y:p.y,iy:y,lying:!!ly,dep,r:ly?(rnd()-.5)*.5:(rnd()-.5)*.12,flip:rnd()<.5}});
   L.slots=res;L.slotsW=W;L.slotsH=H;L.slotsF=fk;return res}
