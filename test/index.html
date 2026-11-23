@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 105</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 106</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=105;
+const APPVER=106;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -880,8 +880,8 @@ function placeBubble(){const r=cv.getBoundingClientRect(),sc=r.width/W;bub.style
 function showBubble(who,text,opts){if(!VISIT)return;if(PUNCHABLE[who]&&!opts.some(o=>o.punch))opts=opts.concat([Object.assign(punchOpt(who),{punch:1})]);placeBubble();const bimg=BUBBLE_IMG;BUBBLE_IMG=null;bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(text)+'</p>'+(bimg?'<img src="'+bimg+'" alt="" style="display:block;height:110px;margin:2px auto 6px">':'')+'<div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
   bub.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=o.f()||{};if(r.pose!==undefined&&VISIT)VISIT.pose=r.pose;
     bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(r.say||'…')+'</p>'+(r.fx?'<small>'+esc(r.fx)+'</small>':'');snd('pop');
-    if(r.after){setTimeout(()=>{if(VISIT)showBubble(who,r.after.text,r.after.opts)},2200);return}
-    setTimeout(leave,2800);checkAch()})}
+    if(r.after){const A=r.after;setTimeout(()=>{if(!VISIT)return;if(A.pose!==undefined)VISIT.pose=A.pose;if(A.snd)snd(A.snd);if(A.run)A.run();showBubble(who,A.text,A.opts)},A.in||2200);return}
+    setTimeout(leave,r.stay||2800);checkAch()})}
 function leave(){bub.style.display='none';if(VISIT){VISIT.target=-260;setTimeout(()=>{VISIT=null},900)}evTimer=R(25,45)}
 function showCard(title,text,opts){CARD=1;$('toast').classList.remove('on');card.innerHTML='<h3>'+esc(title)+'</h3><p>'+esc(text)+'</p><div class="opts">'+opts.map((o,i)=>'<button class="btn'+(i===0?' pri':'')+'" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';card.style.display='block';
   card.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=(o.f&&o.f())||{};snd('pop');
@@ -1771,9 +1771,17 @@ VIS.nikolaus={n:'Nikolaus',c:'#c3262b',h:'#f4f1e8',s:1.05};
 function nikoDue(){const d=xNow();return d.getMonth()===11&&d.getDate()===6&&S.nikoY!==d.getFullYear()&&S.started&&S.hour>=8&&S.hour<23}
 EVENTS.unshift({id:'nikolaus',prio:1,c:nikoDue,run:()=>{S.nikoY=xNow().getFullYear();save();
  visit('nikolaus',pick(['HO HO HO! Der Nikolaus ist da! Und er hat Durst. Warst du brav, du Sofaleiche?','Ho ho … hicks. Nikolaus hier. Ich hab den Schlitten im Halteverbot. Mach schnell, du Penner.']),[
-  {t:'Gedicht aufsagen',f:()=>{snd('lvl');return{say:'„Lieber, guter Nikolaus, ich sauf dir deinen Glühwein aus.“ – HOHOHO! Schlecht, aber ehrlich. Hier, für dich: ein Sixpack und ’n Fünfer.',fx:fx({beer:6,money:5,xp:15}),pose:2}}},
-  {t:'Bier anbieten',c:()=>S.beer>0,f:()=>{if(S.beer<1)return{say:'Kein Bier im Haus? Und du willst Weihnachten feiern? Schäm dich.',pose:1};return{say:'Na endlich mal einer mit Manieren! *gluck gluck* … Hicks. Hier, nimm meine Kippen. Ich brauch die nicht mehr. Ich hör auf. Morgen.',fx:fx({beer:-1,cigs:20,xp:12}),pose:3}}},
-  {t:'Ich war brav!',f:()=>{const bad=(S.h.police||0)>2||(S.h.neighbor||0)>3;if(bad){snd('slap');return{say:'BRAV?! Ich hab hier ’ne Akte so dick wie dein Bauch. Polizei, Nachbarn, alles drin. Rute! Und der Knecht Ruprecht kassiert 5 €.',fx:fx({money:-Math.min(5,Math.max(0,S.money)),bo:10}),pose:1}}return{say:'Hm. Steht nix Schlimmes drin. Komisch. Hier, ein Schoko-Nikolaus. Halb gegessen, ich hatte Hunger.',fx:fx({hu:-20,xp:8}),pose:2}}},
+  {t:'Gedicht aufsagen',f:()=>{snd('lvl');return{say:'„Lieber, guter Nikolaus, ich sauf dir deinen Glühwein aus.“ – HOHOHO! Schlecht, aber ehrlich. Darauf muss ich erst mal einen heben!',pose:2,
+    after:{in:5000,pose:3,snd:'gulp',text:'*Gluck gluck* … *gluck gluck* … Ahhh. Zwei aus meinem Sixpack sind schon weg. Den Rest kriegst du. Und ’n Fünfer, weil Weihnachten ist und ich besoffen bin.',opts:[
+     {t:'Danke, Nikolaus!',f:()=>({say:'HOHOHO … hicks. Ich muss weiter. Die Kinder im dritten Stock warten. Oder die Kneipe. Eher die Kneipe.',fx:fx({beer:4,money:5,xp:15}),pose:2,stay:7000})},
+     {t:'Und die anderen zwei?',f:()=>({say:'Die sind schon in mir drin, du gieriger Sack. Nimm, was du kriegst, sonst gibt’s nächstes Jahr nur Kohle.',fx:fx({beer:4,money:5,xp:10}),pose:1,stay:7000})}]}}}},
+  {t:'Bier anbieten',f:()=>{if(S.beer<1)return{say:'Kein Bier im Haus? Und du willst Weihnachten feiern? Schäm dich, du Trockenpflaume.',pose:1,stay:6000};const n=Math.min(3,S.beer);
+    return{say:'Na endlich mal einer mit Manieren! *gluck gluck* … Noch eins! … *gluck gluck* … Und noch eins für den Weg!',fx:fx({beer:-n}),pose:3,
+    after:{in:5000,pose:3,run:()=>{snd('retch');vib([100,60,200]);const z=L.puddleZone;if(z)S.puddles.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,g:1});S.dirt=Math.min(100,S.dirt+10)},
+     text:'*BLÖÖÄÄÄRGH* … So. Jetzt ist wieder Platz. Fällt in deiner Bude eh nicht auf, sieht hier aus wie bei Hempels unterm Sofa. Hier, 20 Kippen. Frohe Weihnachten, du Schnorrer.',opts:[
+     {t:'Du Sau!',f:()=>({say:'Selber Sau. Ich bin der Nikolaus, ich darf das. Einmal im Jahr. HOHOHO … hicks.',fx:fx({cigs:20,xp:12}),pose:2,stay:7000})},
+     {t:'Danke für die Kippen',f:()=>({say:'Bitte. Und wisch das weg, bevor’s anfängt zu leben. Tschüssi!',fx:fx({cigs:20,xp:12}),pose:2,stay:7000})}]}}}},
+  {t:'Ich war brav!',f:()=>{const bad=(S.h.police||0)>2||(S.h.neighbor||0)>3;if(bad){snd('slap');return{say:'BRAV?! Ich hab hier ’ne Akte so dick wie dein Bauch. Polizei, Nachbarn, alles drin. Rute! Und der Knecht Ruprecht kassiert 5 €.',fx:fx({money:-Math.min(5,Math.max(0,S.money)),bo:10}),pose:1,stay:7000}}return{say:'Hm. Steht nix Schlimmes drin. Komisch. Hier, ein Schoko-Nikolaus. Halb gegessen, ich hatte Hunger.',fx:fx({hu:-20,xp:8}),pose:2,stay:7000}}},
   {t:'Verpiss dich, Fake-Bart!',f:()=>{rude();return{say:'Fake-Bart?! Das ist ECHT, du undankbares Ferkel! Dafür kriegst du nächstes Jahr Kohle. Also die zum Heizen. Nein, gar nix!',pose:1}}}],0)}});
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
