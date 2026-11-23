@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 119</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 120</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=119;
+const APPVER=120;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1041,7 +1041,7 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
  <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
-  if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();rateCheck()});S.started=true;closeModal();showDay();rateCheck()}
+  if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();rateCheck();stat('spiel-start')});S.started=true;closeModal();showDay();rateCheck()}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);if(a==='code')codeMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofatest_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
@@ -1236,7 +1236,7 @@ function rateCommentMenu(){openModal(`<div class="sugg"><h2>💬 Na los, schleim
    if(!v){snd('bad');toast('Leer abschicken? Echt jetzt?');return}
    location.href='mailto:'+IDEA_MAIL+'?subject='+encodeURIComponent('Assi Simulator – Kommentar')+'&body='+encodeURIComponent(v+'\n\n---\nVersion '+APPVER+' · Level '+S.lvl+' · Tag '+S.day);
    rateThanks()}}))}
-function rateThanks(stay){const first=!rateGet().beer;rateDone();const o=rateGet();o.beer=1;rateSet(o);if(first){fx({beer:1});snd('cash');setTimeout(()=>toast('Ehrenmann! 🍺','Freibier für deinen Assi.',3500),stay?3800:0)}if(stay)rateShareMenu();else closeModal()}
+function rateThanks(stay){stat('geteilt-oder-kommentiert');const first=!rateGet().beer;rateDone();const o=rateGet();o.beer=1;rateSet(o);if(first){fx({beer:1});snd('cash');setTimeout(()=>toast('Ehrenmann! 🍺','Freibier für deinen Assi.',3500),stay?3800:0)}if(stay)rateShareMenu();else closeModal()}
 
 // ---------- Tagesaufgaben (XP verdienen) ----------
 const QUESTS=[
@@ -1262,7 +1262,7 @@ setInterval(()=>{try{questTick()}catch(e){}},1500);
 
 // ---------- Name des Assis (bleibt fest, für das spätere Ranking) ----------
 function assiName(){let n=S&&S.name;if(!n){try{n=localStorage.getItem('sofatest_name')||''}catch(e){}if(n&&S)S.name=n}return n||''}
-function newGameWithName(msg){const old=assiName();S=fresh();S.name='';try{localStorage.removeItem('sofatest_name')}catch(e){}layout();nameMenu(()=>{S.started=true;layout();save();closeModal();setTimeout(()=>toast(msg),3200)},old)}
+function newGameWithName(msg){stat('neues-spiel');const old=assiName();S=fresh();S.name='';try{localStorage.removeItem('sofatest_name')}catch(e){}layout();nameMenu(()=>{S.started=true;layout();save();closeModal();setTimeout(()=>toast(msg),3200)},old)}
 function nameMenu(then,prefill){openModal(`<div class="sugg"><h2>Wie heißt dein Assi?</h2><p>Der Name steht später im Ranking und bleibt für dieses Spiel. Erst bei einem neuen Spiel kannst du ihn wieder ändern.</p>
   <input id="nameIn" maxlength="20" autocomplete="off" placeholder="z. B. Kalle Kotzbrocken" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid #6a5546;background:#1d1510;color:#f4e9dc;font:800 18px Nunito,sans-serif">
   <p id="nameErr" style="color:#e66;font-size:13px;min-height:16px"></p><div class="list"><button class="btn pri" data-n="ok">Los geht’s</button><button class="btn" data-n="rnd">Zufallsname</button></div></div>`,()=>{
@@ -1728,7 +1728,7 @@ function tattooMenu(visit){const tt=S.tat||(S.tat={});const rows=TATS.map(T=>{co
   openModal(`<div style="text-align:center"><img src="sprites/toni_0.webp" alt="" onerror="this.style.display='none'" style="height:140px;margin:0 auto 4px;display:block"><h2 style="margin:4px 0">🖋️ Tattoo-Toni</h2><p>${visit?'„So, Meister. Wo soll’s hin? Ich hab ’ne ruhige Hand. Meistens.“':'„Was darf’s sein?“'}</p></div><div class="list">${rows}</div><div class="list"><button class="btn" data-t="x">Lieber doch nicht</button></div>`,()=>bindAll({'[data-t]':el=>{const id=el.dataset.t;
     if(id==='x'){closeModal();return toast(visit?'Toni packt beleidigt seine Maschine ein. „Weichei.“':'Toni legt auf.')}
     const T=TATS.find(x=>x.id===id);if(!T||tt[id])return;if(S.money<T.p){snd('bad');return toast('Zu wenig Kohle. Toni sticht nicht auf Pump.')}
-    S.money-=T.p;tt[id]=1;closeModal();snd('groan');vib([80,60,80,60,200]);fx({bo:-25,xp:8});
+    S.money-=T.p;tt[id]=1;stat('tattoo');closeModal();snd('groan');vib([80,60,80,60,200]);fx({bo:-25,xp:8});
     const drunk=S.prom>=1.5;toast(drunk?'Aua! Toni sticht. Du hast so gezittert, dass es etwas schief geworden ist. Merkt keiner.':pick(['Aua! Zwei Stunden Gesumme, dann ist es drin. Für immer. Wie deine Schulden.','Toni sticht, du beißt ins Sofakissen. Fertig. Sieht aus wie gekauft.','„Nicht wackeln!“ – Du wackelst. Toni flucht. Aber es ist drin.']),T.n+' · Geld −'+eur(T.p),5000);
     if(Object.keys(tt).length===TATS.length)setTimeout(()=>toast('Beide Hände voll! Du bist jetzt offiziell ein Kunstwerk. Ein schlechtes.','XP +20',4500),5200),fx({xp:20});save()}}))}
 CONTACTS.push({k:'toni',n:'Tattoo-Toni',img:'toni_0',hi:['Toni, Tattoo und Piercing. Hausbesuche, keine Fragen.','Jo, Toni. Wenn’s wegen dem Totenkopf von letztem Mal ist: Das ist ein Hase.'],a:[
@@ -1774,7 +1774,7 @@ function xcalMenu(){const z=xSeason();if(!z||!z.cal)return;if(z.after)return toa
   const cells=Array.from({length:24},(_,k)=>{const n=k+1,o=c.open.includes(n),can=!o&&n<=last;return`<button class="btn${can?' pri':''}" data-d="${n}" ${can?'':'disabled'} style="padding:10px 0;font-weight:900;${o?'opacity:.45':''}">${o?'✓':n<=last?n:'🔒'}</button>`}).join('');
   openModal(`<div class="sugg" style="text-align:center"><h2>🎄 Adventskalender</h2><p>${last>=24&&!c.open.length?'Du hast alles verpennt. Mach halt jetzt alle auf.':'Ein Türchen pro Tag. Vorausspicken gibt’s nicht, du Lauch.'}</p>
    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:10px 0">${cells}</div><div class="list"><button class="btn" data-d="x">Zurück</button></div></div>`,()=>bindAll({'[data-d]':el=>{const v=el.dataset.d;if(v==='x')return closeModal();const n=+v;
-    if(c.open.includes(n)||n>last)return;c.open.push(n);const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
+    if(c.open.includes(n)||n>last)return;c.open.push(n);stat('tuerchen');const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
     openModal(`<div class="sugg" style="text-align:center"><h2>Türchen ${n}</h2><p style="font-size:17px">${txt}</p><p style="color:var(--dim)">${fxStr(f)||'Sonst nix.'}</p><div class="list"><button class="btn pri" data-q="more">${xcalDue()?'Noch eins aufmachen':'Zum Kalender'}</button><button class="btn" data-q="x">Weiterglotzen</button></div></div>`,()=>bindAll({'[data-q]':e2=>{if(e2.dataset.q==='more')xcalMenu();else closeModal()}}))}}))}
 function xLayout(){const m=L.mm;if(!m)return null;const r=(x0,y0,x1,y1)=>{const a=m(x0,y0),b=m(x1,y1);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}};
   return{lights:r(272,86,668,162),cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(645,415,895,945)}}
@@ -1861,6 +1861,14 @@ function tatLine(who,text){const tt=S.tat;if(!tt||!TATS.some(T=>tt[T.id]))return
   if(who==='jessica'){line=tt.r3?'Du hast meinen Namen DURCHGESTRICHEN?! Auf der HAND?! Und wer zum Teufel ist MANDY?!':'Tattoos? Du? Hat’s für Geld zum Duschen nicht gereicht?'}
   else if(TAT_FANS[who]){line=pick(TAT_FANS[who]);fan=true}else if(TAT_HATERS[who])line=pick(TAT_HATERS[who]);
   if(!line)return text;S.tatSaid[who]=S.day;if(fan)fx({bo:-3,xp:2});else fx({bo:3});return line+' '+text}
+
+// ================= BESUCHERZÄHLER (GoatCounter: ohne Cookies, ohne persönliche Daten) =================
+// Zählt nur im öffentlichen Spiel auf assi-simulator.de/v2/, nicht in der Testversion.
+const GOAT_CODE='';
+function stat(name){try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'ev/'+name,title:name,event:true})}catch(e){}}
+(function(){try{if(!GOAT_CODE||location.hostname!=='assi-simulator.de'||!/^\/v2\//.test(location.pathname))return;
+  window.goatcounter={path:'/spiel',allow_local:false};const sc=document.createElement('script');sc.async=true;sc.src='https://gc.zgo.at/count.js';
+  sc.dataset.goatcounter='https://'+GOAT_CODE+'.goatcounter.com/count';document.head.appendChild(sc)}catch(e){}})();
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
