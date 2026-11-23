@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 115</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 116</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=115;
+const APPVER=116;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1766,7 +1766,7 @@ function xcalMenu(){const z=xSeason();if(!z||!z.cal)return;if(z.after)return toa
     if(c.open.includes(n)||n>last)return;c.open.push(n);const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
     openModal(`<div class="sugg" style="text-align:center"><h2>Türchen ${n}</h2><p style="font-size:17px">${txt}</p><p style="color:var(--dim)">${fxStr(f)||'Sonst nix.'}</p><div class="list"><button class="btn pri" data-q="more">${xcalDue()?'Noch eins aufmachen':'Zum Kalender'}</button><button class="btn" data-q="x">Weiterglotzen</button></div></div>`,()=>bindAll({'[data-q]':e2=>{if(e2.dataset.q==='more')xcalMenu();else closeModal()}}))}}))}
 function xLayout(){const m=L.mm;if(!m)return null;const r=(x0,y0,x1,y1)=>{const a=m(x0,y0),b=m(x1,y1);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}};
-  return{lights:r(268,72,772,164),cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(645,415,895,945)}}
+  return{lights:r(272,86,668,162),cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(645,415,895,945)}}
 // Solange der Baum steht, räumt der Assi Stehlampe und Sessel (Massage/Gold) weg
 function xTreeUp(){const z=xSeason();return!!(z&&z.tree)}
 function xFit(key,b){const i=SP[key];if(!i||!i.naturalWidth)return false;return spr(key,b)}
