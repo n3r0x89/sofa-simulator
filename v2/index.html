@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=117;
+const APPVER=121;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -876,7 +876,7 @@ let BUBBLE_IMG=null;
 let CARD=null,CALL=null,evTimer=R(20,30),lastEv='',schnitzelT=0;
 const bub=$('bubble'),card=$('card');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function visit(who,text,opts,pose=0){if(GREET[CUR_EV]&&Math.random()<.8)text=pick(GREET[CUR_EV]);if(S.dirt>70&&Math.random()<.5&&who!=='kowalski')text=pick(STINK)+' '+text;VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
+function visit(who,text,opts,pose=0){if(GREET[CUR_EV]&&Math.random()<.8)text=pick(GREET[CUR_EV]);if(S.dirt>70&&Math.random()<.5&&who!=='kowalski')text=pick(STINK)+' '+text;try{text=tatLine(who,text)}catch(e){}VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
 function placeBubble(){const r=cv.getBoundingClientRect(),sc=r.width/W;bub.style.left=((L.visitor.x+L.visitor.w*.9)*sc)+'px';bub.style.top=((L.visitor.y-10)*sc)+'px'}
 function showBubble(who,text,opts){if(!VISIT)return;if(PUNCHABLE[who]&&!opts.some(o=>o.punch))opts=opts.concat([Object.assign(punchOpt(who),{punch:1})]);placeBubble();const bimg=BUBBLE_IMG;BUBBLE_IMG=null;bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(text)+'</p>'+(bimg?'<img src="'+bimg+'" alt="" style="display:block;height:110px;margin:2px auto 6px">':'')+'<div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
   bub.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=o.f()||{};if(r.pose!==undefined&&VISIT)VISIT.pose=r.pose;
@@ -1041,7 +1041,7 @@ function mainMenu(){const has=S.started;openModal(`${SP.splash&&SP.splash.natura
  <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
-  if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();rateCheck()});S.started=true;closeModal();showDay();rateCheck()}
+  if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();rateCheck();stat('spiel-start')});S.started=true;closeModal();showDay();rateCheck();stat('spiel-start')}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);if(a==='code')codeMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofasim_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
@@ -1207,16 +1207,27 @@ function rateMenu(){snd('ring');openModal(`<div class="sugg" style="text-align:c
      <p>${a==='no'?'Selber Müll, du Lappen. Aber gut – sag halt, was dir nicht passt, dann wird’s besser.':'Du bist auch nur „geht so“, du Meckerfritze. Sag halt, was besser werden soll.'}</p>
      <div class="list"><button class="btn pri" data-q="idea">Meckern 📝</button><button class="btn" data-q="x">Ach, vergiss es</button></div></div>`,()=>bindAll({'[data-q]':el2=>{if(el2.dataset.q==='idea')ideaMenu(closeModal);else{closeModal();toast('Typisch. Erst motzen, dann nix sagen.')}}}));return}
    if(a==='later'){rateLater(3);closeModal();toast('Jaja, sauf weiter, du Penner. 🍺')}}}))}
+const SOCIAL={insta:'https://www.instagram.com/assi_simulator/',tiktok:'https://www.tiktok.com/@assi_simulator'};
+const SHARE_TXT='Ich hock im Assi Simulator auf dem Sofa und sauf mich durch den Tag 🛋️🍺 Kannst du besser? Gratis, direkt im Browser:';
 function rateShareMenu(){openModal(`<div class="sugg" style="text-align:center"><h2>😏 Wusst ich’s doch!</h2>
   <p>Hast ja sonst eh nix zu tun. Dann beweg mal deinen faulen Arsch und erzähl’s weiter – kostet dich nix außer zwei Sekunden deiner verschwendeten Lebenszeit.</p>
   <p style="font-size:13px;color:var(--dim)">Als Dankeschön gibt’s für deinen Assi ein Freibier. 🍺</p>
-  <div class="list"><button class="btn pri" data-s="share">📤 Spiel teilen</button><button class="btn" data-s="cmt">💬 Kurzen Kommentar schreiben</button><button class="btn" data-s="later">Später, mein Bier wird warm</button></div></div>`,()=>bindAll({'[data-s]':async el=>{const a=el.dataset.s;
-   if(a==='later'){rateLater(3);closeModal();toast('Faule Sau. Ich frag dich später nochmal.');return}
+  <h4 style="margin:12px 0 6px">📤 Teilen</h4>
+  <div class="list"><button class="btn pri" data-s="share">Teilen (WhatsApp, Insta, TikTok …)</button>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" data-s="wa">WhatsApp</button><button class="btn" data-s="copy">Link kopieren</button></div></div>
+  <h4 style="margin:14px 0 6px">💬 Kommentieren</h4>
+  <div class="list"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" data-s="insta">Instagram</button><button class="btn" data-s="tiktok">TikTok</button></div>
+   <button class="btn" data-s="cmt">Per E-Mail</button></div>
+  <div class="list" style="margin-top:12px"><button class="btn" data-s="later">${(rateGet().done)?'Fertig':'Später, mein Bier wird warm'}</button></div></div>`,()=>bindAll({'[data-s]':async el=>{const a=el.dataset.s;
+   if(a==='later'){if(!rateGet().done)rateLater(3);closeModal();toast(rateGet().done?'Ehrenmann. Jetzt weiterglotzen.':'Faule Sau. Ich frag dich später nochmal.');return}
    if(a==='cmt')return rateCommentMenu();
-   if(a==='share'){const txt='Ich hock im Assi Simulator auf dem Sofa und sauf mich durch den Tag 🛋️🍺 Kannst du besser? Gratis, direkt im Browser:';let ok=false;
-     try{if(navigator.share){await navigator.share({title:'Assi Simulator',text:txt,url:SHARE_URL});ok=true}}catch(e){if(e&&e.name==='AbortError'){toast('Abgebrochen? Feigling.');return}}
-     if(!ok){try{await navigator.clipboard.writeText(txt+' '+SHARE_URL);ok=true;toast('Link kopiert!','Jetzt irgendwo einfügen, du Werbefigur.',3500)}catch(e){toast('Teilen ging nicht','Schick einfach assi-simulator.de rum.',3500);return}}
-     rateThanks()}}}))}
+   if(a==='insta'||a==='tiktok'){window.open(SOCIAL[a],'_blank','noopener');toast(a==='insta'?'Ab zu Insta. Schreib unter einen Post was Nettes. Oder was Ehrliches.':'Ab zu TikTok. Hau einen Kommentar unter ein Video, du Influencer.','',4000);return rateThanks(true)}
+   if(a==='wa'){window.open('https://wa.me/?text='+encodeURIComponent(SHARE_TXT+' '+SHARE_URL),'_blank','noopener');return rateThanks(true)}
+   if(a==='copy'){try{await navigator.clipboard.writeText(SHARE_TXT+' '+SHARE_URL);toast('Link kopiert!','Jetzt in Insta-Story, TikTok oder sonstwo einfügen.',3500);return rateThanks(true)}catch(e){toast('Kopieren ging nicht','Schick einfach assi-simulator.de rum.',3500);return}}
+   if(a==='share'){let ok=false;
+     try{if(navigator.share){await navigator.share({title:'Assi Simulator',text:SHARE_TXT,url:SHARE_URL});ok=true}}catch(e){if(e&&e.name==='AbortError'){toast('Abgebrochen? Feigling.');return}}
+     if(!ok){try{await navigator.clipboard.writeText(SHARE_TXT+' '+SHARE_URL);ok=true;toast('Link kopiert!','Jetzt irgendwo einfügen, du Werbefigur.',3500)}catch(e){toast('Teilen ging nicht','Schick einfach assi-simulator.de rum.',3500);return}}
+     rateThanks(true)}}}))}
 function rateCommentMenu(){openModal(`<div class="sugg"><h2>💬 Na los, schleim mal rum</h2><p>Was gefällt dir am Assi Simulator? Ein Satz reicht, du Schreibfaulpelz.</p>
   <textarea id="cmtTx" placeholder="Zum Beispiel: Bestes Spiel seit Bier erfunden wurde …"></textarea>
   <div class="list"><button class="btn pri" data-c="send">Abschicken</button><button class="btn" data-c="back">Zurück</button></div>
@@ -1225,7 +1236,7 @@ function rateCommentMenu(){openModal(`<div class="sugg"><h2>💬 Na los, schleim
    if(!v){snd('bad');toast('Leer abschicken? Echt jetzt?');return}
    location.href='mailto:'+IDEA_MAIL+'?subject='+encodeURIComponent('Assi Simulator – Kommentar')+'&body='+encodeURIComponent(v+'\n\n---\nVersion '+APPVER+' · Level '+S.lvl+' · Tag '+S.day);
    rateThanks()}}))}
-function rateThanks(){rateDone();closeModal();fx({beer:1});snd('cash');toast('Ehrenmann! 🍺','Freibier für deinen Assi. Und jetzt weiterglotzen.',4000)}
+function rateThanks(stay){stat('geteilt-oder-kommentiert');const first=!rateGet().beer;rateDone();const o=rateGet();o.beer=1;rateSet(o);if(first){fx({beer:1});snd('cash');setTimeout(()=>toast('Ehrenmann! 🍺','Freibier für deinen Assi.',3500),stay?3800:0)}if(stay)rateShareMenu();else closeModal()}
 
 // ---------- Tagesaufgaben (XP verdienen) ----------
 const QUESTS=[
@@ -1251,7 +1262,7 @@ setInterval(()=>{try{questTick()}catch(e){}},1500);
 
 // ---------- Name des Assis (bleibt fest, für das spätere Ranking) ----------
 function assiName(){let n=S&&S.name;if(!n){try{n=localStorage.getItem('sofasim_name')||''}catch(e){}if(n&&S)S.name=n}return n||''}
-function newGameWithName(msg){const old=assiName();S=fresh();S.name='';try{localStorage.removeItem('sofasim_name')}catch(e){}layout();nameMenu(()=>{S.started=true;layout();save();closeModal();setTimeout(()=>toast(msg),3200)},old)}
+function newGameWithName(msg){stat('neues-spiel');const old=assiName();S=fresh();S.name='';try{localStorage.removeItem('sofasim_name')}catch(e){}layout();nameMenu(()=>{S.started=true;layout();save();closeModal();setTimeout(()=>toast(msg),3200)},old)}
 function nameMenu(then,prefill){openModal(`<div class="sugg"><h2>Wie heißt dein Assi?</h2><p>Der Name steht später im Ranking und bleibt für dieses Spiel. Erst bei einem neuen Spiel kannst du ihn wieder ändern.</p>
   <input id="nameIn" maxlength="20" autocomplete="off" placeholder="z. B. Kalle Kotzbrocken" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid #6a5546;background:#1d1510;color:#f4e9dc;font:800 18px Nunito,sans-serif">
   <p id="nameErr" style="color:#e66;font-size:13px;min-height:16px"></p><div class="list"><button class="btn pri" data-n="ok">Los geht’s</button><button class="btn" data-n="rnd">Zufallsname</button></div></div>`,()=>{
@@ -1717,7 +1728,7 @@ function tattooMenu(visit){const tt=S.tat||(S.tat={});const rows=TATS.map(T=>{co
   openModal(`<div style="text-align:center"><img src="sprites/toni_0.webp" alt="" onerror="this.style.display='none'" style="height:140px;margin:0 auto 4px;display:block"><h2 style="margin:4px 0">🖋️ Tattoo-Toni</h2><p>${visit?'„So, Meister. Wo soll’s hin? Ich hab ’ne ruhige Hand. Meistens.“':'„Was darf’s sein?“'}</p></div><div class="list">${rows}</div><div class="list"><button class="btn" data-t="x">Lieber doch nicht</button></div>`,()=>bindAll({'[data-t]':el=>{const id=el.dataset.t;
     if(id==='x'){closeModal();return toast(visit?'Toni packt beleidigt seine Maschine ein. „Weichei.“':'Toni legt auf.')}
     const T=TATS.find(x=>x.id===id);if(!T||tt[id])return;if(S.money<T.p){snd('bad');return toast('Zu wenig Kohle. Toni sticht nicht auf Pump.')}
-    S.money-=T.p;tt[id]=1;closeModal();snd('groan');vib([80,60,80,60,200]);fx({bo:-25,xp:8});
+    S.money-=T.p;tt[id]=1;stat('tattoo');closeModal();snd('groan');vib([80,60,80,60,200]);fx({bo:-25,xp:8});
     const drunk=S.prom>=1.5;toast(drunk?'Aua! Toni sticht. Du hast so gezittert, dass es etwas schief geworden ist. Merkt keiner.':pick(['Aua! Zwei Stunden Gesumme, dann ist es drin. Für immer. Wie deine Schulden.','Toni sticht, du beißt ins Sofakissen. Fertig. Sieht aus wie gekauft.','„Nicht wackeln!“ – Du wackelst. Toni flucht. Aber es ist drin.']),T.n+' · Geld −'+eur(T.p),5000);
     if(Object.keys(tt).length===TATS.length)setTimeout(()=>toast('Beide Hände voll! Du bist jetzt offiziell ein Kunstwerk. Ein schlechtes.','XP +20',4500),5200),fx({xp:20});save()}}))}
 CONTACTS.push({k:'toni',n:'Tattoo-Toni',img:'toni_0',hi:['Toni, Tattoo und Piercing. Hausbesuche, keine Fragen.','Jo, Toni. Wenn’s wegen dem Totenkopf von letztem Mal ist: Das ist ein Hase.'],a:[
@@ -1763,7 +1774,7 @@ function xcalMenu(){const z=xSeason();if(!z||!z.cal)return;if(z.after)return toa
   const cells=Array.from({length:24},(_,k)=>{const n=k+1,o=c.open.includes(n),can=!o&&n<=last;return`<button class="btn${can?' pri':''}" data-d="${n}" ${can?'':'disabled'} style="padding:10px 0;font-weight:900;${o?'opacity:.45':''}">${o?'✓':n<=last?n:'🔒'}</button>`}).join('');
   openModal(`<div class="sugg" style="text-align:center"><h2>🎄 Adventskalender</h2><p>${last>=24&&!c.open.length?'Du hast alles verpennt. Mach halt jetzt alle auf.':'Ein Türchen pro Tag. Vorausspicken gibt’s nicht, du Lauch.'}</p>
    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:10px 0">${cells}</div><div class="list"><button class="btn" data-d="x">Zurück</button></div></div>`,()=>bindAll({'[data-d]':el=>{const v=el.dataset.d;if(v==='x')return closeModal();const n=+v;
-    if(c.open.includes(n)||n>last)return;c.open.push(n);const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
+    if(c.open.includes(n)||n>last)return;c.open.push(n);stat('tuerchen');const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
     openModal(`<div class="sugg" style="text-align:center"><h2>Türchen ${n}</h2><p style="font-size:17px">${txt}</p><p style="color:var(--dim)">${fxStr(f)||'Sonst nix.'}</p><div class="list"><button class="btn pri" data-q="more">${xcalDue()?'Noch eins aufmachen':'Zum Kalender'}</button><button class="btn" data-q="x">Weiterglotzen</button></div></div>`,()=>bindAll({'[data-q]':e2=>{if(e2.dataset.q==='more')xcalMenu();else closeModal()}}))}}))}
 function xLayout(){const m=L.mm;if(!m)return null;const r=(x0,y0,x1,y1)=>{const a=m(x0,y0),b=m(x1,y1);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}};
   return{lights:r(272,86,668,162),cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(645,415,895,945)}}
@@ -1830,6 +1841,34 @@ EVENTS.unshift({id:'xlights',prio:1,c:xlightsDue,run:()=>{const z=xSeason();
     return{say:n>0?'*nagelt die Kette schief an die Wand* … Fertig. Das Werkzeug hat Durst gemacht. *greift sich '+(n===1?'ein Bier':'zwei Bier')+' und leert sie in einem Zug* Ahhh. Frohe Weihnachten, Nachbar.':'*nagelt die Kette schief an die Wand* … Fertig. Kein Bier im Haus? Du bist echt der traurigste Mensch, den ich kenne.',
       fx:fx(n>0?{beer:-n,xp:6}:{xp:6}),pose:2,stay:7000}}},
   {t:'Nee, lass mal',f:()=>{S.xlightsNo=S.day;return{say:'Dann sitz halt im Dunkeln wie ’n Maulwurf. Ich komm morgen nochmal, vielleicht bist du dann nüchtern.',pose:1,stay:6000}}}],0)}});
+
+// ================= TATTOOS: Besucher reagieren drauf (die einen feiern es, die anderen finden es scheiße) =================
+const TAT_FANS={
+ kevin:['Ey, geile Tattoos, Digga! Sieht aus wie frisch aus’m Knast. Respekt, Bruder.','Boah, zeig mal her! Das ist ja Kunst. Also fast.'],
+ uwe:['Schöne Bilder auf’m Arm. Hatte ich auch mal, die sind aber eingeschrumpelt.','Tätowiert? Jetzt siehst du aus wie ein echter Kerl. Ein versoffener, aber echt.'],
+ kowalski:['Oh, mein Hengst hat sich bemalen lassen! Ich werd ganz schwach, Schätzchen.','Diese Tattoos … da wird mir ganz warm unter der Kittelschürze.'],
+ pizza:['Cooles Tattoo, Bruder. Gibt trotzdem keinen Rabatt.','Nice Tinte! Mein Cousin sticht auch, im Hinterzimmer vom Döner.'],
+ parcel:['Krasse Tattoos. Unterschreiben Sie trotzdem hier. Mit der unbemalten Hand.']};
+const TAT_HATERS={
+ brandt:['Und jetzt auch noch Schmierereien auf der Haut. Der Verfall dieses Hauses hat ein Gesicht. Ihres.','Tätowiert. Natürlich. Als Nächstes kommt ein Kampfhund.'],
+ landlord:['Tattoos? Davon wird die Miete auch nicht bezahlt, Sie bemalter Höhlenmensch.','Neue Tattoos, aber die Nebenkosten sind offen. Prioritäten, ja?'],
+ jobcenter:['Mit den Tattoos vermittel ich Sie höchstens noch in die Geisterbahn.','Tattoos an den Händen. Das schreib ich mal unter „Vermittlungshemmnisse“.'],
+ police:['Tattoos, Kippe, Bier … Sie sehen aus wie auf unserem Fahndungsplakat.','Ah, frisch tätowiert. Wir nehmen die Motive mal in die Akte auf.'],
+ salesman:['Huch, Tattoos. Dann zeig ich Ihnen lieber nicht unsere Premium-Staubsauger.'],
+ bailiff:['Die Farbe unter Ihrer Haut kann ich leider nicht pfänden. Leider.']};
+function tatLine(who,text){const tt=S.tat;if(!tt||!TATS.some(T=>tt[T.id]))return text;if(!S.tatSaid)S.tatSaid={};if(S.tatSaid[who]===S.day||Math.random()<.45)return text;
+  let line=null,fan=false;
+  if(who==='jessica'){line=tt.r3?'Du hast meinen Namen DURCHGESTRICHEN?! Auf der HAND?! Und wer zum Teufel ist MANDY?!':'Tattoos? Du? Hat’s für Geld zum Duschen nicht gereicht?'}
+  else if(TAT_FANS[who]){line=pick(TAT_FANS[who]);fan=true}else if(TAT_HATERS[who])line=pick(TAT_HATERS[who]);
+  if(!line)return text;S.tatSaid[who]=S.day;if(fan)fx({bo:-3,xp:2});else fx({bo:3});return line+' '+text}
+
+// ================= BESUCHERZÄHLER (GoatCounter: ohne Cookies, ohne persönliche Daten) =================
+// Zählt nur im öffentlichen Spiel auf assi-simulator.de/v2/, nicht in der Testversion.
+const GOAT_CODE='assisimulator';
+function stat(name){try{if(window.goatcounter&&window.goatcounter.count)window.goatcounter.count({path:'ev/'+name,title:name,event:true})}catch(e){}}
+(function(){try{if(!GOAT_CODE||location.hostname!=='assi-simulator.de'||!/^\/v2\//.test(location.pathname))return;
+  window.goatcounter={path:'/spiel',allow_local:false};const sc=document.createElement('script');sc.async=true;sc.src='https://gc.zgo.at/count.js';
+  sc.dataset.goatcounter='https://'+GOAT_CODE+'.goatcounter.com/count';document.head.appendChild(sc)}catch(e){}})();
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
