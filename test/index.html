@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 117</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 118</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=117;
+const APPVER=118;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -876,7 +876,7 @@ let BUBBLE_IMG=null;
 let CARD=null,CALL=null,evTimer=R(20,30),lastEv='',schnitzelT=0;
 const bub=$('bubble'),card=$('card');
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function visit(who,text,opts,pose=0){if(GREET[CUR_EV]&&Math.random()<.8)text=pick(GREET[CUR_EV]);if(S.dirt>70&&Math.random()<.5&&who!=='kowalski')text=pick(STINK)+' '+text;VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
+function visit(who,text,opts,pose=0){if(GREET[CUR_EV]&&Math.random()<.8)text=pick(GREET[CUR_EV]);if(S.dirt>70&&Math.random()<.5&&who!=='kowalski')text=pick(STINK)+' '+text;try{text=tatLine(who,text)}catch(e){}VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
 function placeBubble(){const r=cv.getBoundingClientRect(),sc=r.width/W;bub.style.left=((L.visitor.x+L.visitor.w*.9)*sc)+'px';bub.style.top=((L.visitor.y-10)*sc)+'px'}
 function showBubble(who,text,opts){if(!VISIT)return;if(PUNCHABLE[who]&&!opts.some(o=>o.punch))opts=opts.concat([Object.assign(punchOpt(who),{punch:1})]);placeBubble();const bimg=BUBBLE_IMG;BUBBLE_IMG=null;bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(text)+'</p>'+(bimg?'<img src="'+bimg+'" alt="" style="display:block;height:110px;margin:2px auto 6px">':'')+'<div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
   bub.querySelectorAll('button').forEach(b=>b.onclick=()=>{const o=opts[+b.dataset.i];const r=o.f()||{};if(r.pose!==undefined&&VISIT)VISIT.pose=r.pose;
@@ -1830,6 +1830,26 @@ EVENTS.unshift({id:'xlights',prio:1,c:xlightsDue,run:()=>{const z=xSeason();
     return{say:n>0?'*nagelt die Kette schief an die Wand* … Fertig. Das Werkzeug hat Durst gemacht. *greift sich '+(n===1?'ein Bier':'zwei Bier')+' und leert sie in einem Zug* Ahhh. Frohe Weihnachten, Nachbar.':'*nagelt die Kette schief an die Wand* … Fertig. Kein Bier im Haus? Du bist echt der traurigste Mensch, den ich kenne.',
       fx:fx(n>0?{beer:-n,xp:6}:{xp:6}),pose:2,stay:7000}}},
   {t:'Nee, lass mal',f:()=>{S.xlightsNo=S.day;return{say:'Dann sitz halt im Dunkeln wie ’n Maulwurf. Ich komm morgen nochmal, vielleicht bist du dann nüchtern.',pose:1,stay:6000}}}],0)}});
+
+// ================= TATTOOS: Besucher reagieren drauf (die einen feiern es, die anderen finden es scheiße) =================
+const TAT_FANS={
+ kevin:['Ey, geile Tattoos, Digga! Sieht aus wie frisch aus’m Knast. Respekt, Bruder.','Boah, zeig mal her! Das ist ja Kunst. Also fast.'],
+ uwe:['Schöne Bilder auf’m Arm. Hatte ich auch mal, die sind aber eingeschrumpelt.','Tätowiert? Jetzt siehst du aus wie ein echter Kerl. Ein versoffener, aber echt.'],
+ kowalski:['Oh, mein Hengst hat sich bemalen lassen! Ich werd ganz schwach, Schätzchen.','Diese Tattoos … da wird mir ganz warm unter der Kittelschürze.'],
+ pizza:['Cooles Tattoo, Bruder. Gibt trotzdem keinen Rabatt.','Nice Tinte! Mein Cousin sticht auch, im Hinterzimmer vom Döner.'],
+ parcel:['Krasse Tattoos. Unterschreiben Sie trotzdem hier. Mit der unbemalten Hand.']};
+const TAT_HATERS={
+ brandt:['Und jetzt auch noch Schmierereien auf der Haut. Der Verfall dieses Hauses hat ein Gesicht. Ihres.','Tätowiert. Natürlich. Als Nächstes kommt ein Kampfhund.'],
+ landlord:['Tattoos? Davon wird die Miete auch nicht bezahlt, Sie bemalter Höhlenmensch.','Neue Tattoos, aber die Nebenkosten sind offen. Prioritäten, ja?'],
+ jobcenter:['Mit den Tattoos vermittel ich Sie höchstens noch in die Geisterbahn.','Tattoos an den Händen. Das schreib ich mal unter „Vermittlungshemmnisse“.'],
+ police:['Tattoos, Kippe, Bier … Sie sehen aus wie auf unserem Fahndungsplakat.','Ah, frisch tätowiert. Wir nehmen die Motive mal in die Akte auf.'],
+ salesman:['Huch, Tattoos. Dann zeig ich Ihnen lieber nicht unsere Premium-Staubsauger.'],
+ bailiff:['Die Farbe unter Ihrer Haut kann ich leider nicht pfänden. Leider.']};
+function tatLine(who,text){const tt=S.tat;if(!tt||!TATS.some(T=>tt[T.id]))return text;if(!S.tatSaid)S.tatSaid={};if(S.tatSaid[who]===S.day||Math.random()<.45)return text;
+  let line=null,fan=false;
+  if(who==='jessica'){line=tt.r3?'Du hast meinen Namen DURCHGESTRICHEN?! Auf der HAND?! Und wer zum Teufel ist MANDY?!':'Tattoos? Du? Hat’s für Geld zum Duschen nicht gereicht?'}
+  else if(TAT_FANS[who]){line=pick(TAT_FANS[who]);fan=true}else if(TAT_HATERS[who])line=pick(TAT_HATERS[who]);
+  if(!line)return text;S.tatSaid[who]=S.day;if(fan)fx({bo:-3,xp:2});else fx({bo:3});return line+' '+text}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
