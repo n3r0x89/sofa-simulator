@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 112</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 113</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=112;
+const APPVER=113;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1777,7 +1777,7 @@ function drawXmasBack(t){if(!L.roomMode)return;const z=xSeason();if(!z)return;co
       if(!S.xtreeOff&&!z.after)for(let i=0;i<14;i++){const a=i*2.4,yy=b.y+b.h*(.2+(i%7)*.09),xx=cxm+Math.sin(a)*b.w*(.08+(i%7)*.045);ell(xx,yy,3,3,(Math.sin(t*4+i)>0)?['#ff4040','#ffd23a','#4aa3ff'][i%3]:'#553')}}
     hit('xtree',b)}
   // Lichterkette oben an der Wand (ab 1. Advent bis 6.1.), blinkt abwechselnd
-  {const b=X.lights,on=!S.xlightsOff&&!powerOut(),k=on?(Math.floor(t*1.6)%2?'lights_1':'lights_2'):'lights_0';
+  if(S.xlightsY===z.y){const b=X.lights,on=!S.xlightsOff&&!powerOut(),k=on?(Math.floor(t*1.6)%2?'lights_1':'lights_2'):'lights_0';
     if(!xFit(k,b)){cx.strokeStyle='#1f3a22';cx.lineWidth=2;cx.beginPath();cx.moveTo(b.x,b.y+b.h*.2);cx.quadraticCurveTo(b.x+b.w*.25,b.y+b.h*.9,b.x+b.w*.5,b.y+b.h*.3);cx.quadraticCurveTo(b.x+b.w*.75,b.y+b.h*.9,b.x+b.w,b.y+b.h*.2);cx.stroke()}
     hit('xlights',b)}
   // Adventskalender (1.–24.12., danach leer bis 6.1.)
@@ -1793,7 +1793,7 @@ function drawXmasBack(t){if(!L.roomMode)return;const z=xSeason();if(!z)return;co
     hit('wreath',b)}}
 function drawXmasGlow(dark,t){const z=xSeason(),X=L.xmas;if(!z||!X||dark<=0||powerOut())return;cx.save();cx.globalCompositeOperation='lighter';
   if(!z.after&&z.candles){const b=X.wreath,cxm=b.x+b.w/2,cym=b.y+b.h*.3,fl=.85+.15*Math.sin(t*11);const g=cx.createRadialGradient(cxm,cym,2,cxm,cym,b.w*1.4);g.addColorStop(0,'rgba(255,170,60,'+(dark*.45*fl*z.candles/4+dark*.12)+')');g.addColorStop(1,'rgba(255,150,50,0)');cx.fillStyle=g;cx.fillRect(cxm-b.w*1.5,cym-b.w*1.5,b.w*3,b.w*3)}
-  if(!S.xlightsOff){const b=X.lights,fl=.75+.25*Math.sin(t*2.1),lk=Math.floor(t*1.6)%2?'lights_1':'lights_2';if(SP[lk]&&SP[lk].naturalWidth){cx.save();cx.globalCompositeOperation='source-over';cx.globalAlpha=Math.min(.9,dark*1.3);spr(lk,b);cx.globalCompositeOperation='lighter';cx.globalAlpha=Math.min(.45,dark*.6);spr(lk,b);cx.restore();cx.globalCompositeOperation='lighter'}for(let i=0;i<5;i++){const gx=b.x+b.w*(.1+i*.2),gy=b.y+b.h*.6,rad=b.w*.16;const g=cx.createRadialGradient(gx,gy,2,gx,gy,rad);g.addColorStop(0,'rgba(255,170,110,'+(dark*.2*fl)+')');g.addColorStop(1,'rgba(255,120,80,0)');cx.fillStyle=g;cx.fillRect(gx-rad,gy-rad,rad*2,rad*2)}}
+  if(!S.xlightsOff&&S.xlightsY===z.y){const b=X.lights,fl=.75+.25*Math.sin(t*2.1),lk=Math.floor(t*1.6)%2?'lights_1':'lights_2';if(SP[lk]&&SP[lk].naturalWidth){cx.save();cx.globalCompositeOperation='source-over';cx.globalAlpha=Math.min(.9,dark*1.3);spr(lk,b);cx.globalCompositeOperation='lighter';cx.globalAlpha=Math.min(.45,dark*.6);spr(lk,b);cx.restore();cx.globalCompositeOperation='lighter'}for(let i=0;i<5;i++){const gx=b.x+b.w*(.1+i*.2),gy=b.y+b.h*.6,rad=b.w*.16;const g=cx.createRadialGradient(gx,gy,2,gx,gy,rad);g.addColorStop(0,'rgba(255,170,110,'+(dark*.2*fl)+')');g.addColorStop(1,'rgba(255,120,80,0)');cx.fillStyle=g;cx.fillRect(gx-rad,gy-rad,rad*2,rad*2)}}
   if(z.tree&&!z.after&&!S.xtreeOff){const b=X.tree,cxm=b.x+b.w/2,cym=b.y+b.h*.45,fl=.8+.2*Math.sin(t*3.3);const g=cx.createRadialGradient(cxm,cym,4,cxm,cym,b.h*.6);g.addColorStop(0,'rgba(255,120,160,'+(dark*.3*fl)+')');g.addColorStop(.5,'rgba(120,170,255,'+(dark*.12*fl)+')');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.fillRect(cxm-b.h*.6,cym-b.h*.6,b.h*1.2,b.h*1.2)}
   cx.restore()}
 function wreathTap(){const z=xSeason();if(!z)return;if(z.after)return toast(pick(['Die Kerzen sind runter. Wie du nach Silvester.','Der Kranz nadelt. Riecht nach Wachs und Kippe.']));
@@ -1821,6 +1821,15 @@ EVENTS.unshift({id:'nikolaus',prio:1,c:nikoDue,run:()=>{S.nikoY=xNow().getFullYe
      {t:'Danke für die Kippen',f:()=>({say:'Bitte. Und wisch das weg, bevor’s anfängt zu leben. Tschüssi!',fx:fx({cigs:20,xp:12}),pose:2,stay:7000})}]}}}},
   {t:'Ich war brav!',f:()=>{const bad=(S.h.police||0)>2||(S.h.neighbor||0)>3;if(bad){snd('slap');return{say:'BRAV?! Ich hab hier ’ne Akte so dick wie dein Bauch. Polizei, Nachbarn, alles drin. Rute! Und der Knecht Ruprecht kassiert 5 €.',fx:fx({money:-Math.min(5,Math.max(0,S.money)),bo:10}),pose:1,stay:7000}}return{say:'Hm. Steht nix Schlimmes drin. Komisch. Hier, ein Schoko-Nikolaus. Halb gegessen, ich hatte Hunger.',fx:fx({hu:-20,xp:8}),pose:2,stay:7000}}},
   {t:'Verpiss dich, Fake-Bart!',f:()=>{rude();return{say:'Fake-Bart?! Das ist ECHT, du undankbares Ferkel! Dafür kriegst du nächstes Jahr Kohle. Also die zum Heizen. Nein, gar nix!',pose:1}}}],0)}});
+
+// ================= LICHTERKETTE: Uwe bringt sie vorbei (ab 1. Advent, einmal pro Saison) =================
+function xlightsDue(){const z=xSeason();return!!(z&&!z.after&&S.started&&S.xlightsY!==z.y&&S.hour>=10&&S.hour<22&&(!S.xlightsNo||S.day>S.xlightsNo))}
+EVENTS.unshift({id:'xlights',prio:1,c:xlightsDue,run:()=>{const z=xSeason();
+ visit('uwe','Moin. Uwe hier. Ich hab beim Sperrmüll ’ne Lichterkette gefunden. Funktioniert. Also halb. Soll ich dir die aufhängen? Kost’ nix. Fast nix.',[
+  {t:'Klar, häng auf',f:()=>{const n=Math.min(S.beer,Math.random()<.5?1:2);S.xlightsY=z.y;S.xlightsOff=false;save();
+    return{say:n>0?'*nagelt die Kette schief an die Wand* … Fertig. Das Werkzeug hat Durst gemacht. *greift sich '+(n===1?'ein Bier':'zwei Bier')+' und leert sie in einem Zug* Ahhh. Frohe Weihnachten, Nachbar.':'*nagelt die Kette schief an die Wand* … Fertig. Kein Bier im Haus? Du bist echt der traurigste Mensch, den ich kenne.',
+      fx:fx(n>0?{beer:-n,xp:6}:{xp:6}),pose:2,stay:7000}}},
+  {t:'Nee, lass mal',f:()=>{S.xlightsNo=S.day;return{say:'Dann sitz halt im Dunkeln wie ’n Maulwurf. Ich komm morgen nochmal, vielleicht bist du dann nüchtern.',pose:1,stay:6000}}}],0)}});
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
