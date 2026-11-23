@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 106</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 107</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=106;
+const APPVER=107;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -227,7 +227,7 @@ const SND={
   bad:()=>{noise(.03,.22,2400,2,'bandpass');tone(140,.04,'square',.08)},
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3'],wipe:['sounds/wipe1.mp3','sounds/wipe2.mp3','sounds/wipe3.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
@@ -765,8 +765,8 @@ function eatSnack(){if(S.snacks<=0){toast('Keine Snacks mehr, du verfressenes Sc
 function zap(dir){if(S.right!=='remote')return;if(S.prom>=1.4&&Math.random()<.35){dir=-dir;toast('Falsche Richtung, du besoffener Daumenlutscher.')}
   stopFilm(true);S.ch=(S.ch+dir+CH.length)%CH.length;tvState.chStart=S.tot;tvState.zapFx=S.tot+.35;tvState.night=isNight()&&Math.random()<.4;tvState.nightLine++;snd('stat');
   S.bo-=6;addXP(.5);S.st.zaps.push(S.tot);S.st.zaps=S.st.zaps.filter(z=>S.tot-z<300);schnitzelT=0;clampAll();doneHint('zap');checkAch()}
-function cleanStain(s,k){s.taps=(s.taps||0)+1;snd('slap');vib(20);const need=k==='stain'?2:1;if(s.taps>=need){const a=k==='stain'?S.stains:S.splats;a.splice(a.indexOf(s),1);S.st.clean=(S.st.clean||0)+1;cleanDone(['Die Bude glänzt. Also für deine Verhältnisse.','Kein Fleck, kein Matsch, keine Kotze. Deine Mutter würde weinen vor Glück.','Sauber wie nie. Die Kakerlaken ziehen beleidigt aus.'],{chaos:-1,xp:1});checkAch()}}
-function cleanPuddle(p){p.taps++;snd('slap');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;cleanDone(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.'],{chaos:-3,xp:2});checkAch()}}
+function cleanStain(s,k){s.taps=(s.taps||0)+1;snd('wipe');vib(20);const need=k==='stain'?2:1;if(s.taps>=need){const a=k==='stain'?S.stains:S.splats;a.splice(a.indexOf(s),1);S.st.clean=(S.st.clean||0)+1;cleanDone(['Die Bude glänzt. Also für deine Verhältnisse.','Kein Fleck, kein Matsch, keine Kotze. Deine Mutter würde weinen vor Glück.','Sauber wie nie. Die Kakerlaken ziehen beleidigt aus.'],{chaos:-1,xp:1});checkAch()}}
+function cleanPuddle(p){p.taps++;snd('wipe');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;cleanDone(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.'],{chaos:-3,xp:2});checkAch()}}
 function promCheck(){
   if(S.prom>=1.1&&!S.taskDone&&!busyUI){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
   if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
@@ -1496,7 +1496,7 @@ function drawPoop(){if(!L.roomMode||!Array.isArray(S.poop))return;const m=L.mm,b
     cx.fillStyle='rgba(205,200,185,.9)';cx.beginPath();cx.arc(r*.2,-r*.15,r*.42,0,7);cx.fill();cx.fillStyle='#4a4436';cx.beginPath();cx.arc(-r*.12,r*.08,r*.28,0,7);cx.fill();cx.fillStyle='#6b6450';cx.beginPath();cx.arc(r*.25,r*.25,r*.14,0,7);cx.fill();
     if(p.z==='w'){cx.fillStyle='rgba(235,232,220,.85)';cx.fillRect(-r*.08,r*.5,r*.16,r*.8)}cx.restore();
     HITS.push({id:'poop',x:q.x-r*1.6,y:q.y-r*1.6,w:r*3.2,h:r*3.2,pi:i})}}
-function poopTap(i){if(!Array.isArray(S.poop)||!S.poop[i])return;S.poop.splice(i,1);S.st.clean=(S.st.clean||0)+1;snd('slap');vib(15);cleanDone(['Die ganze Taubenkacke ist weg. Du hast sie mit dem Ärmel abgekratzt.','Kein Vogelschiss mehr. Die Taube plant schon den nächsten Angriff.'],{chaos:-1,xp:1})}
+function poopTap(i){if(!Array.isArray(S.poop)||!S.poop[i])return;S.poop.splice(i,1);S.st.clean=(S.st.clean||0)+1;snd('wipe');vib(15);cleanDone(['Die ganze Taubenkacke ist weg. Du hast sie mit dem Ärmel abgekratzt.','Kein Vogelschiss mehr. Die Taube plant schon den nächsten Angriff.'],{chaos:-1,xp:1})}
 // ================= TELEFONIEREN: Kontakte anrufen =================
 const CONTACTS=[
  {k:'kevin',n:'Kevin',img:'kevin_0',hi:['Ey Digga, was geht? Ich bin grad im Netto. Also… vor dem Netto.','Bruder! Ich wollt dich auch grad anrufen. Wegen Geld. Egal.'],a:[
