@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 118</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 119</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=118;
+const APPVER=119;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1207,16 +1207,27 @@ function rateMenu(){snd('ring');openModal(`<div class="sugg" style="text-align:c
      <p>${a==='no'?'Selber Müll, du Lappen. Aber gut – sag halt, was dir nicht passt, dann wird’s besser.':'Du bist auch nur „geht so“, du Meckerfritze. Sag halt, was besser werden soll.'}</p>
      <div class="list"><button class="btn pri" data-q="idea">Meckern 📝</button><button class="btn" data-q="x">Ach, vergiss es</button></div></div>`,()=>bindAll({'[data-q]':el2=>{if(el2.dataset.q==='idea')ideaMenu(closeModal);else{closeModal();toast('Typisch. Erst motzen, dann nix sagen.')}}}));return}
    if(a==='later'){rateLater(3);closeModal();toast('Jaja, sauf weiter, du Penner. 🍺')}}}))}
+const SOCIAL={insta:'https://www.instagram.com/assi_simulator/',tiktok:'https://www.tiktok.com/@assi_simulator'};
+const SHARE_TXT='Ich hock im Assi Simulator auf dem Sofa und sauf mich durch den Tag 🛋️🍺 Kannst du besser? Gratis, direkt im Browser:';
 function rateShareMenu(){openModal(`<div class="sugg" style="text-align:center"><h2>😏 Wusst ich’s doch!</h2>
   <p>Hast ja sonst eh nix zu tun. Dann beweg mal deinen faulen Arsch und erzähl’s weiter – kostet dich nix außer zwei Sekunden deiner verschwendeten Lebenszeit.</p>
   <p style="font-size:13px;color:var(--dim)">Als Dankeschön gibt’s für deinen Assi ein Freibier. 🍺</p>
-  <div class="list"><button class="btn pri" data-s="share">📤 Spiel teilen</button><button class="btn" data-s="cmt">💬 Kurzen Kommentar schreiben</button><button class="btn" data-s="later">Später, mein Bier wird warm</button></div></div>`,()=>bindAll({'[data-s]':async el=>{const a=el.dataset.s;
-   if(a==='later'){rateLater(3);closeModal();toast('Faule Sau. Ich frag dich später nochmal.');return}
+  <h4 style="margin:12px 0 6px">📤 Teilen</h4>
+  <div class="list"><button class="btn pri" data-s="share">Teilen (WhatsApp, Insta, TikTok …)</button>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" data-s="wa">WhatsApp</button><button class="btn" data-s="copy">Link kopieren</button></div></div>
+  <h4 style="margin:14px 0 6px">💬 Kommentieren</h4>
+  <div class="list"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" data-s="insta">Instagram</button><button class="btn" data-s="tiktok">TikTok</button></div>
+   <button class="btn" data-s="cmt">Per E-Mail</button></div>
+  <div class="list" style="margin-top:12px"><button class="btn" data-s="later">${(rateGet().done)?'Fertig':'Später, mein Bier wird warm'}</button></div></div>`,()=>bindAll({'[data-s]':async el=>{const a=el.dataset.s;
+   if(a==='later'){if(!rateGet().done)rateLater(3);closeModal();toast(rateGet().done?'Ehrenmann. Jetzt weiterglotzen.':'Faule Sau. Ich frag dich später nochmal.');return}
    if(a==='cmt')return rateCommentMenu();
-   if(a==='share'){const txt='Ich hock im Assi Simulator auf dem Sofa und sauf mich durch den Tag 🛋️🍺 Kannst du besser? Gratis, direkt im Browser:';let ok=false;
-     try{if(navigator.share){await navigator.share({title:'Assi Simulator',text:txt,url:SHARE_URL});ok=true}}catch(e){if(e&&e.name==='AbortError'){toast('Abgebrochen? Feigling.');return}}
-     if(!ok){try{await navigator.clipboard.writeText(txt+' '+SHARE_URL);ok=true;toast('Link kopiert!','Jetzt irgendwo einfügen, du Werbefigur.',3500)}catch(e){toast('Teilen ging nicht','Schick einfach assi-simulator.de rum.',3500);return}}
-     rateThanks()}}}))}
+   if(a==='insta'||a==='tiktok'){window.open(SOCIAL[a],'_blank','noopener');toast(a==='insta'?'Ab zu Insta. Schreib unter einen Post was Nettes. Oder was Ehrliches.':'Ab zu TikTok. Hau einen Kommentar unter ein Video, du Influencer.','',4000);return rateThanks(true)}
+   if(a==='wa'){window.open('https://wa.me/?text='+encodeURIComponent(SHARE_TXT+' '+SHARE_URL),'_blank','noopener');return rateThanks(true)}
+   if(a==='copy'){try{await navigator.clipboard.writeText(SHARE_TXT+' '+SHARE_URL);toast('Link kopiert!','Jetzt in Insta-Story, TikTok oder sonstwo einfügen.',3500);return rateThanks(true)}catch(e){toast('Kopieren ging nicht','Schick einfach assi-simulator.de rum.',3500);return}}
+   if(a==='share'){let ok=false;
+     try{if(navigator.share){await navigator.share({title:'Assi Simulator',text:SHARE_TXT,url:SHARE_URL});ok=true}}catch(e){if(e&&e.name==='AbortError'){toast('Abgebrochen? Feigling.');return}}
+     if(!ok){try{await navigator.clipboard.writeText(SHARE_TXT+' '+SHARE_URL);ok=true;toast('Link kopiert!','Jetzt irgendwo einfügen, du Werbefigur.',3500)}catch(e){toast('Teilen ging nicht','Schick einfach assi-simulator.de rum.',3500);return}}
+     rateThanks(true)}}}))}
 function rateCommentMenu(){openModal(`<div class="sugg"><h2>💬 Na los, schleim mal rum</h2><p>Was gefällt dir am Assi Simulator? Ein Satz reicht, du Schreibfaulpelz.</p>
   <textarea id="cmtTx" placeholder="Zum Beispiel: Bestes Spiel seit Bier erfunden wurde …"></textarea>
   <div class="list"><button class="btn pri" data-c="send">Abschicken</button><button class="btn" data-c="back">Zurück</button></div>
@@ -1225,7 +1236,7 @@ function rateCommentMenu(){openModal(`<div class="sugg"><h2>💬 Na los, schleim
    if(!v){snd('bad');toast('Leer abschicken? Echt jetzt?');return}
    location.href='mailto:'+IDEA_MAIL+'?subject='+encodeURIComponent('Assi Simulator – Kommentar')+'&body='+encodeURIComponent(v+'\n\n---\nVersion '+APPVER+' · Level '+S.lvl+' · Tag '+S.day);
    rateThanks()}}))}
-function rateThanks(){rateDone();closeModal();fx({beer:1});snd('cash');toast('Ehrenmann! 🍺','Freibier für deinen Assi. Und jetzt weiterglotzen.',4000)}
+function rateThanks(stay){const first=!rateGet().beer;rateDone();const o=rateGet();o.beer=1;rateSet(o);if(first){fx({beer:1});snd('cash');setTimeout(()=>toast('Ehrenmann! 🍺','Freibier für deinen Assi.',3500),stay?3800:0)}if(stay)rateShareMenu();else closeModal()}
 
 // ---------- Tagesaufgaben (XP verdienen) ----------
 const QUESTS=[
