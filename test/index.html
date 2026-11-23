@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 111</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 112</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=111;
+const APPVER=112;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -343,7 +343,7 @@ function dbAll(){return new Promise(res=>{if(!DB)return res({});try{const out={}
 function dbPut(k,v){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').put(v,k)}catch(e){}}
 function dbClear(){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').clear()}catch(e){}}
 function mkImg(src){const i=new Image();i.src=src;return i}
-const SPKEYS=["nikolaus_0","nikolaus_1","nikolaus_2","nikolaus_3","lh_none_bare","lh_empty_bare","lh_full_bare","lh_open_bare","drink_1_bare","drink_2_bare","drink_3_bare","throw_1_bare","throw_2_bare","rh_empty_bare","rh_cig_bare","rh_ctrl_bare","rh_phone_bare","rh_remote_bare","rh_snack_bare","tat_l1","tat_l2","tat_l3","tat_r1","tat_r2","tat_r3","toni_0","toni_1","toni_2","toni_3","wreath_0","wreath_1","wreath_2","wreath_3","wreath_4","wreath_out","advent_cal","advent_cal_done","xtree_0","xtree_1","xtree_2","lamp_fringe","lamp_80s","swatter_hit","newspaper","newspaper_hit","splat_fly_1","splat_fly_2","splat_roach_1","splat_roach_2","stereo_0","stereo_1","stereo_2","ch_0_1","ch_0_2","ch_0_3","ch_0_4","ch_1_1","ch_1_2","ch_1_3","ch_1_4","ch_2_1","ch_2_2","ch_2_3","ch_2_4","ch_3_1","ch_3_2","ch_3_3","ch_3_4","ch_4_1","ch_4_2","ch_4_3","ch_4_4","ch_5_1","ch_5_2","ch_5_3","ch_5_4","vhs_0_1","vhs_0_2","vhs_0_3","vhs_0_4","vhs_1_1","vhs_1_2","vhs_1_3","vhs_1_4","vhs_2_1","vhs_2_2","vhs_2_3","vhs_2_4","vhs_3_1","vhs_3_2","vhs_3_3","vhs_3_4","vhs_4_1","vhs_4_2","vhs_4_3","vhs_4_4","stash_shelf","stash_spine","stash_low","stash_full","money_pile","mag_worn","mag_sticky","tissues","tissue_used","landlord_hurt", "bailiff_hurt", "police_hurt", "salesman_hurt", "pizza_hurt", "tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5",  "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying", "lh_open", "cap", "cigpack_closed", "cigpack_half", "cigpack_empty", "cig", "cig_lit", "butt", "lighter", "basket_0", "basket_1", "basket_2", "basket_3", "basket_4", "basket_5", "basket_6", "basket_7", "mag", "mag_open", "stash_book", "stash_book_open"];
+const SPKEYS=["lights_0","lights_1","lights_2","poop_big","poop_drop","poop_s","poop_m","poop_l","poop_dry","nikolaus_0","nikolaus_1","nikolaus_2","nikolaus_3","lh_none_bare","lh_empty_bare","lh_full_bare","lh_open_bare","drink_1_bare","drink_2_bare","drink_3_bare","throw_1_bare","throw_2_bare","rh_empty_bare","rh_cig_bare","rh_ctrl_bare","rh_phone_bare","rh_remote_bare","rh_snack_bare","tat_l1","tat_l2","tat_l3","tat_r1","tat_r2","tat_r3","toni_0","toni_1","toni_2","toni_3","wreath_0","wreath_1","wreath_2","wreath_3","wreath_4","wreath_out","advent_cal","advent_cal_done","xtree_0","xtree_1","xtree_2","lamp_fringe","lamp_80s","swatter_hit","newspaper","newspaper_hit","splat_fly_1","splat_fly_2","splat_roach_1","splat_roach_2","stereo_0","stereo_1","stereo_2","ch_0_1","ch_0_2","ch_0_3","ch_0_4","ch_1_1","ch_1_2","ch_1_3","ch_1_4","ch_2_1","ch_2_2","ch_2_3","ch_2_4","ch_3_1","ch_3_2","ch_3_3","ch_3_4","ch_4_1","ch_4_2","ch_4_3","ch_4_4","ch_5_1","ch_5_2","ch_5_3","ch_5_4","vhs_0_1","vhs_0_2","vhs_0_3","vhs_0_4","vhs_1_1","vhs_1_2","vhs_1_3","vhs_1_4","vhs_2_1","vhs_2_2","vhs_2_3","vhs_2_4","vhs_3_1","vhs_3_2","vhs_3_3","vhs_3_4","vhs_4_1","vhs_4_2","vhs_4_3","vhs_4_4","stash_shelf","stash_spine","stash_low","stash_full","money_pile","mag_worn","mag_sticky","tissues","tissue_used","landlord_hurt", "bailiff_hurt", "police_hurt", "salesman_hurt", "pizza_hurt", "tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5",  "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying", "lh_open", "cap", "cigpack_closed", "cigpack_half", "cigpack_empty", "cig", "cig_lit", "butt", "lighter", "basket_0", "basket_1", "basket_2", "basket_3", "basket_4", "basket_5", "basket_6", "basket_7", "mag", "mag_open", "stash_book", "stash_book_open"];
 async function loadSprites(){const base='sprites/';const mk=(k,src)=>{const i=new Image();i.onload=()=>{layout();if(k==='splash'&&mainOpen)mainMenu()};let tries=0;i.onerror=()=>{if(SP[k]!==i)return;if(tries<3){tries++;setTimeout(()=>{if(SP[k]===i)i.src=src+'?r='+tries+'_'+Date.now()},700*tries);return}delete SP[k]};i.src=src;SP[k]=i};
   mk('room',base+'room.jpg');for(const k of SPKEYS)mk(k,base+k+'.webp');
   await dbOpen();const all=await dbAll();for(const k in all){const i=mkImg(all[k]);i.onload=()=>layout();SP[k]=i}}
@@ -835,6 +835,7 @@ function tap(id,p){
    case'xcal':return xcalMenu();
    case'wreath':return wreathTap();
    case'xtree':return xtreeTap();
+   case'xlights':return xlightsTap();
    case'stereo':return stereoTap();
    case'mag':return magTap();
    case'tissue':return tissueTap();
@@ -1488,14 +1489,26 @@ function drawSwatTool(kind,x,y,since){const base=kind==='roach'?'newspaper':'swa
 function splatKey(kind,v){const k=(kind==='roach'?'splat_roach_':'splat_fly_')+(v||1);return SP[k]&&SP[k].naturalWidth?k:null}
 
 // ---------- Taubenkacke überall ----------
-const POOPZ=[[690,560,770,590,'s'],[300,925,860,1000,'f'],[240,1062,700,1150,'t'],[120,330,640,700,'w'],[640,700,760,760,'w']];
-function pigeonPoop(n,sillOnly){if(!Array.isArray(S.poop))S.poop=[];for(let i=0;i<n&&S.poop.length<40;i++){const z=sillOnly?POOPZ[0]:POOPZ[i===0?0:1+Math.floor(Math.random()*(POOPZ.length-1))];S.poop.push({x:R(z[0],z[2]),y:R(z[1],z[3]),z:z[4],s:R(.7,1.25),a:R(0,6.3)})}S.chaos=clamp(S.chaos+n*.3,0,100);S.dirt=clamp((S.dirt||0)+n*.4,0,100)}
-function drawPoop(){if(!L.roomMode||!Array.isArray(S.poop))return;const m=L.mm,base=L.bottleH*.16;
-  for(let i=0;i<S.poop.length;i++){const p=S.poop[i],q=m(p.x,p.y),r=base*p.s*(p.z==='f'?.85:p.z==='w'?1.05:1);cx.save();cx.translate(q.x,q.y);cx.rotate(p.a);if(p.z==='f'||p.z==='t'||p.z==='s')cx.scale(1,.6);
-    cx.fillStyle='rgba(240,238,228,.95)';cx.beginPath();for(let k=0;k<9;k++){const ang=k/9*Math.PI*2,rr=r*(.75+((i*7+k*5)%4)*.12);cx.lineTo(Math.cos(ang)*rr,Math.sin(ang)*rr)}cx.closePath();cx.fill();
-    cx.fillStyle='rgba(205,200,185,.9)';cx.beginPath();cx.arc(r*.2,-r*.15,r*.42,0,7);cx.fill();cx.fillStyle='#4a4436';cx.beginPath();cx.arc(-r*.12,r*.08,r*.28,0,7);cx.fill();cx.fillStyle='#6b6450';cx.beginPath();cx.arc(r*.25,r*.25,r*.14,0,7);cx.fill();
-    if(p.z==='w'){cx.fillStyle='rgba(235,232,220,.85)';cx.fillRect(-r*.08,r*.5,r*.16,r*.8)}cx.restore();
-    HITS.push({id:'poop',x:q.x-r*1.6,y:q.y-r*1.6,w:r*3.2,h:r*3.2,pi:i})}}
+// Taubenkacke nur auf waagrechten Flächen: Fensterbrett, Boden vor dem Schrank, Tischplatte
+const POOPZ=[[700,566,768,586,'s'],[330,912,860,985,'f'],[60,1010,880,1200,'t']];
+function poopBlocked(x,y){const B=[[95,905,300,1085],[318,995,412,1095],[395,1035,525,1112],[525,1045,670,1130],[396,1118,471,1231],[625,962,759,1087],[600,1100,760,1205],[370,1200,660,1300]];
+  if(S.furn.console)B.push([330,1110,450,1185]);if(S.furn.fridge)B.push([196,778,344,962]);if(S.furn.gold)B.push([495,705,765,1005]);if(S.furn.massage)B.push([735,560,1075,1000]);
+  try{const z=xSeason();if(z){B.push([425,872,605,1042]);if(z.tree)B.push([645,415,895,945])}}catch(e){}
+  return B.some(b=>x>b[0]-18&&x<b[2]+18&&y>b[1]-12&&y<b[3]+12)}
+function pigeonPoop(n,sillOnly){if(!Array.isArray(S.poop))S.poop=[];S.poop=S.poop.filter(p=>p.z!=='w');let made=0;
+  for(let i=0;i<n&&S.poop.length<40;i++){const z=sillOnly?POOPZ[0]:POOPZ[i===0?0:1+Math.floor(Math.random()*(POOPZ.length-1))];let x,y,ok=false;
+    for(let tr=0;tr<12&&!ok;tr++){x=R(z[0],z[2]);y=R(z[1],z[3]);ok=!poopBlocked(x,y)}if(!ok)continue;
+    S.poop.push({x,y,z:z[4],s:R(.8,1.2),a:R(0,6.3),v:pick(['s','s','m','m','l','big']),t:S.tot,ft:Date.now()+made*140});made++}
+  S.chaos=clamp(S.chaos+made*.3,0,100);S.dirt=clamp((S.dirt||0)+made*.4,0,100)}
+function drawPoop(){if(!L.roomMode||!Array.isArray(S.poop))return;if(S.poop.some(p=>p.z==='w'))S.poop=S.poop.filter(p=>p.z!=='w');const m=L.mm,base=L.bottleH*.16,now=Date.now();
+  for(let i=0;i<S.poop.length;i++){const p=S.poop[i];if(p.z==='w')continue;const q=m(p.x,p.y),sz={s:.75,m:1,l:1.15,big:1.3}[p.v||'m']||1,r=base*p.s*sz*(p.z==='s'?.8:1);
+    // fällt gerade noch herunter
+    const fa=p.ft?(now-p.ft)/420:2;if(fa<1){if(fa>=0&&SP.poop_drop&&SP.poop_drop.naturalWidth){const dh=r*2.6,dw=dh*SP.poop_drop.naturalWidth/SP.poop_drop.naturalHeight;cx.drawImage(SP.poop_drop,q.x-dw*.6,q.y-dh-(1-fa)*H*.35,dw,dh)}continue}
+    const dry=p.t!==undefined&&S.tot-p.t>900,key=dry?'poop_dry':(p.v==='big'?'poop_big':'poop_'+(p.v||'m')),im=SP[key];
+    cx.save();cx.translate(q.x,q.y);cx.scale(1,.55);cx.rotate(p.a);
+    if(im&&im.naturalWidth){const w=r*2.8,h=w*im.naturalHeight/im.naturalWidth;cx.drawImage(im,-w/2,-h/2,w,h)}
+    else{cx.fillStyle='rgba(240,238,228,.95)';cx.beginPath();for(let k=0;k<9;k++){const ang=k/9*Math.PI*2,rr=r*(.75+((i*7+k*5)%4)*.12);cx.lineTo(Math.cos(ang)*rr,Math.sin(ang)*rr)}cx.closePath();cx.fill();cx.fillStyle='#4a4436';cx.beginPath();cx.arc(-r*.12,r*.08,r*.28,0,7);cx.fill()}
+    cx.restore();HITS.push({id:'poop',x:q.x-r*1.5,y:q.y-r*1.1,w:r*3,h:r*2.2,pi:i})}}
 function poopTap(i){if(!Array.isArray(S.poop)||!S.poop[i])return;S.poop.splice(i,1);S.st.clean=(S.st.clean||0)+1;snd('wipe');vib(15);cleanDone(['Die ganze Taubenkacke ist weg. Du hast sie mit dem Ärmel abgekratzt.','Kein Vogelschiss mehr. Die Taube plant schon den nächsten Angriff.'],{chaos:-1,xp:1})}
 // ================= TELEFONIEREN: Kontakte anrufen =================
 const CONTACTS=[
@@ -1753,7 +1766,7 @@ function xcalMenu(){const z=xSeason();if(!z||!z.cal)return;if(z.after)return toa
     if(c.open.includes(n)||n>last)return;c.open.push(n);const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
     openModal(`<div class="sugg" style="text-align:center"><h2>Türchen ${n}</h2><p style="font-size:17px">${txt}</p><p style="color:var(--dim)">${fxStr(f)||'Sonst nix.'}</p><div class="list"><button class="btn pri" data-q="more">${xcalDue()?'Noch eins aufmachen':'Zum Kalender'}</button><button class="btn" data-q="x">Weiterglotzen</button></div></div>`,()=>bindAll({'[data-q]':e2=>{if(e2.dataset.q==='more')xcalMenu();else closeModal()}}))}}))}
 function xLayout(){const m=L.mm;if(!m)return null;const r=(x0,y0,x1,y1)=>{const a=m(x0,y0),b=m(x1,y1);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}};
-  return{cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(645,415,895,945)}}
+  return{lights:r(268,84,772,176),cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(645,415,895,945)}}
 // Solange der Baum steht, räumt der Assi Stehlampe und Sessel (Massage/Gold) weg
 function xTreeUp(){const z=xSeason();return!!(z&&z.tree)}
 function xFit(key,b){const i=SP[key];if(!i||!i.naturalWidth)return false;return spr(key,b)}
@@ -1763,6 +1776,10 @@ function drawXmasBack(t){if(!L.roomMode)return;const z=xSeason();if(!z)return;co
     if(!xFit(k,b)){const cxm=b.x+b.w/2;rr(cxm-b.w*.22,b.y+b.h*.82,b.w*.44,b.h*.18,6,'#2d5d2a');for(let i=0;i<4;i++){const yy=b.y+b.h*(.08+i*.19),ww=b.w*(.25+i*.17);cx.fillStyle=z.after?'#7a6a3a':'#1f5a2e';cx.beginPath();cx.moveTo(cxm,yy);cx.lineTo(cxm-ww,yy+b.h*.26);cx.lineTo(cxm+ww,yy+b.h*.26);cx.fill()}
       if(!S.xtreeOff&&!z.after)for(let i=0;i<14;i++){const a=i*2.4,yy=b.y+b.h*(.2+(i%7)*.09),xx=cxm+Math.sin(a)*b.w*(.08+(i%7)*.045);ell(xx,yy,3,3,(Math.sin(t*4+i)>0)?['#ff4040','#ffd23a','#4aa3ff'][i%3]:'#553')}}
     hit('xtree',b)}
+  // Lichterkette oben an der Wand (ab 1. Advent bis 6.1.), blinkt abwechselnd
+  {const b=X.lights,on=!S.xlightsOff&&!powerOut(),k=on?(Math.floor(t*1.6)%2?'lights_1':'lights_2'):'lights_0';
+    if(!xFit(k,b)){cx.strokeStyle='#1f3a22';cx.lineWidth=2;cx.beginPath();cx.moveTo(b.x,b.y+b.h*.2);cx.quadraticCurveTo(b.x+b.w*.25,b.y+b.h*.9,b.x+b.w*.5,b.y+b.h*.3);cx.quadraticCurveTo(b.x+b.w*.75,b.y+b.h*.9,b.x+b.w,b.y+b.h*.2);cx.stroke()}
+    hit('xlights',b)}
   // Adventskalender (1.–24.12., danach leer bis 6.1.)
   if(z.cal){const b=X.cal,k=z.after?'advent_cal_done':'advent_cal';
     if(!xFit(k,b)){rr(b.x,b.y,b.w,b.h,4,'#b3262b','#5a1414');for(let i=0;i<24;i++){const cxx=b.x+b.w*(.12+(i%4)*.22),cyy=b.y+b.h*(.12+Math.floor(i/4)*.14);rr(cxx,cyy,b.w*.14,b.h*.1,2,z.after||(S.xcal&&S.xcal.open.includes(i+1))?'#3a0d0f':'#f4e3c1')}}
@@ -1776,10 +1793,12 @@ function drawXmasBack(t){if(!L.roomMode)return;const z=xSeason();if(!z)return;co
     hit('wreath',b)}}
 function drawXmasGlow(dark,t){const z=xSeason(),X=L.xmas;if(!z||!X||dark<=0||powerOut())return;cx.save();cx.globalCompositeOperation='lighter';
   if(!z.after&&z.candles){const b=X.wreath,cxm=b.x+b.w/2,cym=b.y+b.h*.3,fl=.85+.15*Math.sin(t*11);const g=cx.createRadialGradient(cxm,cym,2,cxm,cym,b.w*1.4);g.addColorStop(0,'rgba(255,170,60,'+(dark*.45*fl*z.candles/4+dark*.12)+')');g.addColorStop(1,'rgba(255,150,50,0)');cx.fillStyle=g;cx.fillRect(cxm-b.w*1.5,cym-b.w*1.5,b.w*3,b.w*3)}
+  if(!S.xlightsOff){const b=X.lights,fl=.75+.25*Math.sin(t*2.1),lk=Math.floor(t*1.6)%2?'lights_1':'lights_2';if(SP[lk]&&SP[lk].naturalWidth){cx.save();cx.globalCompositeOperation='source-over';cx.globalAlpha=Math.min(.9,dark*1.3);spr(lk,b);cx.globalCompositeOperation='lighter';cx.globalAlpha=Math.min(.45,dark*.6);spr(lk,b);cx.restore();cx.globalCompositeOperation='lighter'}for(let i=0;i<5;i++){const gx=b.x+b.w*(.1+i*.2),gy=b.y+b.h*.6,rad=b.w*.16;const g=cx.createRadialGradient(gx,gy,2,gx,gy,rad);g.addColorStop(0,'rgba(255,170,110,'+(dark*.2*fl)+')');g.addColorStop(1,'rgba(255,120,80,0)');cx.fillStyle=g;cx.fillRect(gx-rad,gy-rad,rad*2,rad*2)}}
   if(z.tree&&!z.after&&!S.xtreeOff){const b=X.tree,cxm=b.x+b.w/2,cym=b.y+b.h*.45,fl=.8+.2*Math.sin(t*3.3);const g=cx.createRadialGradient(cxm,cym,4,cxm,cym,b.h*.6);g.addColorStop(0,'rgba(255,120,160,'+(dark*.3*fl)+')');g.addColorStop(.5,'rgba(120,170,255,'+(dark*.12*fl)+')');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.fillRect(cxm-b.h*.6,cym-b.h*.6,b.h*1.2,b.h*1.2)}
   cx.restore()}
 function wreathTap(){const z=xSeason();if(!z)return;if(z.after)return toast(pick(['Die Kerzen sind runter. Wie du nach Silvester.','Der Kranz nadelt. Riecht nach Wachs und Kippe.']));
   toast(z.candles>=4?'Alle vier Kerzen brennen. Gleich ist Weihnachten, du Glückspilz.':pick(['Advent, Advent, ein Lichtlein brennt. Erst eins, dann zwei, dann brennt die Bude.','Die Kerzen stecken in leeren Flaschen. Recycling, Baby.']),z.candles+'. Advent');snd('pop')}
+function xlightsTap(){S.xlightsOff=!S.xlightsOff;snd('pop');toast(S.xlightsOff?'Lichterkette aus. Der Stromzähler atmet auf.':'Lichterkette an. Die Hälfte blinkt, der Rest ist seit 1998 kaputt.')}
 function xtreeTap(){const z=xSeason();if(!z)return;if(z.after)return toast('Der Baum nadelt. Am 6. Januar fliegt er aus dem Fenster.');S.xtreeOff=!S.xtreeOff;snd('pop');toast(S.xtreeOff?'Lichterkette aus. Strom ist teuer.':'Lichterkette an. Die Hälfte blinkt, der Rest ist kaputt.')}
 // Baum taucht am 3. Advent einmal mit Meldung auf
 setInterval(()=>{try{const z=xSeason();if(!z||!S.started||busyUI)return;if(z.tree&&S.xtreeNote!==z.y){S.xtreeNote=z.y;toast('Kevin hat dir einen Weihnachtsbaum vom Baumarkt-Parkplatz mitgebracht. Steht jetzt im Bierkasten.','Fröhliche Weihnachten, oder so',5500);save()}
