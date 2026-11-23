@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 107</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 108</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=107;
+const APPVER=108;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -470,7 +470,7 @@ function drawRoom(t){const wall=L.wall;
   // plant
   if(S.furn.plant){const p=L.plant;if(!spr('plant',p)){rr(p.x+8,p.y+p.h-40,30,40,4,'#b5552c');for(let i=0;i<7;i++){cx.save();cx.translate(p.x+23,p.y+p.h-40);cx.rotate(-1.2+i*.4+Math.sin(t*.8+i)*.03);ell(0,-50,12,34,i%2?'#3f7d3a':'#2f6a2e');cx.restore()}}}
   // lamp
-  if(S.furn.lamp){const l=L.lamp,on=S.lampOn&&!powerOut();const lk=lampKey();if(SP[lk]&&SP[lk].naturalWidth){const im=SP[lk],h=l.h,w=h*im.naturalWidth/im.naturalHeight;cx.save();if(!on)cx.filter='brightness(.62) saturate(.8)';cx.drawImage(im,l.x+l.w*.45-w*.45,l.y,w,h);cx.restore()}else if(spr('lamp_off',l)){}else{cx.fillStyle='#222';cx.fillRect(l.x+21,l.y+30,4,l.h-36);ell(l.x+23,l.y+l.h-4,18,5,'#222');cx.beginPath();cx.moveTo(l.x+6,l.y+34);cx.lineTo(l.x+40,l.y+34);cx.lineTo(l.x+30,l.y);cx.lineTo(l.x+16,l.y);cx.closePath();cx.fillStyle='#2b2b2b';cx.fill()}}
+  if(S.furn.lamp&&!xTreeUp()){const l=L.lamp,on=S.lampOn&&!powerOut();const lk=lampKey();if(SP[lk]&&SP[lk].naturalWidth){const im=SP[lk],h=l.h,w=h*im.naturalWidth/im.naturalHeight;cx.save();if(!on)cx.filter='brightness(.62) saturate(.8)';cx.drawImage(im,l.x+l.w*.45-w*.45,l.y,w,h);cx.restore()}else if(spr('lamp_off',l)){}else{cx.fillStyle='#222';cx.fillRect(l.x+21,l.y+30,4,l.h-36);ell(l.x+23,l.y+l.h-4,18,5,'#222');cx.beginPath();cx.moveTo(l.x+6,l.y+34);cx.lineTo(l.x+40,l.y+34);cx.lineTo(l.x+30,l.y);cx.lineTo(l.x+16,l.y);cx.closePath();cx.fillStyle='#2b2b2b';cx.fill()}}
   drawXmasBack(t);
   // fridge
   if(S.furn.fridge){const f=L.fridge;if(!spr(FX.fridgeOpen>S.tot?'fridge_open':'fridge',f)){rr(f.x,f.y,f.w,f.h,8,'#e9e9e4','#bbb');cx.fillStyle='#999';cx.fillRect(f.x+f.w-12,f.y+20,4,30);ell(f.x+24,f.y+26,8,8,'#e44');ell(f.x+40,f.y+50,6,6,'#4ae')}
@@ -481,11 +481,11 @@ function drawRoom(t){const wall=L.wall;
   drawTV(t);
   if(S.furn.lava){const l=L.lava;if(!spr('lava',l)){rr(l.x+4,l.y+38,14,14,2,'#555');cx.beginPath();cx.moveTo(l.x+6,l.y+38);cx.lineTo(l.x+16,l.y+38);cx.lineTo(l.x+19,l.y+6);cx.lineTo(l.x+3,l.y+6);cx.closePath();cx.fillStyle='#7a2a8a';cx.fill();ell(l.x+11,l.y+16+Math.sin(t)*8,4,6,'#ff8a2a');ell(l.x+10,l.y+30-Math.sin(t*.7)*6,3,4,'#ff8a2a')}}
   // massage chair / gold chair
-  if(S.furn.massage&&!S.furn.gold){const m=L.massage;if(!spr('massage',m)){rr(m.x,m.y,m.w,m.h,26,'#1d1d1f');rr(m.x+14,m.y+14,m.w-28,m.h*.55,18,'#2c2c30')}}
+  if(S.furn.massage&&!S.furn.gold&&!xTreeUp()){const m=L.massage;if(!spr('massage',m)){rr(m.x,m.y,m.w,m.h,26,'#1d1d1f');rr(m.x+14,m.y+14,m.w-28,m.h*.55,18,'#2c2c30')}}
   // puddles
   for(const p of S.puddles){const sh=(1-p.taps*.25)*(p.g===undefined?1:p.g),pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
   drawStash();drawStereo(t);drawEmpties(t,'back');
-  if(S.furn.gold){const g=L.gold;if(!spr('goldchair',g)){rr(g.x,g.y,g.w,g.h,30,grad(g.y,g.y+g.h,'#ffe27a','#b8860b'));rr(g.x+18,g.y+20,g.w-36,g.h*.5,20,'#a3122a')}}
+  if(S.furn.gold&&!xTreeUp()){const g=L.gold;if(!spr('goldchair',g)){rr(g.x,g.y,g.w,g.h,30,grad(g.y,g.y+g.h,'#ffe27a','#b8860b'));rr(g.x+18,g.y+20,g.w-36,g.h*.5,20,'#a3122a')}}
 }
 
 // ---------- TV ----------
@@ -618,8 +618,8 @@ const SLOTDEF=[ // [x,y,lying] in room-image coords, filled in this order
  [560,980,1],[835,925,0],[905,590,0],[60,598,1],[350,690,1],[380,935,0],[930,1040,0],
  [210,447,0],[760,592,1],[455,925,0],[670,690,0],[30,925,0],[860,890,1],[230,722,0],[530,925,1],
  [120,960,0],[820,1000,0],[400,1150,0],[640,955,1],[300,1000,1],[700,1005,0],[455,1000,0],[190,1000,1],[930,600,0],[150,598,0],[100,447,1],[60,720,0]];
-function emptySlots(){const fk=['massage','fridge','lamp','gold','stash'].map(k=>S.furn[k]?1:0).join('');if(L.slots&&L.slotsW===W&&L.slotsH===H&&L.slotsF===fk)return L.slots;const m=L.mm;if(!m)return[];
-  const block=[];if(S.furn.massage)block.push([735,560,1075,1000]);if(S.furn.fridge)block.push([196,722,344,910]);if(S.furn.lamp)block.push([640,350,756,910]);if(S.furn.gold)block.push([-110,620,250,1015]);
+function emptySlots(){const xt=xTreeUp();const fk=['massage','fridge','lamp','gold','stash'].map(k=>S.furn[k]?1:0).join('')+(xt?'T':'');if(L.slots&&L.slotsW===W&&L.slotsH===H&&L.slotsF===fk)return L.slots;const m=L.mm;if(!m)return[];
+  const block=[];if(S.furn.massage)block.push([735,560,1075,1000]);if(S.furn.fridge)block.push([196,722,344,910]);if(S.furn.lamp)block.push([640,350,756,910]);if(S.furn.gold)block.push([-110,620,250,1015]);if(xt)block.push([645,415,895,945]);
   let seed=97;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
   const res=SLOTDEF.filter(([x,y])=>!block.some(k=>x>k[0]-15&&x<k[2]+15&&y>k[1]&&y<k[3]+10)).map(([x,y,ly])=>{const p=m(x+(rnd()-.5)*10,y);const dep=clamp(.42+.58*(y-600)/580,.45,1);return{x:p.x,y:p.y,iy:y,lying:!!ly,dep,r:ly?(rnd()-.5)*.5:(rnd()-.5)*.12,flip:rnd()<.5}});
   L.slots=res;L.slotsW=W;L.slotsH=H;L.slotsF=fk;return res}
@@ -721,7 +721,7 @@ function drawOverlay(t){
   if(S.right==='cig'||smokeLevel>0){const k=smokeLevel>1.2?3:smokeLevel>.5?2:1;const dr=(t*9)%W;const ga=Math.min(.75,.25+smokeLevel*.28)*(.85+.15*Math.sin(t*.7));cx.globalAlpha=ga;let sd=spr('smoke_'+k,{x:dr-W,y:H*.06+Math.sin(t*.4)*8,w:W,h:H*.4});if(sd)spr('smoke_'+k,{x:dr,y:H*.06+Math.sin(t*.4+1)*8,w:W,h:H*.4});cx.globalAlpha=1;if(!sd){cx.globalAlpha=Math.min(.35,.1+smokeLevel*.12);for(let i=0;i<6;i++)ell((i*97+t*8)%W,H*.18+((i*53)%120),120,26,'#cfd6dc');cx.globalAlpha=1}}
   // darkness by time of day
   let dark=dayLight();if(powerOut())dark=.8;
-  const lampLit=S.furn.lamp&&S.lampOn&&!powerOut();if(lampLit)dark*=.55;
+  const lampLit=S.furn.lamp&&S.lampOn&&!powerOut()&&!xTreeUp();if(lampLit)dark*=.55;
   if(dark>0){cx.fillStyle='rgba(8,8,22,'+dark+')';cx.fillRect(0,0,W,H);
     if(S.tvOn&&!powerOut()){const s=L.scr,fl=.5+Math.sin(t*9)*.08+Math.sin(t*23)*.06;const g=cx.createRadialGradient(s.x+s.w/2,s.y+s.h/2,10,s.x+s.w/2,s.y+s.h/2,H*.7);g.addColorStop(0,'rgba(150,185,255,'+(dark*fl*1.1)+')');g.addColorStop(1,'rgba(140,180,255,0)');cx.globalCompositeOperation='lighter';cx.fillStyle=g;cx.fillRect(0,0,W,H);cx.globalCompositeOperation='source-over'}
   }
@@ -843,8 +843,8 @@ function tap(id,p){
    case'bottle':if(S.bottle&&S.bottle.opened===false)return openBottle();if(S.bottle&&S.bottle.sips<=0)return putDown();return toast('Gedrückt halten zum Trinken, du Saufanfänger. Selbst Babys können nuckeln.');
   }
   if(S.furn.fridge&&inB(L.fridge))return fridgeTap();
-  if(S.furn.massage&&inB(L.massage))return massage();
-  if(S.furn.lamp&&inB(L.lamp)){S.lampOn=!S.lampOn;snd('pop');return toast(S.lampOn?'Licht an. Jetzt sieht man das ganze Elend, inklusive dir.':'Licht aus. Jetzt muss keiner mehr deine Fresse sehen.')}
+  if(S.furn.massage&&!xTreeUp()&&inB(L.massage))return massage();
+  if(S.furn.lamp&&!xTreeUp()&&inB(L.lamp)){S.lampOn=!S.lampOn;snd('pop');return toast(S.lampOn?'Licht an. Jetzt sieht man das ganze Elend, inklusive dir.':'Licht aus. Jetzt muss keiner mehr deine Fresse sehen.')}
   if(S.furn.vcr&&inB(L.vcr))return openVideo();
   if(S.furn.console&&inB(L.console)){if(!needRightFree('ctrl'))return;S.right='ctrl';return openGames()}
   if(inB(L.tv)){if(S.right==='remote')return toast('Wischen, nicht tippen, du Fingerakrobat. Links oder rechts. Selbst du kriegst das hin.');return toast('Nimm die Fernbedienung, du Neandertaler. Mit Draufglotzen allein schaltet nix um.')}
@@ -1736,7 +1736,9 @@ function xcalMenu(){const z=xSeason();if(!z||!z.cal)return;if(z.after)return toa
     if(c.open.includes(n)||n>last)return;c.open.push(n);const [txt,f]=XCAL[n-1];fx(f);snd(n===24||n===6?'lvl':'pop');save();
     openModal(`<div class="sugg" style="text-align:center"><h2>Türchen ${n}</h2><p style="font-size:17px">${txt}</p><p style="color:var(--dim)">${fxStr(f)||'Sonst nix.'}</p><div class="list"><button class="btn pri" data-q="more">${xcalDue()?'Noch eins aufmachen':'Zum Kalender'}</button><button class="btn" data-q="x">Weiterglotzen</button></div></div>`,()=>bindAll({'[data-q]':e2=>{if(e2.dataset.q==='more')xcalMenu();else closeModal()}}))}}))}
 function xLayout(){const m=L.mm;if(!m)return null;const r=(x0,y0,x1,y1)=>{const a=m(x0,y0),b=m(x1,y1);return{x:a.x,y:a.y,w:b.x-a.x,h:b.y-a.y}};
-  return{cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(55,425,305,945)}}
+  return{cal:r(292,196,408,372),wreath:r(425,872,605,1042),tree:r(645,415,895,945)}}
+// Solange der Baum steht, räumt der Assi Stehlampe und Sessel (Massage/Gold) weg
+function xTreeUp(){const z=xSeason();return!!(z&&z.tree)}
 function xFit(key,b){const i=SP[key];if(!i||!i.naturalWidth)return false;return spr(key,b)}
 function drawXmasBack(t){if(!L.roomMode)return;const z=xSeason();if(!z)return;const X=xLayout();if(!X)return;L.xmas=X;
   // Weihnachtsbaum (ab 3. Advent)
