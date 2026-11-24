@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 123</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 124</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=123;
+const APPVER=124;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1093,7 +1093,7 @@ function openCatalog(){openModal(`<h2>Möbel-Katalog</h2><p>Kasse: <b>${eur(S.mo
  ${CAT.map((it,i)=>{const own=S.furn[it.k],lock=it.u&&!it.u();return`<div class="row${own||lock?' off':''}"><div class="t"><b>${esc(it.n)}</b><span>${esc(it.d)}${lock?' · gesperrt: '+it.ul:''}</span></div>${own?'<span class="ok">✓</span>':`<button class="btn pri" data-b="${i}" ${lock||S.money<it.p?'disabled':''}>${eur(it.p)}</button>`}</div>`}).join('')}
  <div class="row off"><div class="t"><b>Lavalampe</b><span>Geschenk ab Level 20</span></div>${S.furn.lava?'<span class="ok">✓</span>':''}</div>
  <div class="row off"><div class="t"><b>Goldener Fernsehsessel</b><span>Geschenk ab Level 50</span></div>${S.furn.gold?'<span class="ok">✓</span>':''}</div></div>${closeBtn}`,()=>bindAll({
-  '[data-b]':el=>{const it=CAT[+el.dataset.b];if(S.money<it.p)return;S.money-=it.p;S.furn[it.k]=true;if(it.k==='lamp')S.lampOn=true;snd('cash');addXP(5);layout();toast('Geliefert: '+it.n,'Der Paketbote hat gelacht.');openCatalog()},'[data-x]':closeModal}))}
+  '[data-b]':el=>{const it=CAT[+el.dataset.b];if(S.money<it.p)return;S.money-=it.p;S.furn[it.k]=true;if(it.k==='lamp')S.lampOn=true;snd('cash');addXP(5);layout();if(it.k==='stash'&&!S.stashGuide){closeModal();setTimeout(guideStash,400);return}toast('Geliefert: '+it.n,'Der Paketbote hat gelacht.');openCatalog()},'[data-x]':closeModal}))}
 // ---------- Phone & Jobs ----------
 const JOBS=[
  {k:'pfand',n:'Pfandflaschen sammeln',d:2,r:()=>R(2,4),risk:0,legal:1},
@@ -1892,19 +1892,20 @@ const TUT=[
  {t:'Die Ecken',d:'🥨 Essen, 🚿 Duschen, 🛒 Shop, 🛏 Schlafen (abends bis morgens). Duschen solltest du ab und zu. Wirklich.',r:()=>elRects(['bSnack','bWash','bShop','bSleep'])},
  {t:'Oben rechts',d:'🎯 Aufgaben für Erfahrung, 😈 Streiche gegen andere Spieler aus der Rangliste, ☰ Menü mit Rangliste, Spielstand und Einstellungen.',r:()=>elRects(['bQuest','bPrank','bMenu'])},
  {t:'Und sonst so',d:'Es klingeln Besucher, Fliegen nerven, die Taube kackt dir auf den Tisch, und irgendwer kotzt immer. Dreck antippen = wegwischen. Mehr musst du nicht wissen. Viel Spaß beim Verwahrlosen!'}];
-let tutEl=null,tutI=0;
-function startTut(force){if(!force&&tutDone())return;if(!force&&(S.lvl>1||S.day>1)){tutSetDone();return}
+let tutEl=null,tutI=0,TCUR=TUT,TEND=null;
+function startTut(force){if(!force&&tutDone())return;if(!force&&(S.lvl>1||S.day>1)){tutSetDone();return}runGuide(TUT,()=>{tutSetDone();stat('tutorial-'+(tutI>=TUT.length?'fertig':'abgebrochen-'+(tutI+1)))})}
+function runGuide(steps,onEnd){TCUR=steps;TEND=onEnd;
   if(tutEl)tutEl.remove();tutI=0;busyUI=true;tutEl=document.createElement('div');tutEl.id='tut';
   tutEl.style.cssText='position:fixed;inset:0;z-index:40;pointer-events:auto';
   tutEl.innerHTML='<canvas id="tutCv" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none"></canvas><div id="tutCard" style="position:fixed;left:12px;right:12px;background:#2a1f18;border:2px solid #f2c14e;border-radius:16px;padding:14px 14px 12px;color:#f6e8cf;box-shadow:0 8px 30px #000a"><h3 id="tutT" style="margin:0 0 6px;font:22px/1.1 \'Lilita One\',sans-serif;color:#f2c14e"></h3><p id="tutD" style="margin:0 0 12px;font-size:15px;line-height:1.4"></p><div style="display:flex;gap:8px"><button class="btn" id="tutSkip" style="flex:1">Überspringen</button><button class="btn pri" id="tutNext" style="flex:1.4">Weiter</button></div></div>';
   document.body.appendChild(tutEl);
-  tutEl.querySelector('#tutNext').onclick=()=>{initAudio();snd('pop');tutI++;if(tutI>=TUT.length)return endTut();tutShow()};
+  tutEl.querySelector('#tutNext').onclick=()=>{initAudio();snd('pop');tutI++;if(tutI>=TCUR.length)return endTut();tutShow()};
   tutEl.querySelector('#tutSkip').onclick=()=>{snd('pop');endTut()};
   tutShow()}
-function tutShow(){const s=TUT[tutI],card=tutEl.querySelector('#tutCard'),c=tutEl.querySelector('#tutCv');
+function tutShow(){const s=TCUR[tutI],card=tutEl.querySelector('#tutCard'),c=tutEl.querySelector('#tutCv');
   tutEl.querySelector('#tutT').innerHTML=typeof s.t==='function'?s.t():s.t;tutEl.querySelector('#tutD').textContent=s.d;
-  tutEl.querySelector('#tutNext').textContent=tutI===TUT.length-1?'Los geht’s! 🍺':'Weiter ('+(tutI+1)+'/'+TUT.length+')';
-  tutEl.querySelector('#tutSkip').style.display=tutI===TUT.length-1?'none':'';
+  tutEl.querySelector('#tutNext').textContent=tutI===TCUR.length-1?(TCUR===TUT?'Los geht’s! 🍺':'Alles klar'):'Weiter ('+(tutI+1)+'/'+TCUR.length+')';
+  tutEl.querySelector('#tutSkip').style.display=tutI===TCUR.length-1?'none':'';
   let rs=s.r?s.r():null;if(rs&&!Array.isArray(rs))rs=[rs];rs=(rs||[]).filter(Boolean);
   const vw=window.innerWidth,vh=window.innerHeight,dpr=window.devicePixelRatio||1;c.width=vw*dpr;c.height=vh*dpr;const g=c.getContext('2d');g.scale(dpr,dpr);
   g.fillStyle='rgba(10,6,4,.78)';g.fillRect(0,0,vw,vh);const p=8;
@@ -1914,7 +1915,14 @@ function tutShow(){const s=TUT[tutI],card=tutEl.querySelector('#tutCard'),c=tutE
     if(rs.length>2&&bot-top>vh*.4){card.style.bottom='auto';card.style.top=Math.max(90,vh*.32)+'px'}
     else if(mid>vh*.5){card.style.top='auto';card.style.bottom=Math.max(12,vh-(top-p)+12)+'px'}else{card.style.bottom='auto';card.style.top=Math.min(vh-220,bot+p+12)+'px'}}
   else{card.style.bottom='auto';card.style.top=Math.max(80,vh*.3)+'px'}}
-function endTut(){tutSetDone();if(tutEl){tutEl.remove();tutEl=null}busyUI=false;stat('tutorial-'+(tutI>=TUT.length?'fertig':'abgebrochen-'+(tutI+1)))}
+function endTut(){if(tutEl){tutEl.remove();tutEl=null}busyUI=false;try{TEND&&TEND()}catch(e){}TEND=null}
+
+// Einmalige Erklärung nach dem Kauf des Geheimverstecks
+function guideStash(){if(S.stashGuide)return;S.stashGuide=1;save();
+  runGuide([
+   {t:'📕 Dein Geheimversteck',d:'Das hohle Buch steht jetzt oben links im Regal: „Kapital“ von Karl Marx, innen ausgehöhlt. Antippen öffnet es – wir machen’s gleich mal auf.',r:()=>stashR()},
+   {t:'Was bringt’s?',d:'Steck Geld rein, bevor Gerichtsvollzieher, Bullen oder Kevin es dir abknöpfen. Hier finden die nix. Pro Tag gehen höchstens '+eur(STASH_DAY)+' rein, insgesamt '+eur(STASH_MAX)+'. Rausholen geht jederzeit.',r:()=>stashR()}],()=>{stat('versteck-erklaert');setTimeout(()=>{try{stashMenu()}catch(e){}},250)})}
+function stashR(){const r=cvRect(L.stash);if(!r)return null;const e=10;return{x:r.x-e,y:r.y-e,w:r.w+e*2,h:r.h+e*2}}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
