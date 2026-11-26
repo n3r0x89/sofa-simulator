@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 138</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 139</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=138;
+const APPVER=139;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1037,9 +1037,10 @@ function closeModal(){M.style.display='none';busyUI=false;if(S.right==='phone'||
 function bindAll(map){for(const[sel,fn]of Object.entries(map))M.querySelectorAll(sel).forEach(el=>el.onclick=()=>{initAudio();snd('pop');fn(el)})}
 const closeBtn='<button class="btn close" data-x>Zurück</button>';
 
-function splashHtml(){if(!S.sex&&!assiName()&&SP.splash_pair&&SP.splash_pair.naturalWidth)return'<img src="sprites/splash_pair.webp" alt="" style="width:100%;max-height:40vh;object-fit:cover;object-position:center 30%;border-radius:14px;margin-bottom:-36px"><div class="menuT">Assi<br>Simulator</div>';let xm=false;const sw=isW()?'_w':'';try{xm=!!xSeason()&&SP['splash_xmas'+sw]&&SP['splash_xmas'+sw].naturalWidth}catch(e){}
+function splashHtml(){const PAIR='<img src="sprites/splash_pair.webp" alt="" style="width:100%;max-height:40vh;object-fit:cover;object-position:center 30%;border-radius:14px;margin-bottom:-36px"><div class="menuT">Assi<br>Simulator</div>';
+  const chosen=!!assiName();let xm=false;const sw=S.sex==='w'?'_w':'';try{xm=chosen&&!!xSeason()&&SP['splash_xmas'+sw]&&SP['splash_xmas'+sw].naturalWidth}catch(e){}
   if(xm)return'<img src="sprites/splash_xmas'+sw+'.webp" alt="Assi Simulator" style="width:100%;max-height:50vh;object-fit:contain;display:block;margin:0 auto 2px">';
-  return(SP['splash'+sw]&&SP['splash'+sw].naturalWidth?'<img src="sprites/splash'+sw+'.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':'')+'<div class="menuT">Assi<br>Simulator</div>'}
+  return PAIR}
 function mainMenu(){const has=S.started;openModal(`${splashHtml()}<div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER} · Freigegeben ab 16 Jahren</div>
  <div data-a="idea" style="margin:10px auto 0;max-width:420px;background:rgba(242,193,78,.12);border:1px dashed #f2c14e;border-radius:12px;padding:8px 12px;font-size:13px;line-height:1.35;text-align:center;color:#eadfcf;cursor:pointer">🚧 <b>Testphase:</b> Das Spiel befindet sich aktuell noch in der Testphase. Es kann vorkommen, dass das ein oder andere noch nicht so passt. Fehler gefunden? <u>Hier melden</u></div>
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
@@ -1269,7 +1270,7 @@ setInterval(()=>{try{questTick()}catch(e){}},1500);
 // ---------- Name des Assis (bleibt fest, für das spätere Ranking) ----------
 function assiName(){let n=S&&S.name;if(!n){try{n=localStorage.getItem('sofatest_name')||''}catch(e){}if(n&&S)S.name=n}return n||''}
 function newGameWithName(msg){stat('neues-spiel');const old=assiName();S=fresh();S.name='';try{localStorage.removeItem('sofatest_name')}catch(e){}layout();nameMenu(()=>{S.started=true;layout();save();closeModal();setTimeout(()=>toast(msg),3200)},old)}
-function nameMenu(then,prefill){openModal(`<div class="sugg"><h2>Wer bist du?</h2><div class="list" style="display:flex;gap:8px;flex-direction:row"><button class="btn" data-sx="m" style="flex:1">🧔 Mann</button><button class="btn" data-sx="w" style="flex:1">👩 Frau</button></div><h2 style="margin-top:14px">Wie heißt dein Assi?</h2><p>Name und Mann/Frau bleiben für dieses Spiel. Erst bei einem neuen Spiel kannst du sie wieder ändern.</p>
+function nameMenu(then,prefill){openModal(`<div class="sugg"><img src="sprites/splash_pair.webp" alt="" style="width:100%;max-height:26vh;object-fit:cover;object-position:center 25%;border-radius:14px;margin-bottom:6px"><h2>Wer bist du?</h2><div class="list" style="display:flex;gap:8px;flex-direction:row"><button class="btn" data-sx="m" style="flex:1">🧔 Mann</button><button class="btn" data-sx="w" style="flex:1">👩 Frau</button></div><h2 style="margin-top:14px">Wie heißt dein Assi?</h2><p>Name und Mann/Frau bleiben für dieses Spiel. Erst bei einem neuen Spiel kannst du sie wieder ändern.</p>
   <input id="nameIn" maxlength="20" autocomplete="off" placeholder="z. B. Kalle Kotzbrocken" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid #6a5546;background:#1d1510;color:#f4e9dc;font:800 18px Nunito,sans-serif">
   <p id="nameErr" style="color:#e66;font-size:13px;min-height:16px"></p><div class="list"><button class="btn pri" data-n="ok">Los geht’s</button><button class="btn" data-n="rnd">Zufallsname</button></div></div>`,()=>{
   const inp=document.getElementById('nameIn');if(prefill)inp.value=prefill;setTimeout(()=>{try{inp.focus()}catch(e){}},200);
