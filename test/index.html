@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 149</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 150</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=149;
+const APPVER=150;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2389,6 +2389,47 @@ EVENTS.push({id:'exjealous',prio:1,c:()=>S.h.exJ&&S.day>=S.h.exJ,run:()=>{S.h.ex
   {t:'Verpiss dich',f:()=>{rude();return{say:w?'Ihr zwei Verlierer passt super zusammen! Ich wünsch euch Fußpilz!':'Ihr zwei Verlierer passt super zusammen! Ich wünsch euch Filzläuse!',pose:3}}}],1)}});
 // Nach einem guten Date: Ex erfährt davon (am nächsten Tag)
 const _tdateEv=EVENTS.find(e=>e.id==='tdate');if(_tdateEv){const _r=_tdateEv.run;_tdateEv.run=function(){_r();try{if(Math.random()<.45)S.h.exJ=S.day+1}catch(e){}}}
+// ================= FUGGI: versaut schreiben und Telefonsex (nur angedeutet, wie beim Heft/Rudi) =================
+const F_HOT=['m3','m5','m6','m7','w2','w4','w5','w10','w17'];
+const F_HOTLINE={m3:'Ich hab die alte Lederkluft an. Die knarzt bei jeder Bewegung. Und ich bewege mich gerade viel.',m5:'Ich sitz im Golf. Die Scheiben beschlagen schon. Und der Motor ist aus.',m6:'Ich hab die Grillzange in der Hand und denk an dich, Puppe. Es wird heiß hier.',m7:'Ich bin Türsteher. Bei dir mach ich heute mal eine Ausnahme und lass alles rein.',
+ w2:'Ich hab zwei Flaschen Prosecco intus. Ich bin zu allem bereit. Auch zu Fehlern.',w4:'Ich sitz in einem fremden Porsche. Schreib schnell, bevor der Besitzer kommt.',w5:'Ich lieg grad im Solarium. Es ist sehr, sehr heiß hier drin.',w10:'Schätzchen, mein Gebiss liegt im Glas. Das heißt, ich bin bereit.',w17:'Ich hab überall Tattoos. Wirklich überall. Willst du raten, wo das schönste ist?'};
+const F_WEAR={w:['Nur meinen schwarzen Bademantel. Mit Kaffeefleck. Sehr sexy.','Nur meine Jogginghose. Und ein Lächeln. Und Chipskrümel an Stellen, die du nicht wissen willst.','Spitze. Also, die Spitze von meinem Fingernagel. Sonst nix Besonderes.'],m:['Nur Feinripp. Und Hoffnung.','Meine gute Jogginghose. Die mit nur einem Loch.','Socken. Und ein Lächeln. Die Socken sind von Dienstag.']};
+const F_HEAT={w:['Hör auf, sonst muss ich das Handy mit einer Hand halten.','Mir wird so warm. Oder das ist die Heizung. Nein, du bist es.','Ich hab gerade aus Versehen „ohhh“ in die Familiengruppe geschickt.'],m:['Puh. Mir rutscht gleich die Bauchtasche runter.','Ich muss mich kurz hinlegen. Mach weiter.','Ich hab gerade aus Versehen „ohhh“ in die Familiengruppe geschickt.']};
+const F_PEAK={w:['OHHH JA … Moment, mir ist das Handy in den Sekt gefallen. Egal. JAAA!','JAAA … oh nein, die Nachbarin klopft. Egal. JAAAAA!'],m:['OHHH … Mist, der Rauchmelder geht an. Egal. JAAA!','JAAA … oh nein, meine Mutter klopft. Egal. JAAAAA!']};
+const F_AFTER={w:['Wow. Das war … kurz. Aber laut.','Ich muss jetzt das Handy abwischen. Und meinen Ruf.','Mach das nochmal, und ich heirate dich. Oder zeig dich an.'],m:['Wow. Ich muss mir jetzt ein neues Unterhemd anziehen.','Das war besser als Fußball. Fast.','Erzähl das keinem. Ich hab einen Ruf. Also, keinen guten, aber trotzdem.']};
+function fIsHot(p){return F_HOT.includes(p.id)}
+function fPartner(p){return p.id[0]==='w'?'w':'m'}
+// Climax-Szene im Raum (Bild wackelt, Blitz, „Eine Viertelstunde später …“)
+function fPeakScene(p,after){closeModal();busyUI=true;const cv=document.getElementById('cv'),st=document.getElementById('stage');
+ cv.classList.add('jig');vib([30,60,30,60]);if(isW())snd('vibe');
+ setTimeout(()=>{cv.classList.remove('jig');cv.classList.add('jig2');vib([20,30,20,30,20,30])},1200);
+ setTimeout(()=>{cv.classList.remove('jig2');snd('groan');vib([250]);const fl=document.createElement('div');fl.className='flash';st.appendChild(fl);setTimeout(()=>fl.remove(),700)},2400);
+ setTimeout(()=>{const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';st.appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
+  setTimeout(()=>{advance(1.5);if(isW()){try{addWet(RI(1,2))}catch(e){}}else{try{addTissues(RI(2,3))}catch(e){}}f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
+   toast(p.n+': „'+pick(F_AFTER[fPartner(p)])+'“',fx({bo:-55,xp:5}),5000);stat('fuggi-hot');after&&after()},1700)},3600)}
+// Versaut schreiben (3 Runden)
+function fSext(p,lines){const g=fPartner(p),me=isW()?'w':'m';
+ const L1=lines.concat([['me','Was hast du gerade an? 😏'],['you',pick(F_WEAR[g])]]);
+ tChat(p,L1,[
+  {t:'🔥 Weiter',f:()=>{const L2=L1.concat([['me',me==='w'?'Ich stell mir gerade Sachen vor, die man auf Fuggi nicht schreiben darf.':'Ich stell mir gerade Sachen vor, die man auf Fuggi nicht schreiben darf.'],['you',F_HOTLINE[p.id]||pick(F_HEAT[g])]]);
+    if(Math.random()<.15)return tEnd(p,L2.concat([['you','HAHAHA. Reingefallen. Screenshot geht in die Hausgruppe!']]),p.n+' hat dich verarscht. Die ganze Hausgruppe liest mit.',{bo:10,neighbor:1},true);
+    tChat(p,L2,[{t:'🥵 Nicht aufhören!',f:()=>{const L3=L2.concat([['me','Nicht aufhören!'],['you',pick(F_HEAT[g])],['you',pick(F_PEAK[g])]]);tChat(p,L3,[{t:'🥵 …',f:()=>fPeakScene(p)}])}},
+     {t:'📞 Lieber anrufen',f:()=>fCall(p)},{t:'😬 Abbrechen',f:()=>tEnd(p,L2.concat([['me','Sorry, meine Mutter ruft.'],['you','Du bist so ein Schlappi.']]),p.n+' ist enttäuscht. Und du auch ein bisschen.',{bo:5})}])}},
+  {t:'😬 Doch nicht',f:()=>tEnd(p,L1.concat([['me','Ich glaub, ich hab mich verschrieben.'],['you','Langweiler.']]),p.n+' findet dich langweilig.',{bo:5})}])}
+// Telefonsex als Anruf
+function fCall(p){const g=fPartner(p);let step=0;
+ const lines=[pick(['Hallo? … Ach du bist’s. Na, du Ferkel?','Ja? … Oh, hallo. Ich hab schon auf deinen Anruf gewartet.']),pick(F_WEAR[g]),F_HOTLINE[p.id]||pick(F_HEAT[g]),pick(F_HEAT[g]),pick(F_PEAK[g])];
+ const opts=[['😏 Was hast du an?','😬 Auflegen'],['🔥 Erzähl mehr','😬 Auflegen'],['🥵 Weiter','😂 Lachen'],['🥵 Nicht aufhören!','📵 Akku leer'],['🥵 …']];
+ const show=()=>{snd('pop');openModal(`<div style="text-align:center"><img src="${tImg(p)}" alt="" style="width:110px;height:110px;border-radius:50%;object-fit:cover;object-position:top;box-shadow:0 0 0 4px #ff5a6e"><h2 style="margin:6px 0 0">${esc(p.n)}</h2><div style="font-size:12px;color:var(--dim)">📞 Fuggi-Anruf · 0${Math.floor((17+step*47)/60)}:${String((17+step*47)%60).padStart(2,'0')}</div><p style="font-size:17px;margin:12px 4px">„${esc(lines[step])}“</p></div><div class="list">${opts[step].map((o,i)=>`<button class="btn${i===0?' pri':''}" data-c="${i}">${esc(o)}</button>`).join('')}</div>`,()=>bindAll({'[data-c]':el=>{const i=+el.dataset.c,t=opts[step][i];
+  if(t.includes('Auflegen')){closeModal();toast(p.n+': „Feigling!“','Aufgelegt',3000);return}
+  if(t.includes('Lachen')){closeModal();toast(p.n+': „Lachst du mich aus?! Tschüss, du Lauch!“',fx({bo:5}),4000);S.tinda&&(S.tinda.bl[p.id]=1);return}
+  if(t.includes('Akku')){closeModal();toast('Akku leer. Mitten drin. Typisch.',fx({bo:10}),4000);return}
+  if(step>=4)return fPeakScene(p);step++;show()}}))};
+ snd('ring');setTimeout(show,700)}
+// Knöpfe in die zweite Chatrunde einhängen
+const _fRound2Hot=fRound2;fRound2=function(p,lines,heat){if(!fIsHot(p)||p.fake||Math.random()<.35)return _fRound2Hot(p,lines,heat);
+ const L2=lines.concat([['you',heat>1?'Uh, direkt. Gefällt mir. Und jetzt?':pick(['Du gefällst mir. Und jetzt?','Schreib weiter. Ich bin ganz Ohr. Und ganz allein.'])]]);
+ tChat(p,L2,[{t:'🔥 Versaut schreiben',f:()=>fSext(p,L2)},{t:'📞 Anrufen',f:()=>fCall(p)},{t:'🍺 Lieber treffen',f:()=>fFinal(p,L2.concat([['me','Komm doch einfach vorbei.']]),.7)}])};
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
