@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 139</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 140</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=139;
+const APPVER=140;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -662,7 +662,7 @@ function drawHands(t){const lh=L.lh,rh=L.rh,wv=withdrawal().v,sway=(S.prom>=.8?M
     else if(S.bottle&&d>0)lk=d>.9?'drink_1':(S.bottle.sips===0&&d<.5?'drink_3':'drink_2');
     else if(S.bottle)lk=S.bottle.sips<=0?'lh_empty':(S.bottle.opened===false||!(SP.lh_open&&SP.lh_open.naturalWidth)?'lh_full':'lh_open');else lk='lh_none';
     const big=lk.startsWith('drink')||lk.startsWith('throw');const lb={x:lh.x+sway,y:lh.y-(big?lh.h*.12:0),w:lh.w*(big?1.12:1),h:lh.h*(big?1.12:1)};
-    lk=bareKey('l',lk);spr(lk,lb);drawTattoos('l',lk,lb);
+    lk=bareKey('l',lk);const lbS=/^sekt_/.test(lk)&&typeof sektBox==='function'?sektBox(lb,lk):lb;spr(lk,lbS);drawTattoos('l',lk,lbS);
     if(handAnim.cigFly>0&&SP.cig&&SP.cig.naturalWidth){const k=1-handAnim.cigFly,p0=L.cigpack,sx0=p0.x+p0.w/2,sy0=p0.y,ex=rh.x+rh.w*.35,ey=rh.y+rh.h*.25;const x=sx0+(ex-sx0)*k,y=sy0+(ey-sy0)*k-Math.sin(k*Math.PI)*40;const cw2=rh.w*.32;cx.save();cx.translate(x,y);cx.rotate(k*1.2);spr('cig',{x:-cw2/2,y:-cw2*.2,w:cw2,h:cw2*.4});cx.restore()}
     if(handAnim.capT>0){const k=1-handAnim.capT,cxp=lb.x+lb.w*.75+k*lb.w*.6,cyp=lb.y+lb.h*.03-Math.sin(k*Math.PI)*lb.h*.35+k*lb.h*.2;cx.save();cx.translate(cxp,cyp);cx.rotate(k*12);if(SP.cap&&SP.cap.naturalWidth){const cs=lb.w*.16;cx.drawImage(SP.cap,-cs/2,-cs/2,cs,cs*.7);cx.restore()}else{cx.fillStyle='#d6a82a';cx.beginPath();cx.ellipse(0,0,lb.w*.07,lb.w*.035,0,0,7);cx.fill();cx.strokeStyle='#8a6a14';cx.lineWidth=1.5;cx.stroke();cx.restore()}}
     if(S.bottle)hit('bottle',{x:lh.x,y:lh.y-30,w:lh.w,h:lh.h+30});else hit('lefthand',lh);
@@ -2158,6 +2158,9 @@ function drawWet(z){if(S.wetV!==2){S.wet=[];S.wetV=2}if(!L.roomMode||!Array.isAr
   cx.save();if(p.z==='f'){cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip()}cx.globalAlpha=.82;cx.drawImage(im,q.x-w/2,q.y-h/2,w,h);cx.restore();HITS.push({id:'wet',x:q.x-w/2,y:q.y-h/2-6,w,h:h+12,wi:i})})}
 function wetTap(i){const p=S.wet&&S.wet[i];if(!p)return;p.taps++;snd('wipe');vib(15);if(p.taps>=2){S.wet.splice(i,1);S.st.clean=(S.st.clean||0)+1;cleanDone(['Weggewischt. Wo das herkam, weiß nur Rudi.','Pfütze weg. Das Sofa bleibt aber feucht. Für immer.','Trockengelegt. Mit dem Ärmel. Sehr damenhaft.'],{chaos:-2,xp:1})}}
 const _poopBlockedM=poopBlocked;poopBlocked=function(x,y){if(_poopBlockedM(x,y))return true;const B=[];if(isW()&&S.sekt>0)B.push([515,950,640,1065]);if(S.mag)B.push([690,1030,870,1190]);return B.some(b=>x>b[0]-18&&x<b[2]+18&&y>b[1]-12&&y<b[3]+12)};
+
+// Sekt-Hände haben einen langen Unterarm: größer zeichnen, damit die Hand so groß ist wie die rechte. Der Arm läuft unten aus dem Bild.
+function sektBox(b,k){const dr=/drink/.test(k),F=dr?1.25:1.42;return{x:b.x+b.w/2-b.w*F/2+b.w*.06,y:b.y-b.h*(dr?.08:.32),w:b.w*F,h:b.h*F}}
 // ================= FUGGI (Dating-App im Handy, intern tinda) =================
 // Mann sieht nur Frauen, Frau sieht nur Männer. v = Besucherbild (Schlüssel für VIS/Sprites), fake = Kevin steckt dahinter.
 const TINDA_M=[
