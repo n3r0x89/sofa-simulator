@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 151</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 152</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=151;
+const APPVER=152;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1052,7 +1052,7 @@ function mainMenu(){const has=S.started;openModal(`${splashHtml()}<div class="me
  <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
-  if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();rateCheck();stat('spiel-start');setTimeout(()=>startTut(),700)});S.started=true;closeModal();showDay();rateCheck();stat('spiel-start');setTimeout(()=>startTut(),700)}
+  if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();(newsCheck()||rateCheck());stat('spiel-start');setTimeout(()=>startTut(),700)});S.started=true;closeModal();showDay();(newsCheck()||rateCheck());stat('spiel-start');setTimeout(()=>startTut(),700)}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);if(a==='code')codeMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofatest_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
@@ -2481,6 +2481,15 @@ const F_HAS_IMG=id=>/^(m|w)([1-9]|10)$/.test(id);
 fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if(me&&me[0]==='me')me[2]='sprites/foto_me_'+g+'.webp';
  const L2=lines.concat([['you',F_PHOTO[p.id]||'📷 Foto: unscharf. Zum Glück.',F_HAS_IMG(p.id)?'sprites/foto_'+p.id+'.webp':null]]);
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
+// ================= „Was ist neu?“ nach einem Update (kurz) =================
+const NEWS=[
+ {v:152,t:['👫 Spiel als Mann oder Frau, jederzeit im Pausenmenü wechselbar','🔥 Fuggi: Dating-App mit 40 Profilen, fiesen Chats, Fotos, Dates und heißen Anrufen','👺 Der Dreckskobold kommt, wenn die Bude vermüllt ist','🥂 Sekt für die Damen, neue Startbilder','🍺 Leere Flaschen: genau die angetippte wird weggeräumt']}];
+const NEWS_KEY='sofatest_newsv';
+function newsCheck(){let seen=0;try{seen=+localStorage.getItem(NEWS_KEY)||0}catch(e){}
+ const old=!!assiName()||S.day>1;try{localStorage.setItem(NEWS_KEY,String(APPVER))}catch(e){}
+ if(!old)return false;const items=NEWS.filter(n=>n.v>seen&&n.v<=APPVER).sort((a,b)=>b.v-a.v).slice(0,2);if(!items.length)return false;
+ setTimeout(()=>openModal(`<h2>Neu im Spiel 🎉</h2>${items.map(n=>`<p style="margin:6px 0 2px;color:var(--dim);font-size:12px">Version ${n.v}</p><div style="text-align:left;line-height:1.45">${n.t.map(x=>'<div style="margin:5px 0">'+esc(x)+'</div>').join('')}</div>`).join('')}<div class="list" style="margin-top:12px"><button class="btn pri" data-nx>Geil, weiter saufen</button></div>`,()=>bindAll({'[data-nx]':closeModal})),600);
+ stat('news-'+APPVER);return true}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
