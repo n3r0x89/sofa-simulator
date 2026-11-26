@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 128</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 129</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=128;
+const APPVER=129;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -227,7 +227,7 @@ const SND={
   bad:()=>{noise(.03,.22,2400,2,'bandpass');tone(140,.04,'square',.08)},
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3'],wake_w:['sounds/wake1_w.mp3'],cough_w:['sounds/cough1_w.mp3','sounds/cough2_w.mp3','sounds/cough3_w.mp3'],retch_w:['sounds/retch1_w.mp3'],groan_w:['sounds/groan1_w.mp3'],wipe:['sounds/wipe1.mp3','sounds/wipe2.mp3','sounds/wipe3.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3'],wake_w:['sounds/wake1_w.mp3'],cough_w:['sounds/cough1_w.mp3','sounds/cough2_w.mp3','sounds/cough3_w.mp3'],retch_w:['sounds/retch1_w.mp3'],groan_w:['sounds/groan1_w.mp3'],vibe_w:['sounds/vibe1_w.mp3'],wipe:['sounds/wipe1.mp3','sounds/wipe2.mp3','sounds/wipe3.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
@@ -1395,7 +1395,7 @@ function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.r
   const sx=l=>{selfEl.innerHTML='<b>Du:</b> '+esc(l);selfEl.classList.add('on');clearTimeout(selfT);selfT=setTimeout(()=>selfEl.classList.remove('on'),4200)};
   sx(pick(['Mal gucken, was der Busen-Express diesen Monat so bringt…','So. Hose auf, Hirn aus.','Kurz Druck ablassen. Medizinisch notwendig.']));
   at(1200,()=>{MAGA.page=1;snd('plop');sx(pick(['Seite 34… Gisela, 71, aus Castrop-Rauxel. Ohhh Gisela…','Uiii, die Doppelseite. Mit Ausklapper.','Die Lesebrille… wo ist die Lesebrille… egal, Fantasie reicht.']))});
-  at(2000,()=>{cv.classList.add('jig');MAGA.pow=1;vib([30,60,30,60,30])});
+  at(2000,()=>{cv.classList.add('jig');if(isW())snd('vibe');MAGA.pow=1;vib([30,60,30,60,30])});
   at(3200,()=>{MAGA.page=2;cv.classList.remove('jig');cv.classList.add('jig2');MAGA.pow=2;sx(pick(['Hnnngh… nicht klingeln jetzt… bitte nicht klingeln…','Ja… ja… JAAA… nein, Krampf in der Wade!','Schneller, Gerhard, schneller!']));vib([20,30,20,30,20,30,20,30])});
   const interrupt=Math.random()<.22;
   if(interrupt){at(4300,()=>{cv.classList.remove('jig2');MAGA=null;snd('bell');setTimeout(()=>snd('fail'),900);vib(200);busyUI=false;S.magCd=S.tot+15;
