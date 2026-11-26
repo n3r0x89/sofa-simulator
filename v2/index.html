@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=145;
+const APPVER=146;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2300,9 +2300,11 @@ function kobVisit(clean){S.h.kobT=S.tot;const w=isW();
   {t:'Verpiss dich!',f:()=>(snd('kobwhine'),seq('Verpissen? Erst nach dem Geschäft! Und aus Trotz gibt’s einen extra! '+kack(),base+1))},
   {t:'Schuh werfen',f:()=>{snd('slap');setTimeout(()=>snd('kobwhine'),250);return seq('AUA! Mein Kopf! Na warte, einen lass ich trotzdem da! '+kack(),1)}},
   {t:'Ignorieren',f:()=>seq(kack(),base)}],0)}
+// Wie vermüllt ist die Bude? (Chaos, Flaschen, Flecken, Pfützen, Kacke, Taschentücher, Kippen, Körpergeruch)
+function kobMess(){const L2=a=>Array.isArray(a)?a.length:0;return (S.chaos||0)*.5+(S.empties||0)*4+L2(S.stains)*5+L2(S.puddles)*8+L2(S.wet)*5+L2(S.kp)*8+L2(S.poop)*2+(S.tissues||0)*3+Math.min(S.butts||0,10)*1.5+(S.dirt||0)*.3}
 EVENTS.push(
- {id:'kobold',c:()=>S.lvl>=2&&((S.dirt||0)>=55||(S.chaos||0)>=55)&&S.tot-(S.h.kobT||-9999)>240,run:()=>kobVisit(false)},
- {id:'koboldclean',c:()=>S.lvl>=2&&(S.dirt||0)<20&&(S.chaos||0)<15&&S.tot-(S.h.kobT||-9999)>720&&Math.random()<.35,run:()=>kobVisit(true)});
+ {id:'kobold',prio:1,c:()=>S.lvl>=2&&kobMess()>=32&&S.tot-(S.h.kobT||-9999)>240&&Math.random()<.3,run:()=>kobVisit(false)},
+ {id:'koboldclean',prio:1,c:()=>S.lvl>=2&&kobMess()<10&&S.tot-(S.h.kobT||-9999)>720&&Math.random()<.15,run:()=>kobVisit(true)});
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
