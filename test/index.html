@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 129</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 130</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=129;
+const APPVER=130;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -483,7 +483,7 @@ function drawRoom(t){const wall=L.wall;
   // massage chair / gold chair
   if(S.furn.massage&&!S.furn.gold&&!xTreeUp()){const m=L.massage;if(!spr('massage',m)){rr(m.x,m.y,m.w,m.h,26,'#1d1d1f');rr(m.x+14,m.y+14,m.w-28,m.h*.55,18,'#2c2c30')}}
   // puddles
-  for(const p of S.puddles){const sh=(1-p.taps*.25)*(p.g===undefined?1:p.g),pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
+  for(const p of S.puddles){if(p.wet){const sh=(1-p.taps*.25),pw=(L.roomMode?52:70)*sh,ph=(L.roomMode?18:26)*sh;cx.save();cx.globalAlpha=.55;ell(p.x,p.y,pw/2,ph/2,'#cfe3ea');cx.globalAlpha=.8;ell(p.x-pw*.12,p.y-ph*.12,pw*.18,ph*.16,'#ffffff');ell(p.x+pw*.2,p.y+ph*.05,pw*.08,ph*.1,'#eef7fa');cx.restore();continue}const sh=(1-p.taps*.25)*(p.g===undefined?1:p.g),pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
   drawStash();drawStereo(t);drawEmpties(t,'back');
   if(S.furn.gold&&!xTreeUp()){const g=L.gold;if(!spr('goldchair',g)){rr(g.x,g.y,g.w,g.h,30,grad(g.y,g.y+g.h,'#ffe27a','#b8860b'));rr(g.x+18,g.y+20,g.w-36,g.h*.5,20,'#a3122a')}}
 }
@@ -592,8 +592,8 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
 }
 let handAnim={drink:0,throwT:0,throwFrom:null,puff:0,snack:0,capT:0,cigFly:0};
 function skinHand(x,y,w,h,flip){cx.save();cx.translate(x,y);if(flip){cx.scale(-1,1)}rr(-w*.5,h*.25,w,h,18,'#6b6f73');ell(0,h*.18,w*.42,h*.26,'#e8b892');for(let i=0;i<4;i++)ell(-w*.3+i*w*.2,h*.0,w*.09,h*.12,'#e2ae86');cx.restore()}
-const CIG={e:[.0145,.172],f:[.208,.248],th:.04},CIG_BARE={e:[.02,.066],f:[.199,.135],th:.022};let cigOC=null,cigTip=null;
-function drawCig(b,t,kk){const CG=kk==='rh_cig_bare'?CIG_BARE:CIG;const i=SP[kk||'rh_cig'];if(!(i&&i.naturalWidth))return;const nw=i.naturalWidth,nh=i.naturalHeight;
+const CIG={e:[.0145,.172],f:[.208,.248],th:.04},CIG_BARE={e:[.02,.066],f:[.199,.135],th:.022},CIG_W={e:[.022,.066],f:[.245,.132],th:.026};let cigOC=null,cigTip=null;
+function drawCig(b,t,kk){const CG=kk==='rh_cig_w'?CIG_W:kk==='rh_cig_bare'?CIG_BARE:CIG;const i=SP[kk||'rh_cig'];if(!(i&&i.naturalWidth))return;const nw=i.naturalWidth,nh=i.naturalHeight;
   if(!cigOC){cigOC=document.createElement('canvas')}cigOC.width=nw;cigOC.height=nh;const o=cigOC.getContext('2d');o.drawImage(i,0,0);
   const frac=Math.min(.82,(S.cigPuffs+(handAnim.puff>0?1-handAnim.puff/.5:0))/5*.82);
   const ex=CG.e[0]*nw,ey=CG.e[1]*nh,fx=CG.f[0]*nw,fy=CG.f[1]*nh,dx=fx-ex,dy=fy-ey,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len;
@@ -766,7 +766,7 @@ function zap(dir){if(S.right!=='remote')return;if(S.prom>=1.4&&Math.random()<.35
   stopFilm(true);S.ch=(S.ch+dir+CH.length)%CH.length;tvState.chStart=S.tot;tvState.zapFx=S.tot+.35;tvState.night=isNight()&&Math.random()<.4;tvState.nightLine++;snd('stat');
   S.bo-=6;addXP(.5);S.st.zaps.push(S.tot);S.st.zaps=S.st.zaps.filter(z=>S.tot-z<300);schnitzelT=0;clampAll();doneHint('zap');checkAch()}
 function cleanStain(s,k){s.taps=(s.taps||0)+1;snd('wipe');vib(20);const need=k==='stain'?2:1;if(s.taps>=need){const a=k==='stain'?S.stains:S.splats;a.splice(a.indexOf(s),1);S.st.clean=(S.st.clean||0)+1;cleanDone(['Die Bude glänzt. Also für deine Verhältnisse.','Kein Fleck, kein Matsch, keine Kotze. Deine Mutter würde weinen vor Glück.','Sauber wie nie. Die Kakerlaken ziehen beleidigt aus.'],{chaos:-1,xp:1});checkAch()}}
-function cleanPuddle(p){p.taps++;snd('wipe');if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;cleanDone(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.'],{chaos:-3,xp:2});checkAch()}}
+function cleanPuddle(p){p.taps++;snd('wipe');if(p.wet&&p.taps>=2){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;cleanDone(['Weggewischt. Wo das herkam, weiß nur Rudi.','Pfütze weg. Das Sofa bleibt aber feucht. Für immer.','Trockengelegt. Mit dem Ärmel. Sehr damenhaft.'],{chaos:-2,xp:1});return}if(p.taps>=3){S.puddles.splice(S.puddles.indexOf(p),1);S.st.clean++;cleanDone(['Weggewischt, du Reiherwischer. Deine Mutter wäre stolz. Nein, wäre sie nicht.','Sauber. Na ja, für deine Verhältnisse. Also immer noch ekelhaft.'],{chaos:-3,xp:2});checkAch()}}
 function promCheck(){
   if(S.prom>=1.1&&!S.taskDone&&!busyUI){S.taskDone=true;setTimeout(offerDrunkTask,1500)}
   if(S.prom>=1.9&&!S.sickSaid){S.sickSaid=true;toast(T('sick'))}
@@ -1405,7 +1405,7 @@ function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.r
       const fl=document.createElement('div');fl.className='flash';document.getElementById('stage').appendChild(fl);setTimeout(()=>fl.remove(),700);
       sx(pick(['UUUAAAHHH!','Hach… Gisela…','HALLELUJA!']))});
   at(6200,()=>{MAGA=null;const f=document.createElement('div');f.className='fade';f.innerHTML='<div>Eine Viertelstunde später …</div>';document.getElementById('stage').appendChild(f);requestAnimationFrame(()=>f.classList.add('on'));
-  setTimeout(()=>{advance(2.5);addTissues(RI(2,4));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
+  setTimeout(()=>{advance(2.5);if(isW()){const z=L.puddleZone;if(z)for(let i=RI(2,3);i>0;i--)S.puddles.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h),taps:0,wet:1})}else addTissues(RI(2,4));f.classList.remove('on');setTimeout(()=>f.remove(),600);busyUI=false;
     toast(pick(['Fertig. Die Taschentücher kleben am Tisch fest.','Erledigt. Das war das Produktivste heute.','Kowalski klopft an die Wand: „Gesundheit!“','Gekommen, gesehen, Taschentuch verbraucht.','Der Fernseher hat weggeguckt. Die Kakerlaken nicht.','Seite 34 klebt jetzt an Seite 35. Für immer.']),fx({bo:-60,xp:4}));S.dirt=clamp(S.dirt+6,0,100);
     if((S.magUses||0)>=4){setTimeout(()=>{S.mag=false;S.magUses=0;snd('plop');toast(pick(['Das Heft ist durch. Die Seiten kleben zu einem Ziegelstein zusammen. Ab in den Müll.','Busen-Express Nr. 47 hat fertig. Würdevoll im Mülleimer bestattet.','Die Gisela erkennt man nicht mehr. Heft weggeworfen, neues gibt’s am Kiosk.']),'Neues Heft im Shop kaufen',4500)},4200)}setTimeout(()=>{selfEl.innerHTML='<b>Du:</b> '+esc(pick(['Jetzt ’ne Kippe. Das gehört sich so.','Ich bin so müde, ich könnt im Stehen pennen. Gut, dass ich sitz.','Wenn das die Gisela wüsste…']));selfEl.classList.add('on');setTimeout(()=>selfEl.classList.remove('on'),5000)},900)},2600)})}
 let MAGA=null;
@@ -1953,6 +1953,7 @@ const FEM=[
  ['Hach… Gisela…','OHHH RUDI!'],
  ['Kowalski klopft an die Wand: „Gesundheit!“','Herr Brandt hämmert an die Wand: „Bohren nach 22 Uhr ist verboten!“'],
  ['Gekommen, gesehen, Taschentuch verbraucht.','Gekommen, gesehen, Batterien leer.'],
+ ['Fertig. Die Taschentücher kleben am Tisch fest.','Fertig. Ein paar Pfützen auf dem Boden. Du redest dir ein, es war der Sekt.'],
  ['Seite 34 klebt jetzt an Seite 35. Für immer.','Die Nachbarn denken jetzt, du renovierst.'],
  ['Schon wieder? Dein Schwanz hat Urlaub beantragt.','Schon wieder? Rudi hat Urlaub beantragt.'],
  ['Gib ihm ’ne Pause, der ist wund gescheuert.','Gib ihm ’ne Pause, der Motor glüht noch.'],
@@ -2092,9 +2093,6 @@ const _openBottleM=openBottle;openBottle=function(){const was=S.bottle&&S.bottle
 // ---- Handy: Nagel-Natascha, Mandy, Tinda ----
 const DATE_PROF={date1:'Detlef, 54: „Suche Frau zum Pfandflaschen-Sammeln und mehr.“',date2:'Kevin-Pascal, 23: „Influencer. 312 Follower. Suche Content.“',date3:'Günther, 67: „Alter Rocker sucht Sozius. Helm hab ich.“'};
 CONTACTS.push(
- {k:'tinda',w:1,n:'Tinda (Dating-App)',img:'date2_0',hi:['Tinda: „3 neue Singles in deiner Nähe. Alle im selben Block.“','Tinda: „Du hast 0 neue Likes. Kopf hoch!“'],a:[
-  {t:'Nach rechts wischen',f:()=>{const d=pick(['date1','date2','date3']);callVisit(d,45);return{say:DATE_PROF[d]+' – MATCH! Er ist schon unterwegs.',fx:{bo:-5}}}},
-  {t:'Profil aufhübschen',f:()=>({say:'Neues Profilbild: du, von schräg oben, mit Filter. Erkennt dich keiner. Ziel erreicht.',fx:{bo:-10,xp:2}})}]},
  {k:'natascha',w:1,n:'Nagel-Natascha',img:'natascha_0',hi:['Natascha, Nägel und Wimpern. Hausbesuche. Bar, Süße.','Hallöchen! Wenn’s wegen dem abgebrochenen Nagel ist: Garantie gibt’s keine.'],a:[
   {t:'Komm vorbei, Nägel machen',f:()=>{callVisit('natascha',30);return{say:'Bin gleich da, Süße. Ich bring die Glitzer-Edition mit. Hält drei Tage oder ein Bier.'}}},
   {t:'Was kostet’s?',f:()=>({say:'Glitzer komplett 15 Öcken. Und ich will ’n Sekt.',fx:{bo:-3}})}]},
