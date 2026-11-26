@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 133</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 134</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=133;
+const APPVER=134;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -484,6 +484,7 @@ function drawRoom(t){const wall=L.wall;
   if(S.furn.massage&&!S.furn.gold&&!xTreeUp()){const m=L.massage;if(!spr('massage',m)){rr(m.x,m.y,m.w,m.h,26,'#1d1d1f');rr(m.x+14,m.y+14,m.w-28,m.h*.55,18,'#2c2c30')}}
   // puddles
   for(const p of S.puddles){if(p.wet){const sh=(1-p.taps*.25),pw=(L.roomMode?52:70)*sh,ph=(L.roomMode?18:26)*sh;cx.save();cx.globalAlpha=.55;ell(p.x,p.y,pw/2,ph/2,'#cfe3ea');cx.globalAlpha=.8;ell(p.x-pw*.12,p.y-ph*.12,pw*.18,ph*.16,'#ffffff');ell(p.x+pw*.2,p.y+ph*.05,pw*.08,ph*.1,'#eef7fa');cx.restore();continue}const sh=(1-p.taps*.25)*(p.g===undefined?1:p.g),pw=(L.roomMode?60:80)*sh,ph=(L.roomMode?24:36)*sh;cx.save();cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip();const okp=spr('puke',{x:p.x-pw/2,y:p.y-ph/2,w:pw,h:ph});cx.restore();if(!okp){ell(p.x,p.y,38-p.taps*8,14-p.taps*3,'#b5b25a');ell(p.x+10,p.y-3,12,5,'#cfc86f');ell(p.x-14,p.y+3,6,3,'#8f8a3a')}}
+  try{drawWet('f')}catch(e){}
   drawStash();drawStereo(t);drawEmpties(t,'back');
   if(S.furn.gold&&!xTreeUp()){const g=L.gold;if(!spr('goldchair',g)){rr(g.x,g.y,g.w,g.h,30,grad(g.y,g.y+g.h,'#ffe27a','#b8860b'));rr(g.x+18,g.y+20,g.w-36,g.h*.5,20,'#a3122a')}}
 }
@@ -584,7 +585,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
     if(ring){cx.globalAlpha=.55+.35*Math.sin(t*12);cx.fillStyle='#7fb2ff';cx.fillRect(ph.x+ph.w*.18,ph.y+ph.h*.12,ph.w*.64,ph.h*.66);cx.globalAlpha=1}cx.restore();hit('phone',ph)}
   // catalog
   const k=L.catalog;if(!spr('catalog',k)){rr(k.x,k.y,k.w,k.h,3,'#e8e2d0');rr(k.x+6,k.y+6,k.w-12,k.h-18,2,'#b5552c');cx.fillStyle='#333';cx.font='800 8px Nunito,sans-serif';cx.fillText('MÖBEL',k.x+k.w/2,k.y+k.h-4)}hit('catalog',k);
-  drawMag();drawPoop();try{drawWet()}catch(e){}
+  drawMag();drawPoop();try{drawWet('t')}catch(e){}
   // controller
   if(S.furn.console&&S.right!=='ctrl'){const g=L.ctrl;if(!spr('controller',g)){rr(g.x,g.y,g.w,g.h,12,'#1a1a1a');ell(g.x+14,g.y+12,4,4,'#555');ell(g.x+g.w-14,g.y+12,4,4,'#555')}hit('ctrl',g)}
   drawEmpties(t,'front');
@@ -2142,11 +2143,20 @@ const _newDayM=newDay;newDay=function(){_newDayM();if(!isW())return;const l=Arra
  if(S.tageNext==null)S.tageNext=S.day+RI(4,18);
  if(S.day>=S.tageNext){S.tageUntil=S.day+2;S.tageNext=S.day+28;l&&l.push('Die Tage sind da')}};
 // ---- Wasserpfützen nach Rüttel-Rudi (Bilder wet_0 … wet_6), auf Boden oder Tisch ----
-function addWet(n){if(!Array.isArray(S.wet))S.wet=[];for(let i=0;i<n&&S.wet.length<8;i++){const z=Math.random()<.55?POOPZ[1]:[120,1010,700,1150,'t'];let x,y,ok=false;for(let tr=0;tr<14&&!ok;tr++){x=R(z[0],z[2]);y=R(z[1],z[3]);ok=!poopBlocked(x,y)&&!S.wet.some(w=>Math.abs(w.x-x)<90&&Math.abs(w.y-y)<40)}if(!ok)continue;S.wet.push({x,y,z:z[4],v:RI(0,6),s:R(.8,1.15),taps:0})}S.dirt=clamp((S.dirt||0)+n,0,100)}
-function drawWet(){if(!L.roomMode||!Array.isArray(S.wet)||!S.wet.length)return;const m=L.mm;
- S.wet.forEach((p,i)=>{const im=SP['wet_'+p.v];if(!(im&&im.naturalWidth))return;const q=m(p.x,p.y),k=[2.1,2.1,1.6,1.5,1.3,1.05,.9][p.v]||1,w=L.bottleH*k*p.s*(p.z==='t'?.8:1)*(1-p.taps*.3),h=w*im.naturalHeight/im.naturalWidth*.8;
-  cx.save();cx.globalAlpha=.82;cx.drawImage(im,q.x-w/2,q.y-h/2,w,h);cx.restore();HITS.push({id:'wet',x:q.x-w/2,y:q.y-h/2-6,w,h:h+12,wi:i})})}
+function wetSize(p){const k=p.z==='f'?[1.7,1.7,1.4,1.3,1.2,1,.9][p.v]:[1.15,1.15,1,.95,.9,.8,.7][p.v];return L.bottleH*(k||1)*p.s}
+function addWet(n){if(!Array.isArray(S.wet))S.wet=[];const m=L.mm,sc=m(100,0).x-m(0,0).x;
+ for(let i=0;i<n&&S.wet.length<8;i++){const fl=Math.random()<.55;let p=null;
+  for(let tr=0;tr<20&&!p;tr++){const c=fl?{x:R(340,840),y:R(918,948),z:'f',v:RI(0,6),s:R(.85,1.1),taps:0}:{x:R(130,690),y:R(1015,1140),z:'t',v:RI(2,6),s:R(.8,1),taps:0};
+   const im=SP['wet_'+c.v];const w=wetSize(c)/sc*100,h=im&&im.naturalWidth?w*im.naturalHeight/im.naturalWidth*.8:w*.4;
+   const pts=[[c.x,c.y],[c.x-w/2,c.y-h/2],[c.x+w/2,c.y-h/2],[c.x-w/2,c.y+h/2],[c.x+w/2,c.y+h/2]];
+   if(c.z==='t'&&pts.some(q=>poopBlocked(q[0],q[1])))continue;if(c.z==='f'&&c.x>390&&c.x<670)continue;
+   if(S.wet.some(o=>Math.abs(o.x-c.x)<w*.9&&Math.abs(o.y-c.y)<h*1.2))continue;p=c}
+  if(p)S.wet.push(p)}S.dirt=clamp((S.dirt||0)+n,0,100)}
+function drawWet(z){if(S.wetV!==2){S.wet=[];S.wetV=2}if(!L.roomMode||!Array.isArray(S.wet)||!S.wet.length)return;const m=L.mm;
+ S.wet.forEach((p,i)=>{if((p.z==='f')!==(z==='f'))return;const im=SP['wet_'+p.v];if(!(im&&im.naturalWidth))return;const q=m(p.x,p.y),w=wetSize(p)*(1-p.taps*.3),h=w*im.naturalHeight/im.naturalWidth*(p.z==='f'?.6:.8);
+  cx.save();if(p.z==='f'){cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip()}cx.globalAlpha=.82;cx.drawImage(im,q.x-w/2,q.y-h/2,w,h);cx.restore();HITS.push({id:'wet',x:q.x-w/2,y:q.y-h/2-6,w,h:h+12,wi:i})})}
 function wetTap(i){const p=S.wet&&S.wet[i];if(!p)return;p.taps++;snd('wipe');vib(15);if(p.taps>=2){S.wet.splice(i,1);S.st.clean=(S.st.clean||0)+1;cleanDone(['Weggewischt. Wo das herkam, weiß nur Rudi.','Pfütze weg. Das Sofa bleibt aber feucht. Für immer.','Trockengelegt. Mit dem Ärmel. Sehr damenhaft.'],{chaos:-2,xp:1})}}
+const _poopBlockedM=poopBlocked;poopBlocked=function(x,y){if(_poopBlockedM(x,y))return true;const B=[];if(isW()&&S.sekt>0)B.push([515,950,640,1065]);if(S.mag)B.push([690,1030,870,1190]);return B.some(b=>x>b[0]-18&&x<b[2]+18&&y>b[1]-12&&y<b[3]+12)};
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
