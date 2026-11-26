@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 136</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 137</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=136;
+const APPVER=137;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -227,7 +227,7 @@ const SND={
   bad:()=>{noise(.03,.22,2400,2,'bandpass');tone(140,.04,'square',.08)},
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3'],wake_w:['sounds/wake1_w.mp3'],cork:['sounds/cork1.mp3'],cough_w:['sounds/cough1_w.mp3','sounds/cough2_w.mp3','sounds/cough3_w.mp3'],retch_w:['sounds/retch1_w.mp3'],groan_w:['sounds/groan1_w.mp3'],vibe_w:['sounds/vibe1_w.mp3'],wipe:['sounds/wipe1.mp3','sounds/wipe2.mp3','sounds/wipe3.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3'],wake_w:['sounds/wake1_w.mp3'],cork:['sounds/cork1.mp3'],swipe:['sounds/swipe1.mp3'],cough_w:['sounds/cough1_w.mp3','sounds/cough2_w.mp3','sounds/cough3_w.mp3'],retch_w:['sounds/retch1_w.mp3'],groan_w:['sounds/groan1_w.mp3'],vibe_w:['sounds/vibe1_w.mp3'],wipe:['sounds/wipe1.mp3','sounds/wipe2.mp3','sounds/wipe3.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
@@ -1111,7 +1111,7 @@ const JOBS=[
  {k:'kabel',n:'Kupferkabel',d:4,r:()=>R(80,120),risk:.4,fine:60,c:()=>S.hour>=21||S.hour<5,cl:'nur 21 bis 5 Uhr'}];
 function jobRisk(j){if(!j.risk)return 0;return Math.min(.95,j.risk+.04*S.h.police+(S.prom>=.8?.15:0)+(S.h.kowNo>=3?.05:0))}
 function openPhone(){if(CALL){busyUI=false;return answerCall()}
-  openModal(`<h2>Handy</h2><p>${eur(S.money)} · ${hourStr()} Uhr · Polizei-Interesse ${S.h.police}</p><div class="list"><button class="btn pri" data-tinda style="background:#ff5a6e;color:#fff">🔥 Tinda öffnen</button></div>${contactsHtml()}<h4>Jobs</h4><div class="list">
+  openModal(`<h2>Handy</h2><p>${eur(S.money)} · ${hourStr()} Uhr · Polizei-Interesse ${S.h.police}</p><div class="list"><button class="btn pri" data-tinda style="background:#ff5a6e;color:#fff">🔥 Fuggi öffnen</button></div>${contactsHtml()}<h4>Jobs</h4><div class="list">
   ${JOBS.map((j,i)=>{const cd=(S.jobCd[j.k]||0)>S.tot,bad=j.c&&!j.c();const rk=jobRisk(j);return`<div class="row${cd||bad?' off':''}"><div class="t"><b>${j.n}</b><span>${j.d} Std. · ${j.lbl?j.lbl:j.k==='klau'?'Sixpack + 2 Snacks':j.k==='plasma'?'6,00 €':eur(j.k==='pfand'?2:j.k==='zeitung'?4.5:j.k==='floh'?3.2:j.k==='schwarz'?16:j.k==='rad'?30:80)+' +'}${rk?' · Risiko '+Math.round(rk*100)+' % / '+eur(j.fine):''}${bad?' · '+j.cl:''}${cd?' · Abkühlzeit':''}</span></div><button class="btn pri" data-j="${i}" ${cd||bad?'disabled':''}>Los</button></div>`}).join('')}</div>${closeBtn}`,()=>bindAll({'[data-tinda]':()=>tindaOpen(),'[data-j]':el=>doJob(JOBS[+el.dataset.j]),'[data-call]':el=>callContact(CONTACTS[+el.dataset.call]),'[data-x]':()=>{closeModal()}}))}
 function doJob(j){closeModal();S.right='empty';stopFilm(true);for(let i=0;i<j.d*10;i++)advance(1);S.jobCd[j.k]=S.tot+j.d*20+40;
   if(j.k==='bribe'){S.money-=25;if(Math.random()<.3){S.h.police+=2;S.h.caught++;snd('fail');toast('Der Beamte nimmt das Geld – und dich gleich mit aufs Revier. Bestechung, du Vollpfosten!','−25,00 € · Polizei +2',4500)}else{S.h.police=Math.max(0,S.h.police-3);snd('cash');addXP(5);toast(pick(['Ein Kasten Bier und ein Fuffi unterm Tisch – deine Akte ist plötzlich verschwunden.','Der Wachtmeister zwinkert. Deine Akte hat jetzt Kaffeeflecken. Unlesbar.','Geld weg, Akte dünner. So funktioniert Deutschland.']),'−25,00 € · Polizei −3 · XP +5',4500)}checkAch();showDay();return}
@@ -2157,7 +2157,7 @@ function drawWet(z){if(S.wetV!==2){S.wet=[];S.wetV=2}if(!L.roomMode||!Array.isAr
   cx.save();if(p.z==='f'){cx.beginPath();cx.rect(0,0,W,L.table.y0+2);cx.clip()}cx.globalAlpha=.82;cx.drawImage(im,q.x-w/2,q.y-h/2,w,h);cx.restore();HITS.push({id:'wet',x:q.x-w/2,y:q.y-h/2-6,w,h:h+12,wi:i})})}
 function wetTap(i){const p=S.wet&&S.wet[i];if(!p)return;p.taps++;snd('wipe');vib(15);if(p.taps>=2){S.wet.splice(i,1);S.st.clean=(S.st.clean||0)+1;cleanDone(['Weggewischt. Wo das herkam, weiß nur Rudi.','Pfütze weg. Das Sofa bleibt aber feucht. Für immer.','Trockengelegt. Mit dem Ärmel. Sehr damenhaft.'],{chaos:-2,xp:1})}}
 const _poopBlockedM=poopBlocked;poopBlocked=function(x,y){if(_poopBlockedM(x,y))return true;const B=[];if(isW()&&S.sekt>0)B.push([515,950,640,1065]);if(S.mag)B.push([690,1030,870,1190]);return B.some(b=>x>b[0]-18&&x<b[2]+18&&y>b[1]-12&&y<b[3]+12)};
-// ================= TINDA (Dating-App im Handy) =================
+// ================= FUGGI (Dating-App im Handy, intern tinda) =================
 // Mann sieht nur Frauen, Frau sieht nur Männer. v = Besucherbild (Schlüssel für VIS/Sprites), fake = Kevin steckt dahinter.
 const TINDA_M=[
  {id:'m1',n:'Detlef',a:54,d:'350 m',b:'Suche Frau zum Pfandsammeln und mehr.',op:'Hallo schöne Frau. Hast du Leergut? Frag für einen Freund. Den Freund gibt’s nicht.',v:'date1'},
@@ -2194,7 +2194,7 @@ const TDATE={
  wdate4:{g:'Na, mein Junge? Ich hab Eierlikör dabei und keine Termine mehr bis zum Tod.',ok:{say:'Elke erzählt Geschichten aus den 70ern, bei denen sogar du rot wirst. Eierlikör für alle.',fx:{prom:.3,bo:-30,xp:4}},bad:{say:'Elke kneift dir in den Hintern und klaut beim Gehen die Batterien aus deiner Fernbedienung.',fx:{bo:5}},away:'Unverschämt! Ich hab schon Jüngere als dich abblitzen lassen!'}};
 Object.assign(VIS,{date4:{n:'Mario (41)',c:'#222',h:'#111',s:1},date5:{n:'Bernd (58)',c:'#eee',h:'#999',s:1},date6:{n:'Sascha (35)',c:'#111',h:'#d9b38c',s:1},
  wdate1:{n:'Chantal (26)',c:'#2a3aa8',h:'#f1d27a',s:1},wdate2:{n:'Tanja (38)',c:'#e8417a',h:'#f1d27a',s:1},wdate3:{n:'Gabi (61)',c:'#c9b28f',h:'#aaa',s:1},wdate4:{n:'Elke (70)',c:'#b0306a',h:'#b9a0e0',s:1}});
-const T_INS_HIM=['Du hast geschrieben, als hättest du noch nie eine Frau gesehen. Hast du auch nicht, oder?','Bei deinem Profilbild dachte ich kurz, mein Handy ist kaputt.','Nicht mal mit Tinda Gold, du Lauch.','Mein Ex war ein Totalausfall. Du bist ein Downgrade.'];
+const T_INS_HIM=['Du hast geschrieben, als hättest du noch nie eine Frau gesehen. Hast du auch nicht, oder?','Bei deinem Profilbild dachte ich kurz, mein Handy ist kaputt.','Nicht mal mit Fuggi Gold, du Lauch.','Mein Ex war ein Totalausfall. Du bist ein Downgrade.'];
 const T_INS_HER=['Dein Ansatz hat mehr Charakter als du.','Ich hab nur nach rechts gewischt, weil mein Daumen abgerutscht ist.','Du siehst aus wie meine Ex. Und die war schon ein Fehler.','Bei dir hilft nicht mal ein Filter, Schätzchen.'];
 const T_EXCUSE=['Sorry, meine Mutter braucht das Auto.','Ich hab mir beim Wischen den Daumen verstaucht.','Mein Ex steht vor der Tür. Mit Hund.','Hab grad gemerkt, wir wohnen im selben Haus. Nee.'];
 function tPool(){return isW()?TINDA_M:TINDA_W}
@@ -2202,11 +2202,11 @@ function tProf(id){return TINDA_M.concat(TINDA_W).find(p=>p.id===id)}
 function tImg(p){return 'sprites/tinda_'+p.id+'.webp'}
 function tInit(){const g=isW()?'w':'m';if(!S.tinda||S.tinda.g!==g)S.tinda={g,day:-1,left:10,deck:[],bl:{},gold:false};const t=S.tinda;if(t.day!==S.day){t.day=S.day;t.left=t.gold?15:10}}
 function tNext(){const t=S.tinda;t.deck=t.deck.filter(id=>!t.bl[id]);if(!t.deck.length){let ids=tPool().map(p=>p.id).filter(id=>!t.bl[id]);if(!ids.length){t.bl={};ids=tPool().map(p=>p.id)}for(let i=ids.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[ids[i],ids[j]]=[ids[j],ids[i]]}t.deck=ids}return tProf(t.deck[0])}
-const T_HEAD='<div style="text-align:center;margin-top:-4px"><div style="font:400 30px \'Lilita One\',sans-serif;color:#ff5a6e;letter-spacing:.5px">🔥 tinda</div></div>';
+const T_HEAD='<div style="text-align:center;margin-top:-4px"><div style="font:400 30px \'Lilita One\',sans-serif;color:#ff5a6e;letter-spacing:.5px">🔥 Fuggi</div></div>';
 function tBtns(){return'<div class="list" style="margin-top:8px"><button class="btn" data-tback>Zurück zum Handy</button></div>'}
-function tindaOpen(){tInit();stat('tinda');tShow()}
+function tindaOpen(){tInit();stat('fuggi');tShow()}
 function tShow(){const t=S.tinda;
- if(t.left<=0){openModal(T_HEAD+`<p style="text-align:center">Keine Wischer mehr für heute. Morgen gibt’s neue.</p><div class="list">${t.gold?'':'<button class="btn pri" data-tgold>Tinda Gold kaufen (4,99 €)</button>'}</div>`+tBtns(),()=>bindAll({'[data-tgold]':()=>{if(S.money<4.99){snd('bad');toast('Nicht mal Geld für Tinda Gold. Das sagt eigentlich alles.');return}S.money-=4.99;t.gold=true;t.left+=5;snd('cash');toast('Tinda Gold! Jetzt kriegst du deine Absagen schneller.','',3500);tShow()},'[data-tback]':()=>openPhone()}));return}
+ if(t.left<=0){openModal(T_HEAD+`<p style="text-align:center">Keine Wischer mehr für heute. Morgen gibt’s neue.</p><div class="list">${t.gold?'':'<button class="btn pri" data-tgold>Fuggi Gold kaufen (4,99 €)</button>'}</div>`+tBtns(),()=>bindAll({'[data-tgold]':()=>{if(S.money<4.99){snd('bad');toast('Nicht mal Geld für Fuggi Gold. Das sagt eigentlich alles.');return}S.money-=4.99;t.gold=true;t.left+=5;snd('cash');toast('Fuggi Gold! Jetzt kriegst du deine Absagen schneller.','',3500);tShow()},'[data-tback]':()=>openPhone()}));return}
  const p=tNext();
  openModal(T_HEAD+`<div style="text-align:center;font-size:12px;color:var(--dim)">noch ${t.left} Wischer heute${t.gold?' · Gold':''}</div>
  <div id="tcard" style="position:relative;margin:8px auto;width:min(74vw,290px);aspect-ratio:2/3;border-radius:18px;overflow:hidden;background:#222 url(${tImg(p)}) center/cover;box-shadow:0 8px 24px #000a;touch-action:none;user-select:none;-webkit-user-select:none">
@@ -2219,10 +2219,10 @@ function tSwipe(p){const c=document.getElementById('tcard'),st=document.getEleme
  c.addEventListener('pointermove',e=>{if(x0===null)return;dx=e.clientX-x0;c.style.transform=`translateX(${dx}px) rotate(${dx/18}deg)`;st.textContent=dx>0?'LIKE':'NOPE';st.style.borderColor=st.style.color=dx>0?'#3c3':'#e44';st.style.left=dx>0?'14px':'';st.style.right=dx>0?'':'14px';st.style.opacity=Math.min(1,Math.abs(dx)/90)});
  const up=()=>{if(x0===null)return;x0=null;if(Math.abs(dx)>90)tDecide(p,dx>0);else{c.style.transition='transform .2s';c.style.transform='';st.style.opacity=0}};c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up)}
 function tDecide(p,like){const t=S.tinda;if(t.busy)return;t.busy=1;const c=document.getElementById('tcard');if(c){c.style.transition='transform .3s, opacity .3s';c.style.transform=`translateX(${like?420:-420}px) rotate(${like?24:-24}deg)`;c.style.opacity=0}
- snd(like?'pop':'slap');setTimeout(()=>{t.busy=0;t.left--;t.deck.shift();addXP(like?1:0);if(like&&Math.random()<(p.fake?.75:.3))tMatch(p);else tShow()},320)}
+ snd('swipe');setTimeout(()=>{t.busy=0;t.left--;t.deck.shift();addXP(like?1:0);if(like&&Math.random()<(p.fake?.75:.3))tMatch(p);else tShow()},320)}
 function tChat(p,lines,opts){const bub=(who,txt)=>who==='me'?`<div style="margin:6px 0 6px 40px;padding:8px 12px;border-radius:14px 14px 2px 14px;background:#ff5a6e;color:#fff;text-align:left">${esc(txt)}</div>`:`<div style="margin:6px 40px 6px 0;padding:8px 12px;border-radius:14px 14px 14px 2px;background:#3a2e27;color:#f4e9dc;text-align:left">${esc(txt)}</div>`;
- openModal(`<div style="display:flex;align-items:center;gap:10px"><img src="${tImg(p)}" alt="" style="width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:top"><div><b>${esc(p.n)}, ${p.a}</b><div style="font-size:12px;color:var(--dim)">Match auf Tinda</div></div></div><div style="margin-top:8px">${lines.map(l=>bub(l[0],l[1])).join('')}</div><div class="list">${opts.map((o,i)=>`<button class="btn${i===0?' pri':''}" data-to="${i}">${esc(o.t)}</button>`).join('')}</div>`,()=>bindAll({'[data-to]':el=>opts[+el.dataset.to].f()}))}
-function tMatch(p){snd('lvl');vib([40,40,80]);stat('tinda-match');
+ openModal(`<div style="display:flex;align-items:center;gap:10px"><img src="${tImg(p)}" alt="" style="width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:top"><div><b>${esc(p.n)}, ${p.a}</b><div style="font-size:12px;color:var(--dim)">Match auf Fuggi</div></div></div><div style="margin-top:8px">${lines.map(l=>bub(l[0],l[1])).join('')}</div><div class="list">${opts.map((o,i)=>`<button class="btn${i===0?' pri':''}" data-to="${i}">${esc(o.t)}</button>`).join('')}</div>`,()=>bindAll({'[data-to]':el=>opts[+el.dataset.to].f()}))}
+function tMatch(p){snd('lvl');vib([40,40,80]);stat('fuggi-match');
  openModal(`<div style="text-align:center"><div style="font:400 34px 'Lilita One',sans-serif;color:#ff5a6e;margin:6px 0">It’s a Match!</div><img src="${tImg(p)}" alt="" style="width:150px;height:200px;object-fit:cover;border-radius:16px;box-shadow:0 6px 18px #000a"><p>Du und ${esc(p.n)} habt euch gegenseitig gelikt. Gott steh euch bei.</p></div><div class="list"><button class="btn pri" data-tm>Nachricht lesen</button></div>`,()=>bindAll({'[data-tm]':()=>tOpener(p)}))}
 function tOpener(p){const w=isW();const L0=[['you',p.op]];
  const mine={nett:'Hey, du siehst nett aus. Lust auf ein Bier bei mir?',plump:w?'Na, Großer? Auf meinem Sofa ist noch Platz. Neben mir.':'Na, Schnecke? Auf meinem Sofa ist noch Platz. Neben mir.',ins:'Dein Profilbild ist das Schönste an dir. Und das ist schon hässlich.'};
