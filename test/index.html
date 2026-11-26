@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 147</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 148</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=147;
+const APPVER=148;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2305,6 +2305,82 @@ function kobMess(){const L2=a=>Array.isArray(a)?a.length:0;return (S.chaos||0)*.
 EVENTS.push(
  {id:'kobold',prio:1,c:()=>S.lvl>=2&&kobMess()>=32&&S.tot-(S.h.kobT||-9999)>240&&Math.random()<.3,run:()=>kobVisit(false)},
  {id:'koboldclean',prio:1,c:()=>S.lvl>=2&&kobMess()<10&&S.tot-(S.h.kobT||-9999)>720&&Math.random()<.15,run:()=>kobVisit(true)});
+// ================= FUGGI 2: längere, gemeinere Chats, Sonder-Ereignisse, Ex-Eifersucht =================
+// Themenfrage pro Profil (2. Runde)
+const F_TOPIC={m1:'Wie viele Pfandflaschen hast du gerade zu Hause? Ehrlich jetzt.',m2:'Wie viele Follower hast du? Unter 300 red ich nicht mit Leuten.',m3:'Kannst du hinten auf ’ner Harley sitzen, ohne zu kotzen?',m4:'Welchen Namen soll ich mir als Nächstes stechen lassen? Deinen?',m5:'Was hältst du von tiefergelegten Autos? Falsche Antwort und ich blockier dich.',m6:'Magst du Würstchen? Ich mein vom Grill. Oder auch nicht.',m7:'Warst du schon mal im „Club Exzess“? Ich hab dich da nämlich rausgeschmissen, glaub ich.',m8:'Meine Mama fragt, ob du kochen kannst. Und ob du rauchst. Und warum.',m9:'Ich bin drei Wochen weg, dann zwei Tage da. Passt das?',m10:'Können Sie Uniformen stärken? Mit Wäschestärke, nicht mit Bier.',
+ w1:'Kaufst du bei Netto? An Kasse 3? Dann kenn ich deinen Einkauf. Bier und Klopapier, oder?',w2:'Wie viel Prosecco verträgst du? Unter zwei Flaschen ist für mich kein Mann.',w3:'Spielen Sie Bingo? Wer nicht Bingo spielt, hat kein Herz.',w4:'Was fährst du für ein Auto? Und sag nicht Bus.',w5:'Wie oft gehst du ins Solarium? Du siehst aus wie Quark.',w6:'Magst du Schlager? Andrea Berg oder Helene? Falsche Antwort und Tschüss.',w7:'Hast du schon Telegram? Da kann ich dir Fotos schicken. Für 20 € Guthaben.',w8:'Bist du allergisch gegen Katzen? Ich hab drei. Und eine im Kühlschrank. Spaß. Oder?',w9:'Kannst du Windeln wechseln? Frag für vier Freunde.',w10:'Hast du ein gutes Herz? Und ein noch besseres Testament?'};
+const F_INS_HIM=['Ich hab schon Würstchen gesehen, die mehr hermachen als du. Im Glas. Abgelaufen.','Dein Bauch ist das Einzige an dir, das steht.','Mit dir im Bett ist wie beim Jobcenter: ewig warten, und am Ende kommt nix.','Bei deinem Profilbild hat sich sogar mein Vibrator von selbst ausgeschaltet.','Du schreibst wie einer, der beim Sex „Sorry“ sagt. Zweimal. In zwei Minuten.','Du bist der Grund, warum Frauen lieber Katzen haben.','Deine Mutter hätte dich beim Pfandautomaten abgeben sollen. 25 Cent wärst du wert gewesen.','Du riechst sogar durchs Handy nach Fußpilz und Verzweiflung.','Minischwanz-Energie mit Bierbauch-Garantie.','Wenn Hässlichkeit wehtun würde, würdest du den ganzen Tag schreien.'];
+const F_INS_HER=['Du hast mehr Ansatz als Persönlichkeit.','Dein Profilbild hat mehr Filter als eine Kläranlage.','Mit dir ins Bett? Da schlaf ich lieber im Altglascontainer.','Du bist wie Tiefkühlpizza: billig, aufgetaut, und keiner will das letzte Stück.','Selbst dein Rüttel-Rudi kriegt Kopfschmerzen, wenn er dich sieht.','Dein Damenbart hat mehr Follower als du.','Du hast die Ausstrahlung von einem nassen Aschenbecher.','Bei dir wird sogar der Pizzabote impotent.','Du siehst aus, als würdest du Prosecco aus dem Tetrapack saufen. Tust du, oder?','Wenn Hässlichkeit wehtun würde, würdest du den ganzen Tag schreien.'];
+const F_ME_HARD={m:['Du bist so hässlich, dein Spiegel hat gekündigt.','Ich hab mehr Grips in meiner Achselhöhle als du im Kopf.','Dein Gesicht sieht aus, als hätte ein Döner es gemalt.','Bei dir würde sogar Frau Kowalski Nein sagen. Und die sagt nie Nein.'],w:['Du bist so hässlich, dein Spiegel hat gekündigt.','Mit dem Ding in deiner Hose kann man nicht mal ’ne Bierflasche aufmachen.','Dein Gesicht sieht aus, als hätte ein Döner es gemalt.','Ich hab Rudi. Der hat mehr Ausdauer als du, und der läuft auf zwei AA-Batterien.']};
+const F_SEXY={m:'Na, was hast du gerade an? Ich: nur Jogginghose. Und Bierflecken.',w:'Na, was hast du gerade an? Ich: nur Jogginghose. Und Chipskrümel.'};
+const F_PHOTO={m1:'📷 Foto: Detlefs Pfandbon über 14,75 €. Er ist sehr stolz.',m2:'📷 Foto: Kevin-Pascal oben ohne vor dem Ringlicht. Mit Filter. Viel Filter.',m3:'📷 Foto: Günthers Harley. Sie hat einen Platten.',m4:'📷 Foto: Dennis’ frisches Tattoo. Da steht „CHANTEL“. Falsch geschrieben.',m5:'📷 Foto: Marios Auspuff. Ganz nah. Sehr ganz nah.',m6:'📷 Foto: Bernds Bratwurst. Ganz nah. Du hoffst, es ist die Bratwurst.',m7:'📷 Foto: Sascha flexend im Spiegel. Im Hintergrund seine Mutter.',m8:'📷 Foto: Justins Zeugnis. Mathe: 5.',m9:'📷 Foto: Ralfs Fuß auf dem Armaturenbrett. Dreckig.',m10:'📷 Foto: Achim in Unterhose und Schützenhut. Mehr will man nicht sehen.',
+ w1:'📷 Foto: Chantal an der Kasse, Mittelfinger in die Kamera.',w2:'📷 Foto: Sandys Kühlschrank. Nur Prosecco und ein Senf.',w3:'📷 Foto: Gabis Bingokarte. Fast voll. Sie ist sehr aufgeregt.',w4:'📷 Foto: Jacqueline vor einem fremden Porsche.',w5:'📷 Foto: Tanja im Solarium. Man sieht nur Zähne.',w6:'📷 Foto: Biggis Aschenbecher. Randvoll. „Mein Zuhause“.',w7:'📷 Foto: ein Model am Strand. Unten klein: © Stockfoto.',w8:'📷 Foto: drei Katzen auf einem Mann, der um Hilfe zu rufen scheint.',w9:'📷 Foto: vier schreiende Kinder. Kein Mann zu sehen. Nur Chaos.',w10:'📷 Foto: Elke im Spitzennachthemd. Mit Gebiss im Glas daneben.'};
+const F_MYPHOTO={m:'📷 Du schickst ein Foto: dein Bierbauch mit Chipskrümeln drauf.',w:'📷 Du schickst ein Foto: deine Füße mit abgeblättertem Nagellack auf dem Couchtisch.'};
+function fp(arr,lines){const u=new Set((lines||[]).map(l=>l[1]));const a=arr.filter(x=>!u.has(x));return pick(a.length?a:arr)}
+// Ablauf eines Matches
+function tOpener(p){const g=isW()?'w':'m';const L0=[['you',p.op]];
+ // Sonder-Ereignisse gleich am Anfang (ca. 30 %)
+ const r=Math.random();
+ if(!p.fake&&r<.07)return fEx(p);
+ if(!p.fake&&r<.12)return fBrandt(p);
+ if(!p.fake&&r<.17&&p.id==='m8')return fMama(p,L0);
+ if(!p.fake&&r<.22)return fVoice(p,L0);
+ tChat(p,L0,[
+  {t:'😊 Nett antworten',f:()=>fRound2(p,L0.concat([['me','Hey, du siehst nett aus. Lust auf ein Bier bei mir?']]),1)},
+  {t:'😏 Anbaggern',f:()=>fRound2(p,L0.concat([['me',F_SEXY[g]]]),2)},
+  {t:'💰 Angeben',f:()=>{S.tLie=p.id;return fRound2(p,L0.concat([['me',g==='w'?'Ich bin eigentlich Model. Gerade nur Pause. Seit 2014.':'Ich hab ’nen Porsche. Der ist gerade in der Werkstatt. Seit 2014.']]),1)}},
+  {t:'🤬 Beleidigen',f:()=>fFight(p,L0.concat([['me',pick(F_ME_HARD[g])]]),true)}])}
+function fRound2(p,lines,heat){const r=Math.random();
+ if(p.fake)return tOut(p,'nett',lines);
+ if(r<.18)return fFight(p,lines.concat([['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false);
+ if(r<.26)return tEnd(p,lines.concat([['you','✓✓ Gelesen']]),p.n+' hat dich geghostet. Gelesen und nix.',{bo:5});
+ if(r<.33)return fMarried(p,lines);
+ if(r<.38&&(p.id==='m10'||p.id==='w10'||Math.random()<.3))return fProposal(p,lines);
+ if(r<.44&&(p.id==='w5'||p.id==='m2'))return fMlm(p,lines);
+ const L2=lines.concat([['you',heat>1?'Uh, direkt. '+F_TOPIC[p.id]:F_TOPIC[p.id]]]);const g=isW()?'w':'m';
+ tChat(p,L2,[
+  {t:'🙂 Ehrlich antworten',f:()=>fFinal(p,L2.concat([['me',g==='w'?'Ehrlich? Ich lieg seit Jahren auf dem Sofa und sauf. Aber mit Stil.':'Ehrlich? Ich lieg seit Jahren auf dem Sofa und sauf. Aber mit Würde.']]),.55)},
+  {t:'📷 Foto schicken',f:()=>fPhoto(p,L2.concat([['me',F_MYPHOTO[g]]]))},
+  {t:'🍆 Schweinkram schreiben',f:()=>{const ok=Math.random()<.4;return ok?fFinal(p,L2.concat([['me',g==='w'?'Komm vorbei, dann zeig ich dir, wo Rudi wohnt.':'Komm vorbei, dann zeig ich dir meine Fernbedienung. Die große.'],['you','Du Ferkel. Gefällt mir.']]),.85):fFight(p,L2.concat([['me',g==='w'?'Komm vorbei, dann zeig ich dir, wo Rudi wohnt.':'Komm vorbei, dann zeig ich dir meine Fernbedienung. Die große.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}}])}
+function fPhoto(p,lines){const L2=lines.concat([['you',F_PHOTO[p.id]||'📷 Foto: unscharf. Zum Glück.']]);
+ tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])}
+function fFinal(p,lines,chance){if(Math.random()<chance){const say=pick(['Klingt gut. Ich komm vorbei!','Bin in einer Stunde da. Halt das Bier kalt.','Okay. Aber wenn’s stinkt, geh ich wieder.']);
+  if(p.v){S.tdate=p.id;callVisit('tdate',45);return tEnd(p,lines.concat([['you',say]]),p.n+' kommt vorbei! In etwa einer Stunde klingelt’s.',{bo:-10,xp:3})}
+  return tEnd(p,lines.concat([['you',say],['you','… '+pick(T_EXCUSE)]]),p.n+' hat in letzter Sekunde abgesagt. Typisch.',{bo:-10,xp:2})}
+ return tEnd(p,lines.concat([['you',pick(['Ne, doch nicht. Du bist mir zu assi. Und ich bin schon assi.','Hab’s mir anders überlegt. Meine Mutter sagt Nein.','Sorry, ich hab grad einen Besseren gefunden. Also, irgendwen.'])]]),p.n+' hat abgesagt.',{bo:5},true)}
+function fFight(p,lines,iStarted){const ins=fp(isW()?F_INS_HER:F_INS_HIM,lines),L2=iStarted?lines.concat([['you',ins]]):lines;const g=isW()?'w':'m';
+ tChat(p,L2,[
+  {t:'🔥 Härter zurück',f:()=>{const L3=L2.concat([['me',fp(F_ME_HARD[g],L2)]]);if(Math.random()<.5)return tEnd(p,L3.concat([['you','…'],['you','BLOCKIERT. Und gemeldet. Und ich erzähl’s meiner Mutter!']]),'Beleidigungs-Duell gewonnen! '+p.n+' heult jetzt irgendwo.',{bo:-25,xp:5},true);
+   const L4=L3.concat([['you',fp(isW()?F_INS_HER:F_INS_HIM,L3)]]);tChat(p,L4,[{t:'🔥🔥 Noch härter',f:()=>tEnd(p,L4.concat([['me',fp(F_ME_HARD[g],L4)],['you','Okay, du hast gewonnen. Du bist trotzdem ein Wrack.']]),'Drei Runden Beleidigungen, du gewinnst knapp. Ehrensache.',{bo:-30,xp:6},true)},{t:'😢 Aufgeben',f:()=>tEnd(p,L4.concat([['me','😢'],['you','HAHA. Screenshot geht in die Hausgruppe.']]),p.n+' hat den Chat in die Hausgruppe gepostet. Herr Brandt hat gelacht.',{bo:10,neighbor:1},true)}])}},
+  {t:'📸 Screenshot an die Hausgruppe',f:()=>tEnd(p,L2.concat([['me','Screenshot ist in der Hausgruppe. Viel Spaß, du Wrack.'],['you','DU MISTSTÜCK!']]),'Das ganze Haus lacht über '+p.n+'. Du auch.',{bo:-20,xp:3},true)},
+  {t:'😢 Heulen',f:()=>tEnd(p,L2.concat([['me','😢'],['you','HAHA. Heulsuse. Blockiert.']]),p.n+' hat dich blockiert und lacht dich aus.',{bo:10},true)}])}
+function fMarried(p,lines){const g=isW();const L2=lines.concat([['you',g?'HIER IST SEINE FRAU! WER BIST DU, DU SOFASCHLAMPE?! Ich weiß, wo du wohnst!':'HIER IST IHR MANN! WER BIST DU, DU SOFAWICHSER?! Ich weiß, wo du wohnst!']]);
+ tChat(p,L2,[{t:'😬 Entschuldigen',f:()=>tEnd(p,L2.concat([['me','Sorry, wusste ich nicht!'],['you','Zu spät. Ich hab deinen Namen bei Facebook gepostet.']]),'Erwischt. Jetzt kennt dich die ganze Stadt.',{bo:10,neighbor:1},true)},
+  {t:'🔥 Zurückpöbeln',f:()=>{S.h.police=(S.h.police||0)+1;return tEnd(p,L2.concat([['me',g?'Dann pass halt besser auf deinen Lauch auf!':'Dann pass halt besser auf deine Alte auf!'],['you','Ich ruf die Polizei!!!']]),'Eifersuchtsdrama. Die Polizei hat jetzt deine Nummer.',{bo:-15,xp:3},true)}}])}
+function fProposal(p,lines){const L2=lines.concat([['you','Ich spür das. Willst du mich heiraten? Ich mein es ernst. Ich hab schon einen Ring. Aus dem Kaugummiautomaten.']]);
+ tChat(p,L2,[{t:'💍 Ja!',f:()=>tEnd(p,L2.concat([['me','JA! Warum nicht.'],['you','Super! Ich schick dir meine Mutter vorbei. Die zieht bei dir ein.']]),'Verlobt nach drei Nachrichten. Rekord. Dann hat '+p.n+' es sich anders überlegt.',{bo:-20,xp:5},true)},
+  {t:'🏃 Nein!',f:()=>tEnd(p,L2.concat([['me','Bist du bescheuert?'],['you','Dann stirb halt allein auf deinem Sofa!']]),p.n+' hat dich blockiert. Mit gebrochenem Herzen.',{bo:-5},true)}])}
+function fMlm(p,lines){const L2=lines.concat([['you','Hey! Hast du schon mal von Power-Shake Gold gehört? Du kaufst 10 Dosen, verkaufst sie an 10 Freunde und wirst reich!']]);
+ tChat(p,L2,[{t:'💸 Mitmachen (10 €)',f:()=>{const g=Math.min(10,S.money);S.money-=g;return tEnd(p,L2.concat([['me','Okay, ich bin dabei.'],['you','Super! Deine Dosen kommen nie. Danke!']]),'10 € weg. Du hast keine Freunde, an die du verkaufen könntest. Und jetzt auch kein Geld.',{bo:5},true)}},
+  {t:'🙅 Verpiss dich',f:()=>tEnd(p,L2.concat([['me','Verpiss dich mit deinem Pulver.'],['you','Dann bleib halt arm und fett!']]),p.n+' hat dich blockiert. Und dir ein Werbe-Video geschickt.',{bo:3},true)}])}
+function fVoice(p,L0){const L2=L0.concat([['you','🎤 Sprachnachricht (4:12): … 4 Minuten Rülpsen …']]);
+ tChat(p,L2,[{t:'🎤 Zurückrülpsen',f:()=>{snd('burp');return tEnd(p,L2.concat([['me','🎤 Sprachnachricht (4:30): … dein bester Rülpser …'],['you','Wow. Respekt. Ich glaub, ich hab mich verliebt.']]),'Rülps-Battle gewonnen! '+p.n+' ist beeindruckt.',{bo:-25,xp:4})}},
+  {t:'🤢 Blockieren',f:()=>tEnd(p,L2.concat([['me','Ekelhaft.'],['you','Du hast keine Kultur.']]),'Blockiert. Die Sprachnachricht hörst du trotzdem im Traum.',{bo:3},true)}])}
+function fMama(p,L0){const L2=L0.concat([['you','Hier ist Justins Mutter. Wer sind Sie? Justin muss um 8 ins Bett. Und Sie sind zu alt. Und Sie rauchen, das seh ich am Foto.']]);
+ tEnd(p,L2,'Justins Mutter hat dich blockiert. Und angezeigt. Wegen Rauchen.',{bo:5},true)}
+function fEx(p){const w=isW();const L2=[['you',p.op],['you',w?'Haha, reingefallen! Hier ist Ronny, du dumme Kuh. Fake-Profil. Ich wollte nur sehen, wie verzweifelt du bist. SEHR verzweifelt.':'Haha, reingefallen! Hier ist Jessica, du Lauch. Fake-Profil. Ich wollte nur sehen, wie verzweifelt du bist. SEHR verzweifelt.']];
+ tChat(p,L2,[{t:'🔥 Zurückbeleidigen',f:()=>tEnd(p,L2.concat([['me',w?'Und du hast einen Fake-Account gemacht, um mich zu stalken. Wer ist jetzt verzweifelt, du Lauch mit Bauchtasche?':'Und du hast einen Fake-Account gemacht, um mich zu stalken. Wer ist jetzt verzweifelt, du Solariumsleiche?'],['you','…'],['you','Halt die Fresse!!!']]),'Punkt für dich. '+(w?'Ronny':'Jessica')+' hat beleidigt den Account gelöscht.',{bo:-25,xp:5},true)},
+  {t:'😢 Heulen',f:()=>{S.h.exTaunt=S.day;return tEnd(p,L2.concat([['me','😢'],['you','HAHAHA. Screenshot geht an alle.']]),(w?'Ronny':'Jessica')+' hat dich reingelegt und lacht sich kaputt.',{bo:15},true)}}])}
+function fBrandt(p){const L2=[['you',p.op],['you','Moment. Sind Sie nicht der aus dem 3. Stock? Hier ist Herr Brandt. Das Profil gehört mir. Ich zeige Sie an. Wegen Unzucht. Und Ruhestörung. Vorsorglich.']];
+ tChat(p,L2,[{t:'🤬 Brandt beleidigen',f:()=>{S.h.neighbor=(S.h.neighbor||0)+1;return tEnd(p,L2.concat([['me','Herr Brandt, Sie alter Spanner! Sie sind auf Fuggi?!'],['you','Das bleibt unter uns. Sonst sag ich allen, dass Sie Rudi heißen. Äh. Gute Nacht.']]),'Herr Brandt ist auf Fuggi. Das wird er nie wieder los.',{bo:-25,xp:4},true)}},
+  {t:'🙊 Unter uns',f:()=>{S.h.neighbor=Math.max(0,(S.h.neighbor||0)-1);return tEnd(p,L2.concat([['me','Ich sag nix. Sie sagen nix.'],['you','Abgemacht. Und machen Sie leiser.']]),'Stillhalteabkommen mit Herrn Brandt. Nachbar-Stress −1.',{bo:-10,xp:2},true)}}])}
+// Ex wird eifersüchtig, wenn ein Date gut lief
+EVENTS.push({id:'exjealous',prio:1,c:()=>S.h.exJ&&S.day>=S.h.exJ,run:()=>{S.h.exJ=0;const w=isW();visit('jessica',w?'WER WAR DIE LUSCHE GESTERN?! Ich hab ihn auf Fuggi gesehen! Mit DEM gehst du aus? Der hat ja noch weniger als ich!':'WER WAR DIE SCHLAMPE GESTERN?! Ich hab sie auf Fuggi gesehen! Mit DER gehst du aus? Die hat ja noch weniger Niveau als dein Sofa!',[
+  {t:'Angeben',f:()=>({say:w?'Er ist besser als du? DER? Pff. Ich hab dir die besten drei Jahre deines Lebens geschenkt! Also, die einzigen guten.':'Sie ist besser als ich? DIE? Pff. Ich hab dir die besten drei Jahre deines Lebens geschenkt! Also, die einzigen guten.',fx:fx({bo:-20,xp:3}),pose:1})},
+  {t:'Eifersüchtig, hä?',f:()=>({say:w?'Ich? Eifersüchtig? Auf DICH? … Ja. Ein bisschen. Halt die Fresse.':'Ich? Eifersüchtig? Auf DICH? … Ja. Ein bisschen. Halt die Fresse.',fx:fx({bo:-25,xp:4}),pose:'laugh'})},
+  {t:'Verpiss dich',f:()=>{rude();return{say:w?'Ihr zwei Verlierer passt super zusammen! Ich wünsch euch Fußpilz!':'Ihr zwei Verlierer passt super zusammen! Ich wünsch euch Filzläuse!',pose:3}}}],1)}});
+// Nach einem guten Date: Ex erfährt davon (am nächsten Tag)
+const _tdateEv=EVENTS.find(e=>e.id==='tdate');if(_tdateEv){const _r=_tdateEv.run;_tdateEv.run=function(){_r();try{if(Math.random()<.45)S.h.exJ=S.day+1}catch(e){}}}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
