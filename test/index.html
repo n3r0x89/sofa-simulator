@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 152</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 153</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=152;
+const APPVER=153;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2259,7 +2259,7 @@ function tOut(p,kind,lines){const r=Math.random(),w=isW(),nm=p.n;
   {t:'😢 Heulen',f:()=>tEnd(p,L2.concat([['me','😢'],['you','HAHA. Screenshot geht in die Hausgruppe.']]),nm+' hat den Chat in die Hausgruppe gepostet.',{bo:10},true)}])}
 EVENTS.push(
  {id:'tdate',c:()=>false,run:()=>{const p=tProf(S.tdate),D=p&&TDATE[p.v];if(!D)return;const who=p.v;visit(who,D.g,[
-   {t:'Reinlassen',f:()=>{const o=Math.random()<(D.okP||.55)?D.ok:D.bad;if(o.run)o.run();return{say:o.say,fx:fx(o.fx),pose:o===D.ok?0:1}}},
+   {t:'Reinlassen',f:()=>{const o=Math.random()<(D.okP||.55)?D.ok:D.bad;if(o.run)o.run();if(o===D.ok)try{relGood(p.id)}catch(e){}return{say:o.say,fx:fx(o.fx),pose:o===D.ok?0:1}}},
    {t:'Abservieren',f:()=>({say:D.away,pose:1})}],0)}},
  {id:'tfake',c:()=>false,run:()=>visit('kevin','Überraschung! Ich bin Nadine. Also, ich hab das Profil gemacht. Danke für die 20 €, '+(isW()?'Süße':'Digga')+'!',[
    {t:'Geld zurück!',f:()=>({say:'Welches Geld? Ich seh kein Geld. Tschüss!',fx:fx({bo:5}),pose:3})},
@@ -2483,6 +2483,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:153,t:['💔 Dein Ex meldet sich: fiese Nachrichten und besoffene Anrufe','🥊 Ex trifft Date: Prügelei im Treppenhaus','💕 Fuggi: Feste Beziehung nach zwei guten Dates, bis es kracht']},
  {v:152,t:['👫 Spiel als Mann oder Frau, jederzeit im Pausenmenü wechselbar','🔥 Fuggi: Dating-App mit 40 Profilen, fiesen Chats, Fotos, Dates und heißen Anrufen','👺 Der Dreckskobold kommt, wenn die Bude vermüllt ist','🥂 Sekt für die Damen, neue Startbilder','🍺 Leere Flaschen: genau die angetippte wird weggeräumt']}];
 const NEWS_KEY='sofatest_newsv';
 function newsCheck(){let seen=0;try{seen=+localStorage.getItem(NEWS_KEY)||0}catch(e){}
@@ -2490,6 +2491,56 @@ function newsCheck(){let seen=0;try{seen=+localStorage.getItem(NEWS_KEY)||0}catc
  if(!old)return false;const items=NEWS.filter(n=>n.v>seen&&n.v<=APPVER).sort((a,b)=>b.v-a.v).slice(0,2);if(!items.length)return false;
  setTimeout(()=>openModal(`<h2>Neu im Spiel 🎉</h2>${items.map(n=>`<p style="margin:6px 0 2px;color:var(--dim);font-size:12px">Version ${n.v}</p><div style="text-align:left;line-height:1.45">${n.t.map(x=>'<div style="margin:5px 0">'+esc(x)+'</div>').join('')}</div>`).join('')}<div class="list" style="margin-top:12px"><button class="btn pri" data-nx>Geil, weiter saufen</button></div>`,()=>bindAll({'[data-nx]':closeModal})),600);
  stat('news-'+APPVER);return true}
+// ================= EX AUSGEBAUT + FESTE BEZIEHUNG ÜBER FUGGI =================
+function exName(){return isW()?'Ronny':'Jessica'}
+const EX_INS={m:['Ich hab grad an dich gedacht. Dann musste ich kotzen.','Mein Neuer hat einen, den man ohne Lupe findet. Wollt ich nur mal sagen.','Hast du die Jogginghose schon gewechselt? Oder klebt die inzwischen fest?','Weißt du, was ich an dir vermisse? Nichts. Absolut gar nichts.','Ich hab deinen Namen in mein Tagebuch geschrieben. Unter „Fehler“.','Selbst meine Katze hat mehr Ausdauer im Bett als du. Und die pennt 20 Stunden am Tag.','Ich hab unser altes Bett verbrannt. Es war das erste Mal, dass es darin heiß wurde.'],
+ w:['Ich hab grad an dich gedacht. Dann musste ich kotzen.','Meine Neue hat keinen Damenbart. Wollt ich nur mal sagen.','Hast du Rüttel-Rudi schon ersetzt? Oder hat der auch Schluss gemacht?','Weißt du, was ich an dir vermisse? Nichts. Absolut gar nichts.','Ich hab deinen Namen in mein Tagebuch geschrieben. Unter „Fehler“.','Meine Neue kocht, putzt und sabbert nicht beim Schlafen. Unglaublich, oder?','Ich hab unser altes Bett verbrannt. Es war das erste Mal, dass es darin heiß wurde.']};
+const EX_BACK={m:['Ach, Jessica. Dein Neuer tut mir leid. Er weiß noch nicht, worauf er sich eingelassen hat.','Dein Gesicht war das Einzige an dir, das ich nie vermisst hab. Und der Rest auch nicht.','Du warst wie mein Sofa: durchgesessen, fleckig und keiner will dich geschenkt.'],
+ w:['Ach, Ronny. Deine Neue tut mir leid. Sie weiß noch nicht, worauf sie sich eingelassen hat.','Du warst so schlecht im Bett, dass Rudi bei dir Mitleid hatte.','Du warst wie dein Bizeps: viel Gerede, nix dahinter.']};
+// SMS vom Ex
+EVENTS.push({id:'exsms',c:()=>S.day>=3&&S.day-(S.h.exsms||-9)>=2&&!((S.h.exBlock||0)>S.day)&&!isNight()&&Math.random()<.5,run:()=>{S.h.exsms=S.day;const g=isW()?'w':'m';const ins=pick(EX_INS[g]);
+ showCard('📱 Nachricht von '+exName()+' (Ex)','„'+ins+'“',[
+  {t:'🔥 Zurückbeleidigen',f:()=>({say:'Du schreibst: „'+pick(EX_BACK[g])+'“ – Drei Minuten später: „Halt die Fresse!!!“ Punkt für dich.',fx:fx({bo:-20,xp:3})})},
+  {t:'😢 Heulen',f:()=>({say:'Du heulst in dein Bier. Das Bier wird dadurch nicht besser.',fx:fx({bo:10})})},
+  {t:'🚫 Blockieren',f:()=>{S.h.exBlock=S.day+5;return{say:'Blockiert. Fünf Tage Ruhe. Dann macht '+exName()+' sich eine neue Nummer.',fx:fx({bo:-5})}}}])}});
+// Anruf vom Ex
+EVENTS.push({id:'excall',c:()=>S.day>=4&&S.day-(S.h.excall||-9)>=4&&!((S.h.exBlock||0)>S.day)&&Math.random()<.4,run:()=>{S.h.excall=S.day;const g=isW()?'w':'m',n=exName(),img='sprites/'+sprKey('jessica_0')+'.webp';
+ snd('ring');vib([200,100,200]);const head=t=>`<div style="text-align:center"><img src="${img}" alt="" style="height:140px;margin:4px auto;display:block"><h2 style="margin:4px 0">${n} (Ex)</h2><div style="font-size:12px;color:var(--dim)">${t}</div></div>`;
+ openModal(head('📞 ruft an …')+`<div class="list"><button class="btn pri" data-e="1">Rangehen</button><button class="btn" data-e="0">Wegdrücken</button></div>`,()=>bindAll({'[data-e]':el=>{
+  if(el.dataset.e==='0'){closeModal();setTimeout(()=>toast(n+' schreibt: „Wegdrücken? Wie früher im Bett. Nach zwei Minuten war Schluss.“','',4500),1500);return}
+  const say=pick([g==='w'?'Na, Sofawal? Ich wollt nur hören, ob du noch lebst. Schade eigentlich.':'Na, Sofakartoffel? Ich wollt nur hören, ob du noch lebst. Schade eigentlich.','Ich bin besoffen und hab mich verwählt. Wollte eigentlich den Pizzaservice. Ist auch billiger als du.','Mein Neuer ist grad nicht da. Ich wollt nur sagen: Er ist trotzdem besser als du.']);
+  openModal(head('📞 00:12')+`<p style="text-align:center;font-size:17px">„${esc(say)}“</p><div class="list"><button class="btn pri" data-f="0">🔥 Zurückpöbeln</button><button class="btn" data-f="1">🍑 Telefonsex anbieten</button><button class="btn" data-f="2">📵 Auflegen</button></div>`,()=>bindAll({'[data-f]':e2=>{const k=+e2.dataset.f;closeModal();
+   if(k===0)toast('Du: „'+pick(EX_BACK[g])+'“ – '+n+' legt heulend auf.',fx({bo:-20,xp:4}),5000);
+   else if(k===1){if(Math.random()<.35){toast(n+': „… Okay. Aber nur dieses eine Mal. Und du erzählst das NIEMANDEM.“','',3500);setTimeout(()=>fPeakScene({n,id:isW()?'mex':'wex'},()=>toast(n+': „Das war ein Fehler. Ein geiler Fehler. Aber ein Fehler.“','',4500)),1800)}else toast(n+': „HAHAHA. Lieber ruf ich bei der Telefonseelsorge an. Die sind wenigstens nicht so verzweifelt.“',fx({bo:10}),5000)}
+   else toast('Aufgelegt. Endlich Ruhe. Bis zum nächsten Suff.',fx({bo:-5}),3500)}}))}}))}});
+// Ex prügelt sich mit deinem Date
+EVENTS.push({id:'exbrawl',prio:1,c:()=>!!S.h.brawl,run:()=>{const p=tProf(S.h.brawl);S.h.brawl=null;if(!p)return;const w=isW(),n=exName();
+ visit('jessica',w?'ACH, DAS ist also der Neue?! Dieser '+p.n+'? Der sieht aus wie ich nach drei Tagen Saufen!':'ACH, DAS ist also die Neue?! Diese '+p.n+'? Die sieht aus wie ich nach drei Tagen Saufen!',[
+  {t:'🍿 Popcorn holen',f:()=>{const win=Math.random()<.5;return{say:win?p.n+' haut '+n+' eine rein, '+n+' fliegt heulend durchs Treppenhaus. Bestes Fernsehprogramm seit Jahren.':n+' zieht '+p.n+' an den Haaren durchs Treppenhaus. '+p.n+' blockiert dich auf Fuggi. Herr Brandt hat alles gefilmt.',fx:fx(win?{bo:-40,xp:6,neighbor:1}:{bo:-25,neighbor:2}),pose:win?3:'laugh'}}},
+  {t:'🙅 Dazwischengehen',f:()=>({say:'Du gehst dazwischen und kriegst von beiden eine gescheuert. Gleichzeitig. Das nennt man Teamwork.',fx:fx({bo:-10,xp:3}),pose:1})},
+  {t:'👋 '+n+' rausschmeißen',f:()=>{rude();return{say:w?'Viel Spaß mit dem Lauch! Ihr passt zusammen wie Fußpilz und Badelatschen!':'Viel Spaß mit der Schlampe! Ihr passt zusammen wie Fußpilz und Badelatschen!',pose:3}}}],1)}});
+// ---- Feste Beziehung: nach zwei guten Dates mit derselben Person ----
+function relGood(id){if(!S.rel)S.rel={};S.rel[id]=(S.rel[id]||0)+1;
+ if(Math.random()<.35)S.h.brawl=id;
+ if(S.rel[id]>=2&&!S.partner){const p=tProf(id);if(!p)return;S.partner=id;S.partnerEnd=S.day+RI(6,10);setTimeout(()=>{snd('lvl');toast('💕 Du und '+p.n+' seid jetzt fest zusammen!','Bis einer von euch es versaut',5000)},3500);stat('beziehung')}}
+const P_LINES={m:['Hallo Schatz! Ich hab Bier mitgebracht. Und schlechte Laune. Was davon willst du zuerst?','Na, mein Sofaschnecke? Ich bin’s. Ich hab dich vermisst. Also, ein bisschen. Beim Fernsehen.','Schatz, ich bleib heute Nacht. Und morgen. Und vielleicht für immer. Oder bis das Bier alle ist.'],
+ w:['Hallo Schatz! Ich hab Bier mitgebracht. Und schlechte Laune. Was davon willst du zuerst?','Na, mein Sofaprinz? Ich bin’s. Ich hab dich vermisst. Also, ein bisschen. Beim Fernsehen.','Schatz, ich bleib heute Nacht. Und morgen. Und vielleicht für immer. Oder bis das Bier alle ist.']};
+EVENTS.push(
+ {id:'partner',c:()=>!!S.partner&&S.day<S.partnerEnd&&S.day-(S.h.pv||-9)>=2,run:()=>{S.h.pv=S.day;const p=tProf(S.partner);if(!p||!p.v)return;
+  visit(p.v,pick(P_LINES[p.id[0]==='w'?'w':'m']),[
+   {t:'💋 Kuscheln',f:()=>({say:pick(['Ihr kuschelt auf dem Sofa. Es knarzt. Ihr knarzt. Alles knarzt.','Kuscheln vorm Fernseher. '+p.n+' schläft nach zwei Minuten ein und furzt. Liebe ist schön.']),fx:fx({bo:-35,xp:3}),pose:0})},
+   {t:'🍺 Zusammen saufen',f:()=>({say:p.n+' hat zwei Bier dabei. Ihr sauft zusammen und lästert über alle im Haus. Fast wie eine Ehe.',fx:fx({beer:2,bo:-25,xp:3}),pose:0})},
+   {t:'🔥 Streit anfangen',f:()=>{S.partnerEnd=S.day;return{say:'Du fängst Streit an, weil '+p.n+' falsch atmet. '+p.n+' knallt die Tür. Das wird nix mehr.',fx:fx({bo:-10}),pose:1}}}],0)}},
+ {id:'partnerend',prio:1,c:()=>!!S.partner&&S.day>=S.partnerEnd,run:()=>{const p=tProf(S.partner);S.partner=null;if(!p||!p.v)return;
+  if(!S.tinda)tInit();S.tinda.bl[p.id]=1;S.h.exList=(S.h.exList||[]).concat(p.id);
+  visit(p.v,pick(['Es ist aus! Ich hab dein Fuggi-Profil gesehen. Du hast WEITERGEWISCHT, du Schwein!','Ich mach Schluss. Du stinkst, du säufst, und du hast mir nie Platz auf dem Sofa gemacht!','Weißt du was? Ich geh zurück zu meinem Ex. Der war wenigstens nur halb so peinlich wie du.']),[
+   {t:'😭 Betteln',f:()=>{if(Math.random()<.4){S.partner=p.id;S.partnerEnd=S.day+RI(3,5);return{say:'… Na gut. Eine Chance noch. Aber nur, weil du so jämmerlich aussiehst.',fx:fx({bo:-10}),pose:0}}return{say:'Betteln steht dir nicht. Nichts steht dir. Tschüss!',fx:fx({bo:15}),pose:1}}},
+   {t:'💔 Selber Schluss machen',f:()=>({say:'Du machst Schluss, bevor '+p.n+' fertig reden kann. '+p.n+' wirft dir einen Schuh an den Kopf und geht.',fx:fx({bo:-10,xp:3}),pose:1})},
+   {t:'🪟 Sachen aus dem Fenster werfen',f:()=>({say:'Du wirfst '+p.n+'s Zahnbürste und eine Socke aus dem Fenster. Mehr Sachen hatte '+p.n+' hier nicht. Herr Brandt kriegt die Socke ab.',fx:fx({bo:-25,xp:4,neighbor:1}),pose:3})}],1)}});
+// Ex-Partner aus Fuggi schicken auch mal fiese Nachrichten
+EVENTS.push({id:'ex2sms',c:()=>(S.h.exList||[]).length>0&&S.day-(S.h.ex2sms||-9)>=3&&Math.random()<.5,run:()=>{S.h.ex2sms=S.day;const p=tProf(pick(S.h.exList));if(!p)return;
+ showCard('📱 Nachricht von '+p.n+' (Ex)','„'+pick(['Ich hab deine Socke noch. Ich benutz sie jetzt zum Klo putzen.','Mein neuer Fuggi-Match hat mehr Haare auf dem Kopf als du am Arsch.','Ich hab allen erzählt, wie du im Bett bist. Die lachen heute noch.','Vermisst du mich? Ich dich nicht. Nur dein Bier.'])+'“',[
+  {t:'🔥 Zurück',f:()=>({say:'Du antwortest: „Und ich hab dein Profilbild als Zielscheibe beim Dartspielen.“ Blockiert. Gewonnen.',fx:fx({bo:-15,xp:2})})},{t:'Ignorieren',f:()=>({say:'Gelesen. Nicht geantwortet. Wie früher.',fx:fx({bo:3})})}])}});
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
