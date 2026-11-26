@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 141</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 142</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=141;
+const APPVER=142;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -589,7 +589,7 @@ function drawTable(t){const T=L.table,y0=T.y0,y1=T.y1;
   // controller
   if(S.furn.console&&S.right!=='ctrl'){const g=L.ctrl;if(!spr('controller',g)){rr(g.x,g.y,g.w,g.h,12,'#1a1a1a');ell(g.x+14,g.y+12,4,4,'#555');ell(g.x+g.w-14,g.y+12,4,4,'#555')}hit('ctrl',g)}
   drawEmpties(t,'front');
-  for(const h of EH)hit('empty',h);
+  for(const h of EH){hit('empty',h);HITS[HITS.length-1].si=h.si}
 }
 let handAnim={drink:0,throwT:0,throwFrom:null,puff:0,snack:0,capT:0,cigFly:0};
 function skinHand(x,y,w,h,flip){cx.save();cx.translate(x,y);if(flip){cx.scale(-1,1)}rr(-w*.5,h*.25,w,h,18,'#6b6f73');ell(0,h*.18,w*.42,h*.26,'#e8b892');for(let i=0;i<4;i++)ell(-w*.3+i*w*.2,h*.0,w*.09,h*.12,'#e2ae86');cx.restore()}
@@ -627,12 +627,14 @@ function emptySlots(){const xt=xTreeUp(),xw=!!xSeason();const fk=['massage','fri
 function drawEmpties(t,pass){const n=S.empties;if(pass==='back')EH=[];if(n<=0)return;
   if(!L.roomMode){if(pass!=='front')return;const E=L.empties;for(let i=0;i<Math.min(n,22);i++){const col=i%11,row=Math.floor(i/11);drawBottle(E.x+col*E.w/11.5+(row?E.w/23:0),E.y-row*E.h*.25,E.w/12,E.h*.75,5)}return}
   const sl=emptySlots(),cnt=Math.min(n,sl.length);
-  const idx=[...Array(cnt).keys()].filter(i=>pass==='front'?sl[i].iy>=1000:sl[i].iy<1000).sort((a,b)=>sl[a].y-sl[b].y);
+  const idx=syncESlots(sl.length,cnt).filter(i=>pass==='front'?sl[i].iy>=1000:sl[i].iy<1000).sort((a,b)=>sl[a].y-sl[b].y);
   for(const i of idx){const p=sl[i];const bh=(L.bottleH||40)*p.dep,bw=bh*.34;cx.save();cx.translate(p.x,p.y);
-    if(p.lying&&SP.bottle_lying&&SP.bottle_lying.naturalWidth){const lw=bh*1.05,lh2=lw*.4;cx.rotate(p.r*.35);if(p.flip)cx.scale(-1,1);spr('bottle_lying',{x:-lw/2,y:-lh2,w:lw,h:lh2});cx.restore();EH.push({x:p.x-lw/2,y:p.y-lh2-6,w:lw,h:lh2+6});continue}
-    cx.rotate(p.r);if(!spr('bottle_5',{x:-bw/2,y:-bh,w:bw,h:bh}))drawBottle(-bw/2,-bh,bw,bh,5);cx.restore();EH.push({x:p.x-bw/2,y:p.y-bh,w:bw,h:bh*.6})}
+    if(p.lying&&SP.bottle_lying&&SP.bottle_lying.naturalWidth){const lw=bh*1.05,lh2=lw*.4;cx.rotate(p.r*.35);if(p.flip)cx.scale(-1,1);spr('bottle_lying',{x:-lw/2,y:-lh2,w:lw,h:lh2});cx.restore();EH.push({x:p.x-lw/2,y:p.y-lh2-6,w:lw,h:lh2+6,si:i});continue}
+    cx.rotate(p.r);if(!spr('bottle_5',{x:-bw/2,y:-bh,w:bw,h:bh}))drawBottle(-bw/2,-bh,bw,bh,5);cx.restore();EH.push({x:p.x-bw/2,y:p.y-bh,w:bw,h:bh*.6,si:i})}
   if(n>sl.length){const extra=n-sl.length;cx.font='800 12px Nunito,sans-serif';cx.textAlign='center';cx.fillStyle='#000a';const tx='+'+extra+' Flaschen';const tw=cx.measureText(tx).width+10;const q=sl[0];if(pass==='front'){cx.fillRect(q.x-tw/2,q.y+4,tw,16);cx.fillStyle='#fff';cx.fillText(tx,q.x,q.y+16)}}}
-function toBasket(all){if(S.empties<=0)return;const k=all?S.empties:1;S.empties-=k;S.basket+=k;S.chaos=Math.max(0,S.chaos-.5*k);addXP(.5*k);snd('clink');
+// Welche Tischplätze gerade eine leere Flasche haben (damit genau die angetippte verschwindet)
+function syncESlots(max,cnt){let a=[...new Set((S.eslots||[]).filter(i=>i<max))];while(a.length>cnt)a.pop();for(let i=0;a.length<cnt&&i<max;i++)if(!a.includes(i))a.push(i);S.eslots=a;return a}
+function toBasket(all,p){if(S.empties<=0)return;if(!all&&p&&Array.isArray(S.eslots)){const h=HITS.filter(h=>h.id==='empty'&&p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h).pop();if(h&&h.si!=null){const j=S.eslots.indexOf(h.si);if(j>=0)S.eslots.splice(j,1)}}const k=all?S.empties:1;S.empties-=k;S.basket+=k;S.chaos=Math.max(0,S.chaos-.5*k);addXP(.5*k);snd('clink');
   if(all||S.empties===0)toast(all?k+' Flaschen in den Korb geräumt.':'Letzte Flasche im Korb. Fast so ordentlich wie ein Mensch.',S.basket+' im Korb · im Shop abgeben');
   else if(Math.random()<.3)toast(pick(['Ab in den Korb, du Pfandpenner.','Klirr. Uwe wird stolz auf dich sein.','Eine weniger. Noch hundert, du Messie.']),'Noch '+S.empties+' auf dem Tisch');checkAch()}
 function pukeTick(dt){const P=PUKE;if(!P)return;P.t+=dt;const t=P.t,pd=P.pd;
@@ -832,7 +834,7 @@ function tap(id,p){
    case'phone':if(!needRightFree('phone'))return;S.right='phone';snd('pop');return openPhone();
    case'catalog':return openCatalog();
    case'ctrl':if(!needRightFree('ctrl'))return;S.right='ctrl';snd('pop');return openGames();
-   case'empty':return toBasket(false);
+   case'empty':return toBasket(false,p);
    case'basket':if(S.empties>0)return toBasket(true);return toast(S.basket?S.basket+' Flaschen im Korb. Im Shop gibt’s Pfand dafür.':'Der Korb ist leer. Wie dein Bett seit Jessica.');
    case'ash':if(S.right==='cig'){S.right='empty';S.butts++;S.ash++;S.cigPuffs=0;S.smolderUntil=S.tot+20;snd('pop');toast(pick(['Kippe im Ascher ausgedrückt. Halb geraucht, halb verschwendet.','Ausgedrückt. Die halbe Kippe hebst du dir für schlechte Zeiten auf.','Zack, in den Ascher. Deine Lunge atmet kurz auf.']));return}return emptyAsh();
    case'stash':return stashMenu();
