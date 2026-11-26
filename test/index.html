@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 134</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 135</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=134;
+const APPVER=135;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -227,7 +227,7 @@ const SND={
   bad:()=>{noise(.03,.22,2400,2,'bandpass');tone(140,.04,'square',.08)},
   pop:()=>tone(700,.06,'square',.08)
 };
-const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3'],wake_w:['sounds/wake1_w.mp3'],cough_w:['sounds/cough1_w.mp3','sounds/cough2_w.mp3','sounds/cough3_w.mp3'],retch_w:['sounds/retch1_w.mp3'],groan_w:['sounds/groan1_w.mp3'],vibe_w:['sounds/vibe1_w.mp3'],wipe:['sounds/wipe1.mp3','sounds/wipe2.mp3','sounds/wipe3.mp3']};
+const BANKS={fart:['sounds/fart1.mp3','sounds/fart2.mp3','sounds/fart3.mp3','sounds/fart4.mp3','sounds/fart5.mp3','sounds/fart6.mp3','sounds/fart7.mp3'],burp:['sounds/burp1.mp3','sounds/burp2.mp3','sounds/burp3.mp3','sounds/burp4.mp3'],cough:['sounds/cough1.mp3','sounds/cough2.mp3'],retch:['sounds/retch1.mp3','sounds/retch2.mp3','sounds/retch3.mp3'],puff:['sounds/puff1.mp3','sounds/puff2.mp3'],plop:['sounds/plop1.mp3','sounds/plop2.mp3'],gulp:['sounds/gulp1.mp3','sounds/gulp2.mp3','sounds/gulp3.mp3','sounds/gulp4.mp3','sounds/gulp5.mp3'],bell:['sounds/bell1.mp3'],knock:['sounds/knock1.mp3'],clink:['sounds/clink1.mp3','sounds/clink2.mp3','sounds/clink3.mp3'],smash:['sounds/smash1.mp3','sounds/smash2.mp3','sounds/smash3.mp3','sounds/smash4.mp3'],lighter:['sounds/lighter1.mp3'],buzz:['sounds/buzz1.mp3','sounds/buzz2.mp3'],wake:['sounds/wake1.mp3'],fail:['sounds/fail1.mp3'],slap:['sounds/slap1.mp3'],cash:['sounds/cash1.mp3','sounds/cash2.mp3'],ring:['sounds/ring1.mp3'],lvl:['sounds/lvl1.mp3'],coo:['sounds/coo1.mp3'],groan:['sounds/groan1.mp3'],wake_w:['sounds/wake1_w.mp3'],cork:['sounds/cork1.mp3'],cough_w:['sounds/cough1_w.mp3','sounds/cough2_w.mp3','sounds/cough3_w.mp3'],retch_w:['sounds/retch1_w.mp3'],groan_w:['sounds/groan1_w.mp3'],vibe_w:['sounds/vibe1_w.mp3'],wipe:['sounds/wipe1.mp3','sounds/wipe2.mp3','sounds/wipe3.mp3']};
 const NOOVER={puff:1};const BUSY={};
 const BUF={},ORD={},LAST={};let bankLoading=false;
 function loadBanks(){if(!AC||bankLoading)return;bankLoading=true;for(const k in BANKS){BUF[k]=[];ORD[k]=[];BANKS[k].forEach((u,i)=>{fetch(u).then(r=>r.arrayBuffer()).then(b=>new Promise((res,rej)=>{const pr=AC.decodeAudioData(b,res,rej);if(pr&&pr.catch)pr.catch(rej)})).then(buf=>{BUF[k][i]=buf}).catch(()=>{})})}}
@@ -749,7 +749,7 @@ function fridgeTap(){FX.fridgeOpen=S.tot+1.2;if(S.fridge>0&&S.tot>=S.fridgeColdA
   if(S.fridge>0){toast('Wird noch kalt. Noch '+Math.ceil(S.fridgeColdAt-S.tot)+' Sekunden, du zappelige Sackratte.');return}
   if(S.beer<=0){toast('Kühlschrank leer, Sixpack leer, Leben leer. Respekt, du Nullnummer.');return}
   const n=Math.min(6,S.beer);S.beer-=n;S.fridge=n;S.fridgeColdAt=S.tot+10;toast(n+' Flaschen in den Kühlschrank gestellt.','In einer Stunde kalt')}
-function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=true;snd('plop');vib(30);handAnim.capT=1;if(b.sekt){handAnim.capT=0;toast(pick(['PLOPP! Der Korken fliegt Richtung Fernseher. Knapp vorbei.','Sekt auf. Es schäumt über deine Finger. Ableckt. Elegant.','Plopp. Silvester-Feeling. Im November. Allein.']));doneHint('open');return}toast(pick(['Plopp. Das einzige Loch, das du heute aufmachst.','Kronkorken ab. Zum Glück kriegst du wenigstens das noch auf.','Zisch. Feierabend, obwohl du seit 2011 nicht angefangen hast.']));doneHint('open')}
+function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=true;snd(b.sekt?'cork':'plop');vib(30);handAnim.capT=1;if(b.sekt){handAnim.capT=0;toast(pick(['PLOPP! Der Korken fliegt Richtung Fernseher. Knapp vorbei.','Sekt auf. Es schäumt über deine Finger. Ableckt. Elegant.','Plopp. Silvester-Feeling. Im November. Allein.']));doneHint('open');return}toast(pick(['Plopp. Das einzige Loch, das du heute aufmachst.','Kronkorken ab. Zum Glück kriegst du wenigstens das noch auf.','Zisch. Feierabend, obwohl du seit 2011 nicht angefangen hast.']));doneHint('open')}
 function sip(){const b=S.bottle;if(!b)return;if(b.opened===false){toast('Erst aufmachen, du hirnloser Nuckelbubi. Flasche antippen.');snd('bad');return}if(b.sips<=0){toast(pick(['Die Flasche ist leer, du Flaschenlutscher. Saugen bringt nix.','Da ist nix mehr drin. Wie in deinem Kopf und deiner Hose.']));return}
   b.sips--;S.lastBeer=S.tot;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=(b.sekt?.15:.19)*pl;if(b.sekt)S.bo=Math.max(0,S.bo-4);S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
   if(b.sips===2){S.st.beers++;}
