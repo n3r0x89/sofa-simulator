@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 148</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 149</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=148;
+const APPVER=149;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1058,7 +1058,8 @@ function mainMenu(){const has=S.started;openModal(`${splashHtml()}<div class="me
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofatest_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
  <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="sex">👫 Mann/Frau wechseln</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
+  if(a==='sex')sexSwitchMenu();
   if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='sup')supportMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofatest_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
   if(a==='new')confirmBox('Wirklich alles löschen und neu anfangen?',()=>newGameWithName('Neues Spiel. Gleiches Sofa.'),pauseMenu)}}))}
@@ -2165,6 +2166,13 @@ const _poopBlockedM=poopBlocked;poopBlocked=function(x,y){if(_poopBlockedM(x,y))
 
 // Sekt-Hände haben einen langen Unterarm: größer zeichnen, damit die Hand so groß ist wie die rechte. Der Arm läuft unten aus dem Bild.
 function sektBox(b,k){const dr=/drink/.test(k),F=dr?1.25:1.42;return{x:b.x+b.w/2-b.w*F/2+b.w*.06,y:b.y-b.h*(dr?.08:.32),w:b.w*F,h:b.h*F}}
+
+// ---- Mann/Frau im Pausenmenü wechseln (mit Spott von Kevin) ----
+function sexSwitchMenu(){const to=isW()?'m':'w';openModal(`<h2>Mann/Frau wechseln</h2><p>Du spielst gerade als <b>${isW()?'Frau':'Mann'}</b>. Wechseln zu <b>${to==='w'?'Frau':'Mann'}</b>? Dein Spielstand bleibt, nur Hände, Ex, Nachbar und Sprüche ändern sich. Und das ganze Haus kriegt’s mit.</p><div class="list"><button class="btn pri" data-sw>Ja, wechseln</button><button class="btn" data-sn>Nein</button></div>`,()=>bindAll({'[data-sw]':()=>{S.sex=to;S.tinda=null;layout();save();closeModal();stat('wechsel-'+to);
+  const M=['Oha! Gestern noch Bierbauch, heute Gelnägel. Du bleibst trotzdem derselbe Versager, nur mit Glitzer.','Neue Nägel, alte Jogginghose. Respekt, du Wrack.','Ich hab’s dem ganzen Haus erzählt. Herr Brandt hat vor Lachen seinen Tee verschüttet.'];
+  const F=['Oha! Gestern noch Glitzernägel, heute Brusthaar. Du bleibst trotzdem dieselbe Versagerin, nur mit Bart.','Neuer Name auf dem Klingelschild, gleicher Gestank in der Bude. Respekt.','Ich hab’s dem ganzen Haus erzählt. Frau Kowalski will jetzt deine Nummer.'];
+  setTimeout(()=>{if(VISIT||CARD||busyUI){toast(pick(to==='w'?M:F),'',4500);return}visit('kevin',pick(to==='w'?M:F),[{t:'Halt die Fresse, Kevin',f:()=>{rude();return{say:'HAHAHA. Ich hab schon ein Foto gemacht. Geht in die Hausgruppe!',pose:3}}},{t:'Ich bin immer noch ich',f:()=>({say:'Eben. Und genau das ist das Problem. Bier?',fx:fx({bo:-10}),pose:2})}],2)},900)},
+ '[data-sn]':pauseMenu}))}
 // ================= FUGGI (Dating-App im Handy, intern tinda) =================
 // Mann sieht nur Frauen, Frau sieht nur Männer. v = Besucherbild (Schlüssel für VIS/Sprites), fake = Kevin steckt dahinter.
 const TINDA_M=[
