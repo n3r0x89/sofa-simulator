@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 124</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 125</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=124;
+const APPVER=125;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -238,7 +238,7 @@ let lastBad=0;function snd(n){try{if(n==='fail'){const nw=performance.now();if(n
 function vib(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}}
 
 // ---------- Texte ----------
-function slur(t){if(S.prom<1.1)return t;const k=clamp((S.prom-1.1)/1.2,0,1);
+function slur(t){t=fem(t);if(S.prom<1.1)return t;const k=clamp((S.prom-1.1)/1.2,0,1);
   return t.split(' ').map(w=>{if(Math.random()<.35*k)w=w.replace(/s(?!ch)/g,'sch');if(Math.random()<.3*k)w=w.replace(/([aeiou])/i,'$1$1');if(Math.random()<.12*k)w+='… hicks';return w}).join(' ')}
 const TX={
   busy:['Eine Hand, ein Ding, du Hirnamputierter. Erst auf den Tisch legen.','Willst du das mit deinem Pimmel halten? Ach so, zu klein. Erst was weglegen.','Deine Wichsgriffel sind voll, du Sackgesicht. Tisch antippen.','Zwei Sachen gleichzeitig? Du schaffst ja nicht mal eine, du Hohlbrot.'],
@@ -260,7 +260,7 @@ function T(k){const v=TX[k];return Array.isArray(v)?pick(v):v}
 
 // ---------- UI helpers ----------
 let toastT=0,toastQ=[],toastBusy=false,toastPrio=false;
-function toast(msg,sub,long){const item={msg:slur(msg),sub,dur:Math.max(long||0,Math.min(7000,2800+msg.length*45+(sub?String(sub).length*20:0))),prio:!!long||msg.length>70};
+function toast(msg,sub,long){const item={msg:slur(msg),sub:fem(sub),dur:Math.max(long||0,Math.min(7000,2800+msg.length*45+(sub?String(sub).length*20:0))),prio:!!long||msg.length>70};
   if(toastBusy&&toastPrio){toastQ.push(item);if(toastQ.length>3)toastQ.shift();return}
   if(toastBusy&&item.prio){toastQ.unshift(item);showToast(toastQ.shift());return}
   showToast(item)}
@@ -343,7 +343,7 @@ function dbAll(){return new Promise(res=>{if(!DB)return res({});try{const out={}
 function dbPut(k,v){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').put(v,k)}catch(e){}}
 function dbClear(){try{DB&&DB.transaction('sp','readwrite').objectStore('sp').clear()}catch(e){}}
 function mkImg(src){const i=new Image();i.src=src;return i}
-const SPKEYS=["splash_xmas","lights_0","lights_1","lights_2","poop_big","poop_drop","poop_s","poop_m","poop_l","poop_dry","nikolaus_0","nikolaus_1","nikolaus_2","nikolaus_3","lh_none_bare","lh_empty_bare","lh_full_bare","lh_open_bare","drink_1_bare","drink_2_bare","drink_3_bare","throw_1_bare","throw_2_bare","rh_empty_bare","rh_cig_bare","rh_ctrl_bare","rh_phone_bare","rh_remote_bare","rh_snack_bare","tat_l1","tat_l2","tat_l3","tat_r1","tat_r2","tat_r3","toni_0","toni_1","toni_2","toni_3","wreath_0","wreath_1","wreath_2","wreath_3","wreath_4","wreath_out","advent_cal","advent_cal_done","xtree_0","xtree_1","xtree_2","lamp_fringe","lamp_80s","swatter_hit","newspaper","newspaper_hit","splat_fly_1","splat_fly_2","splat_roach_1","splat_roach_2","stereo_0","stereo_1","stereo_2","ch_0_1","ch_0_2","ch_0_3","ch_0_4","ch_1_1","ch_1_2","ch_1_3","ch_1_4","ch_2_1","ch_2_2","ch_2_3","ch_2_4","ch_3_1","ch_3_2","ch_3_3","ch_3_4","ch_4_1","ch_4_2","ch_4_3","ch_4_4","ch_5_1","ch_5_2","ch_5_3","ch_5_4","vhs_0_1","vhs_0_2","vhs_0_3","vhs_0_4","vhs_1_1","vhs_1_2","vhs_1_3","vhs_1_4","vhs_2_1","vhs_2_2","vhs_2_3","vhs_2_4","vhs_3_1","vhs_3_2","vhs_3_3","vhs_3_4","vhs_4_1","vhs_4_2","vhs_4_3","vhs_4_4","stash_shelf","stash_spine","stash_low","stash_full","money_pile","mag_worn","mag_sticky","tissues","tissue_used","landlord_hurt", "bailiff_hurt", "police_hurt", "salesman_hurt", "pizza_hurt", "tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5",  "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying", "lh_open", "cap", "cigpack_closed", "cigpack_half", "cigpack_empty", "cig", "cig_lit", "butt", "lighter", "basket_0", "basket_1", "basket_2", "basket_3", "basket_4", "basket_5", "basket_6", "basket_7", "mag", "mag_open", "stash_book", "stash_book_open"];
+const SPKEYS=["ronny_0","ronny_1","ronny_2","ronny_3","ronny_kiss","ronny_laugh","ronny_selfie","ronny_tv","horst_0","horst_1","horst_2","horst_3","toy","toy_on","toy_worn","toy_dead","tat_r3_w","splash_w","splash_xmas_w","lh_none_w","lh_empty_w","lh_full_w","lh_open_w","drink_1_w","drink_2_w","drink_3_w","throw_1_w","throw_2_w","rh_empty_w","rh_cig_w","rh_ctrl_w","rh_phone_w","rh_remote_w","rh_snack_w","splash_xmas","lights_0","lights_1","lights_2","poop_big","poop_drop","poop_s","poop_m","poop_l","poop_dry","nikolaus_0","nikolaus_1","nikolaus_2","nikolaus_3","lh_none_bare","lh_empty_bare","lh_full_bare","lh_open_bare","drink_1_bare","drink_2_bare","drink_3_bare","throw_1_bare","throw_2_bare","rh_empty_bare","rh_cig_bare","rh_ctrl_bare","rh_phone_bare","rh_remote_bare","rh_snack_bare","tat_l1","tat_l2","tat_l3","tat_r1","tat_r2","tat_r3","toni_0","toni_1","toni_2","toni_3","wreath_0","wreath_1","wreath_2","wreath_3","wreath_4","wreath_out","advent_cal","advent_cal_done","xtree_0","xtree_1","xtree_2","lamp_fringe","lamp_80s","swatter_hit","newspaper","newspaper_hit","splat_fly_1","splat_fly_2","splat_roach_1","splat_roach_2","stereo_0","stereo_1","stereo_2","ch_0_1","ch_0_2","ch_0_3","ch_0_4","ch_1_1","ch_1_2","ch_1_3","ch_1_4","ch_2_1","ch_2_2","ch_2_3","ch_2_4","ch_3_1","ch_3_2","ch_3_3","ch_3_4","ch_4_1","ch_4_2","ch_4_3","ch_4_4","ch_5_1","ch_5_2","ch_5_3","ch_5_4","vhs_0_1","vhs_0_2","vhs_0_3","vhs_0_4","vhs_1_1","vhs_1_2","vhs_1_3","vhs_1_4","vhs_2_1","vhs_2_2","vhs_2_3","vhs_2_4","vhs_3_1","vhs_3_2","vhs_3_3","vhs_3_4","vhs_4_1","vhs_4_2","vhs_4_3","vhs_4_4","stash_shelf","stash_spine","stash_low","stash_full","money_pile","mag_worn","mag_sticky","tissues","tissue_used","landlord_hurt", "bailiff_hurt", "police_hurt", "salesman_hurt", "pizza_hurt", "tv_crt", "tv_43", "tv_55", "vcr", "console", "controller", "bottle_0", "bottle_1", "bottle_2", "bottle_3", "bottle_4", "bottle_5",  "chips", "cigpack", "ash_0", "ash_1", "ash_2", "remote", "phone", "phone_ring", "catalog", "rh_empty", "rh_remote", "rh_phone", "rh_cig", "rh_ctrl", "rh_snack", "lh_full", "lh_empty", "drink_1", "drink_2", "drink_3", "throw_1", "throw_2", "lh_none", "fridge", "fridge_open", "massage", "goldchair", "plant", "lava", "lamp_off", "neon_off", "neon_on", "trash", "basket", "empties_1", "empties_2", "empties_3", "puke", "wallstain", "splat", "mold_1", "mold_2", "mold_3", "smoke_1", "smoke_2", "smoke_3", "fly", "roach", "mosquito", "dustbunny", "pigeon", "drop", "ufo", "swatter", "landlord_0", "landlord_1", "landlord_2", "landlord_3", "kowalski_0", "kowalski_1", "kowalski_2", "kowalski_3", "pizza_0", "pizza_1", "pizza_2", "pizza_3", "uwe_0", "uwe_1", "uwe_2", "uwe_3", "kevin_0", "kevin_1", "kevin_2", "kevin_3", "brandt_0", "brandt_1", "brandt_2", "brandt_3", "police_0", "police_1", "police_2", "police_3", "bailiff_0", "bailiff_1", "bailiff_2", "bailiff_3", "jobcenter_0", "jobcenter_1", "jobcenter_2", "jobcenter_3", "parcel_0", "parcel_2", "salesman_0", "salesman_2", "jessica_0", "jessica_1", "jessica_2", "jessica_3", "jessica_kiss", "jessica_laugh", "jessica_selfie", "jessica_tv", "ch_0", "ch_1", "ch_2", "ch_3", "ch_4", "ch_5", "ad", "night", "vhs_0", "game_flight", "game_pong", "game_catch", "splash", "cassette", "sixpack_0", "sixpack_1", "sixpack_2", "sixpack_3", "sixpack_4", "sixpack_5", "sixpack_6", "sixpack_trash", "bottle_lying", "lh_open", "cap", "cigpack_closed", "cigpack_half", "cigpack_empty", "cig", "cig_lit", "butt", "lighter", "basket_0", "basket_1", "basket_2", "basket_3", "basket_4", "basket_5", "basket_6", "basket_7", "mag", "mag_open", "stash_book", "stash_book_open"];
 async function loadSprites(){const base='sprites/';const mk=(k,src)=>{const i=new Image();i.onload=()=>{layout();if((k==='splash'||k==='splash_xmas')&&mainOpen)mainMenu()};let tries=0;i.onerror=()=>{if(SP[k]!==i)return;if(tries<3){tries++;setTimeout(()=>{if(SP[k]===i)i.src=src+'?r='+tries+'_'+Date.now()},700*tries);return}delete SP[k]};i.src=src;SP[k]=i};
   mk('room',base+'room.jpg');for(const k of SPKEYS)mk(k,base+k+'.webp');
   await dbOpen();const all=await dbAll();for(const k in all){const i=mkImg(all[k]);i.onload=()=>layout();SP[k]=i}}
@@ -695,9 +695,9 @@ const VIS={landlord:{n:'Vermieter',c:'#d8c38f',h:'#555',s:1.05},kowalski:{n:'Fra
 let VISIT=null; // {who,pose,x,target,leaving}
 function drawVisitor(t){if(!VISIT)return;const v=VISIT,d=VIS[v.who],b=L.visitor;
   v.x+=(v.target-v.x)*.12;const x=b.x+v.x;
-  let pose=v.pose;if(pose!=='hurt'){if(v.who==='parcel'||v.who==='salesman')pose=pose===2?2:0;if(typeof pose==='string'&&!SP[v.who+'_'+pose])pose=2}
+  let pose=v.pose;if(pose!=='hurt'){if(v.who==='parcel'||v.who==='salesman')pose=pose===2?2:0;if(typeof pose==='string'&&!SP[sprKey(v.who+'_'+pose)])pose=2}
   if(pose==='hurt'){if(spr(v.who+'_hurt',{x,y:b.y,w:b.w,h:b.h}))return;const hp=(v.who==='salesman'||v.who==='parcel')?'_0':'_1';const rc=sprRect(v.who+hp,{x,y:b.y,w:b.w,h:b.h});if(rc){spr(v.who+hp,{x,y:b.y,w:b.w,h:b.h});drawHurt(rc);return}pose=1}
-  if(spr(v.who+'_'+pose,{x,y:b.y,w:b.w,h:b.h}))return;
+  if(spr(sprKey(v.who+'_'+pose),{x,y:b.y,w:b.w,h:b.h}))return;
   cx.save();cx.translate(x+b.w/2,b.y+b.h);cx.scale(d.s,d.s);const bob=Math.sin(t*3)*2;
   ell(0,0,48,10,'#0004');cx.fillStyle='#333';cx.fillRect(-26,-120,20,120);cx.fillRect(6,-120,20,120);
   rr(-40,-250+bob,80,140,20,d.c);
@@ -875,7 +875,7 @@ let BUBBLE_IMG=null;
 // ================= EVENTS & VISITORS =================
 let CARD=null,CALL=null,evTimer=R(20,30),lastEv='',schnitzelT=0;
 const bub=$('bubble'),card=$('card');
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function esc(s){return String(fem(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function visit(who,text,opts,pose=0){if(GREET[CUR_EV]&&Math.random()<.8)text=pick(GREET[CUR_EV]);if(S.dirt>70&&Math.random()<.5&&who!=='kowalski')text=pick(STINK)+' '+text;try{text=tatLine(who,text)}catch(e){}VISIT={who,pose,x:-220,target:0};snd(Math.random()<.5?'knock':'bell');vib(60);setTimeout(()=>showBubble(who,text,opts),650)}
 function placeBubble(){const r=cv.getBoundingClientRect(),sc=r.width/W;bub.style.left=((L.visitor.x+L.visitor.w*.9)*sc)+'px';bub.style.top=((L.visitor.y-10)*sc)+'px'}
 function showBubble(who,text,opts){if(!VISIT)return;if(PUNCHABLE[who]&&!opts.some(o=>o.punch))opts=opts.concat([Object.assign(punchOpt(who),{punch:1})]);placeBubble();const bimg=BUBBLE_IMG;BUBBLE_IMG=null;bub.innerHTML='<div class="who">'+esc(VIS[who].n)+'</div><p>'+esc(text)+'</p>'+(bimg?'<img src="'+bimg+'" alt="" style="display:block;height:110px;margin:2px auto 6px">':'')+'<div class="opts">'+opts.map((o,i)=>'<button class="btn" data-i="'+i+'">'+esc(o.t)+'</button>').join('')+'</div>';bub.style.display='block';
@@ -1029,14 +1029,14 @@ function eventTick(dt){if(VISIT||CARD||CALL||busyUI||PUKE||toastBusy||toastQ.len
 // ================= MENUS =================
 const M=$('modal');
 var mainOpen=false;
-function openModal(html,onBind){mainOpen=false;busyUI=true;M.innerHTML=html;M.style.display='flex';M.scrollTop=0;onBind&&onBind();save()}
+function openModal(html,onBind){mainOpen=false;busyUI=true;M.innerHTML=fem(html);M.style.display='flex';M.scrollTop=0;onBind&&onBind();save()}
 function closeModal(){M.style.display='none';busyUI=false;if(S.right==='phone'||S.right==='ctrl'){} }
 function bindAll(map){for(const[sel,fn]of Object.entries(map))M.querySelectorAll(sel).forEach(el=>el.onclick=()=>{initAudio();snd('pop');fn(el)})}
 const closeBtn='<button class="btn close" data-x>Zurück</button>';
 
-function splashHtml(){let xm=false;try{xm=!!xSeason()&&SP.splash_xmas&&SP.splash_xmas.naturalWidth}catch(e){}
-  if(xm)return'<img src="sprites/splash_xmas.webp" alt="Assi Simulator" style="width:100%;max-height:50vh;object-fit:contain;display:block;margin:0 auto 2px">';
-  return(SP.splash&&SP.splash.naturalWidth?'<img src="sprites/splash.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':'')+'<div class="menuT">Assi<br>Simulator</div>'}
+function splashHtml(){let xm=false;const sw=isW()?'_w':'';try{xm=!!xSeason()&&SP['splash_xmas'+sw]&&SP['splash_xmas'+sw].naturalWidth}catch(e){}
+  if(xm)return'<img src="sprites/splash_xmas'+sw+'.webp" alt="Assi Simulator" style="width:100%;max-height:50vh;object-fit:contain;display:block;margin:0 auto 2px">';
+  return(SP['splash'+sw]&&SP['splash'+sw].naturalWidth?'<img src="sprites/splash'+sw+'.webp" alt="" style="width:100%;max-height:34vh;object-fit:cover;border-radius:14px;margin-bottom:-36px">':'')+'<div class="menuT">Assi<br>Simulator</div>'}
 function mainMenu(){const has=S.started;openModal(`${splashHtml()}<div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER} · Freigegeben ab 16 Jahren</div>
  <div data-a="idea" style="margin:10px auto 0;max-width:420px;background:rgba(242,193,78,.12);border:1px dashed #f2c14e;border-radius:12px;padding:8px 12px;font-size:13px;line-height:1.35;text-align:center;color:#eadfcf;cursor:pointer">🚧 <b>Testphase:</b> Das Spiel befindet sich aktuell noch in der Testphase. Es kann vorkommen, dass das ein oder andere noch nicht so passt. Fehler gefunden? <u>Hier melden</u></div>
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
@@ -1266,12 +1266,14 @@ setInterval(()=>{try{questTick()}catch(e){}},1500);
 // ---------- Name des Assis (bleibt fest, für das spätere Ranking) ----------
 function assiName(){let n=S&&S.name;if(!n){try{n=localStorage.getItem('sofatest_name')||''}catch(e){}if(n&&S)S.name=n}return n||''}
 function newGameWithName(msg){stat('neues-spiel');const old=assiName();S=fresh();S.name='';try{localStorage.removeItem('sofatest_name')}catch(e){}layout();nameMenu(()=>{S.started=true;layout();save();closeModal();setTimeout(()=>toast(msg),3200)},old)}
-function nameMenu(then,prefill){openModal(`<div class="sugg"><h2>Wie heißt dein Assi?</h2><p>Der Name steht später im Ranking und bleibt für dieses Spiel. Erst bei einem neuen Spiel kannst du ihn wieder ändern.</p>
+function nameMenu(then,prefill){openModal(`<div class="sugg"><h2>Wer bist du?</h2><div class="list" style="display:flex;gap:8px;flex-direction:row"><button class="btn" data-sx="m" style="flex:1">🧔 Mann</button><button class="btn" data-sx="w" style="flex:1">👩 Frau</button></div><h2 style="margin-top:14px">Wie heißt dein Assi?</h2><p>Name und Mann/Frau bleiben für dieses Spiel. Erst bei einem neuen Spiel kannst du sie wieder ändern.</p>
   <input id="nameIn" maxlength="20" autocomplete="off" placeholder="z. B. Kalle Kotzbrocken" style="width:100%;box-sizing:border-box;padding:12px;border-radius:12px;border:1px solid #6a5546;background:#1d1510;color:#f4e9dc;font:800 18px Nunito,sans-serif">
   <p id="nameErr" style="color:#e66;font-size:13px;min-height:16px"></p><div class="list"><button class="btn pri" data-n="ok">Los geht’s</button><button class="btn" data-n="rnd">Zufallsname</button></div></div>`,()=>{
   const inp=document.getElementById('nameIn');if(prefill)inp.value=prefill;setTimeout(()=>{try{inp.focus()}catch(e){}},200);
   const RN=['Kalle Kotzbrocken','Dieter Dosenbier','Ronny Ranzig','Uwe Unterhemd','Heinz Hartgeld','Manni Mundgeruch','Bodo Bierbauch','Kevin Kippenkönig','Olaf Ochsenfrosch','Siggi Sofapilz','Jürgen Jogginghose','Horst Hackedicht'];
-  bindAll({'[data-n]':el=>{if(el.dataset.n==='rnd'){inp.value=pick(RN);return}
+  const sxBtns=[...document.querySelectorAll('[data-sx]')];const sxShow=()=>sxBtns.forEach(b=>b.classList.toggle('pri',b.dataset.sx===(S.sex==='w'?'w':'m')));if(S.sex!=='w')S.sex='m';sxShow();
+  sxBtns.forEach(b=>b.onclick=()=>{S.sex=b.dataset.sx;snd('pop');sxShow();layout();if(RN.includes(inp.value)||RN_W.includes(inp.value))inp.value=pick(S.sex==='w'?RN_W:RN);inp.placeholder=S.sex==='w'?'z. B. Chantal Chipstüte':'z. B. Kalle Kotzbrocken'});
+  bindAll({'[data-n]':el=>{if(el.dataset.n==='rnd'){inp.value=pick(S.sex==='w'?RN_W:RN);return}
     const v=inp.value.replace(/\s+/g,' ').trim();const err=document.getElementById('nameErr');
     if(v.length<2){err.textContent='Mindestens 2 Zeichen, du Analphabet.';snd('bad');return}
     if(!/^[A-Za-zÄÖÜäöüß0-9 ._\-]+$/.test(v)){err.textContent='Nur Buchstaben, Zahlen, Leerzeichen, Punkt, Strich.';snd('bad');return}
@@ -1407,14 +1409,14 @@ function magTap(){if(S.right==='ctrl'||S.right==='remote')S.right='empty';if(S.r
     if((S.magUses||0)>=4){setTimeout(()=>{S.mag=false;S.magUses=0;snd('plop');toast(pick(['Das Heft ist durch. Die Seiten kleben zu einem Ziegelstein zusammen. Ab in den Müll.','Busen-Express Nr. 47 hat fertig. Würdevoll im Mülleimer bestattet.','Die Gisela erkennt man nicht mehr. Heft weggeworfen, neues gibt’s am Kiosk.']),'Neues Heft im Shop kaufen',4500)},4200)}setTimeout(()=>{selfEl.innerHTML='<b>Du:</b> '+esc(pick(['Jetzt ’ne Kippe. Das gehört sich so.','Ich bin so müde, ich könnt im Stehen pennen. Gut, dass ich sitz.','Wenn das die Gisela wüsste…']));selfEl.classList.add('on');setTimeout(()=>selfEl.classList.remove('on'),5000)},900)},2600)})}
 let MAGA=null;
 function drawMagAnim(t){if(!MAGA)return;MAGA.t+=1/60;const pw=MAGA.pow||0,sp=pw===2?44:28,am=pw===2?.022:pw?.012:0,k=Math.min(1,MAGA.t/.4),w=W*.62,h=w*1.3,x=W/2,y=H*1.15-(H*.55)*k+Math.sin(t*sp)*H*am;
-  cx.save();cx.translate(x,y);cx.rotate(-.05+Math.sin(t*sp)*am*1.6);const ak=MAGA.page===0?magKey():'mag_open';if(SP[ak]&&SP[ak].naturalWidth){const im=SP[ak],ww=MAGA.page===0?w:W*.94,hh=ww*im.naturalHeight/im.naturalWidth;cx.drawImage(im,-ww/2,-hh/2,ww,hh);if(MAGA.page){cx.fillStyle='#ffe14d';cx.strokeStyle='#000';cx.lineWidth=5;cx.textAlign='center';cx.font='900 '+Math.round(W*.07)+'px "Lilita One",sans-serif';const tx=MAGA.page===1?'SEITE 34 · GISELA (71)':'DOPPELSEITE!';cx.strokeText(tx,0,-hh/2-W*.03);cx.fillText(tx,0,-hh/2-W*.03)}cx.restore()}else{rr(-w/2,-h/2,w,h,8,MAGA.page===0?'#e8417a':MAGA.page===1?'#c2185b':'#ad1457');cx.fillStyle='#ffe14d';cx.textAlign='center';
+  cx.save();cx.translate(x,y);cx.rotate(-.05+Math.sin(t*sp)*am*1.6);const ak=isW()?(MAGA.page===0?toyKey():'toy_on'):MAGA.page===0?magKey():'mag_open';if(SP[ak]&&SP[ak].naturalWidth){const im=SP[ak],ww=isW()?w*.55:MAGA.page===0?w:W*.94,hh=ww*im.naturalHeight/im.naturalWidth;cx.drawImage(im,-ww/2,-hh/2,ww,hh);if(MAGA.page){cx.fillStyle='#ffe14d';cx.strokeStyle='#000';cx.lineWidth=5;cx.textAlign='center';cx.font='900 '+Math.round(W*.07)+'px "Lilita One",sans-serif';const tx=isW()?(MAGA.page===1?'STUFE 5':'STUFE ZEHN!'):MAGA.page===1?'SEITE 34 · GISELA (71)':'DOPPELSEITE!';cx.strokeText(tx,0,-hh/2-W*.03);cx.fillText(tx,0,-hh/2-W*.03)}cx.restore()}else{rr(-w/2,-h/2,w,h,8,MAGA.page===0?'#e8417a':MAGA.page===1?'#c2185b':'#ad1457');cx.fillStyle='#ffe14d';cx.textAlign='center';
   if(MAGA.page===0){cx.font='900 '+Math.round(w*.13)+'px "Lilita One",sans-serif';cx.fillText('BUSEN',0,-h*.33);cx.fillText('EXPRESS',0,-h*.2);cx.fillStyle='#111';cx.fillRect(-w*.42,-h*.08,w*.84,h*.2);cx.fillStyle='#fff';cx.font='900 '+Math.round(w*.09)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,h*.05);cx.fillStyle='#ffe14d';cx.font='800 '+Math.round(w*.055)+'px Nunito,sans-serif';cx.fillText('Heiße Omas aus deiner Nähe',0,h*.3);cx.fillText('Nr. 47 · 2,99 €',0,h*.4)}
   else{cx.font='900 '+Math.round(w*.08)+'px "Lilita One",sans-serif';cx.fillText(MAGA.page===1?'SEITE 34':'DOPPELSEITE!',0,-h*.38);cx.fillStyle='#111';cx.fillRect(-w*.4,-h*.28,w*.8,h*.5);cx.fillStyle='#fff';cx.font='900 '+Math.round(w*.1)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,0);cx.fillStyle='#ffe14d';cx.font='800 '+Math.round(w*.055)+'px Nunito,sans-serif';cx.fillText(MAGA.page===1?'Gisela (71), Castrop-Rauxel':'„Ich mag Männer mit Bauch“',0,h*.33)}
   cx.restore()}
-  if(MAGA.pop){MAGA.pop+=1/60;const p=MAGA.pop;if(p<1.2){cx.save();cx.translate(W/2,H*.32);const s=1+Math.min(1,p*4)*.25;cx.scale(s,s);cx.fillStyle='#ffe14d';cx.beginPath();for(let i=0;i<20;i++){const a=i/20*Math.PI*2,r=i%2?W*.13:W*.27;cx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}cx.fill();cx.fillStyle='#d22';cx.font='900 '+Math.round(W*.11)+'px "Lilita One",sans-serif';cx.textAlign='center';cx.fillText('PLÖPP!',0,W*.035);cx.restore();
+  if(MAGA.pop){MAGA.pop+=1/60;const p=MAGA.pop;if(p<1.2){cx.save();cx.translate(W/2,H*.32);const s=1+Math.min(1,p*4)*.25;cx.scale(s,s);cx.fillStyle='#ffe14d';cx.beginPath();for(let i=0;i<20;i++){const a=i/20*Math.PI*2,r=i%2?W*.13:W*.27;cx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}cx.fill();cx.fillStyle='#d22';cx.font='900 '+Math.round(W*.11)+'px "Lilita One",sans-serif';cx.textAlign='center';cx.fillText(isW()?'BRZZZ!':'PLÖPP!',0,W*.035);cx.restore();
     for(let i=0;i<14;i++){const a=i*2.4,r=p*W*.5;cx.fillStyle=['#ffe14d','#e8417a','#7fd3ff','#9be36b'][i%4];cx.fillRect(W/2+Math.cos(a)*r,H*.32+Math.sin(a)*r+p*p*H*.2,8,14)}}}}
 function magKey(){const n=S.magUses||0;return n>=3&&SP.mag_sticky?'mag_sticky':n>=2&&SP.mag_worn?'mag_worn':'mag'}
-function drawMag(){if(!L.roomMode)return;const m=L.mm;if(S.mag){const p=m(782,1132),w=L.bottleH*.85,h=w*1.25;cx.save();cx.translate(p.x,p.y);cx.rotate(.18);const mk=magKey();if(SP[mk]&&SP[mk].naturalWidth){spr(mk,{x:-w*.65,y:-h*1.05,w:w*1.3,h:h*1.05});cx.restore()}else{rr(-w/2,-h,w,h,3,'#e8417a');cx.fillStyle='#ffe14d';cx.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('BUSEN',0,-h*.78);cx.fillText('EXPRESS',0,-h*.6);cx.fillStyle='#111';cx.fillRect(-w*.32,-h*.45,w*.64,h*.12);cx.fillStyle='#fff';cx.font='800 '+Math.round(w*.11)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,-h*.36);cx.restore()}L.magR={x:p.x-w*.6,y:p.y-h,w:w*1.2,h:h};hit('mag',L.magR)}else L.magR=null;
+function drawMag(){if(!L.roomMode)return;const m=L.mm;if(S.mag){const p=m(782,1132),w=L.bottleH*.85,h=w*1.25;cx.save();cx.translate(p.x,p.y);cx.rotate(.18);const mk=isW()?toyKey():magKey();if(SP[mk]&&SP[mk].naturalWidth){spr(mk,{x:-w*.65,y:-h*1.05,w:w*1.3,h:h*1.05});cx.restore()}else if(isW()){cx.translate(0,-h*.5);drawToyFallback(w,h);cx.restore()}else{rr(-w/2,-h,w,h,3,'#e8417a');cx.fillStyle='#ffe14d';cx.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';cx.textAlign='center';cx.fillText('BUSEN',0,-h*.78);cx.fillText('EXPRESS',0,-h*.6);cx.fillStyle='#111';cx.fillRect(-w*.32,-h*.45,w*.64,h*.12);cx.fillStyle='#fff';cx.font='800 '+Math.round(w*.11)+'px Nunito,sans-serif';cx.fillText('ZENSIERT',0,-h*.36);cx.restore()}L.magR={x:p.x-w*.6,y:p.y-h,w:w*1.2,h:h};hit('mag',L.magR)}else L.magR=null;
   syncTissues();for(let i=0;i<S.tissuePos.length;i++){const tp=S.tissuePos[i],p=m(tp.x,tp.y),sc=tp.z==='b'?.75:tp.z==='f'?1.15:1,r=L.bottleH*.16*sc;
     if(SP.tissue_used&&SP.tissue_used.naturalWidth){cx.save();cx.translate(p.x,p.y);cx.rotate(tp.a||0);if(tp.z==='b')cx.filter='brightness(.8)';spr('tissue_used',{x:-r*1.5,y:-r*1.2,w:r*3,h:r*2.3});cx.restore()}
     else{cx.fillStyle='#f4f1ea';cx.beginPath();cx.ellipse(p.x,p.y,r*1.2,r*.8,0,0,7);cx.fill()}
@@ -1558,17 +1560,17 @@ let CALL_UI=null;
 function later(sec,fn){const due=S.tot+sec;const tk=setInterval(()=>{if(S.tot>=due&&!busyUI){clearInterval(tk);fn()}},500)}
 function callVisit(id,sec,guest){S.callVisit={id,at:S.tot+sec,guest:!!guest}}
 setInterval(()=>{try{const cv=S.callVisit;if(!cv||!S.started||S.tot<cv.at||VISIT||CARD||CALL||busyUI||PUKE||toastBusy||S.guest)return;S.callVisit=null;if(cv.guest){startGuest(cv.id);return}const e=EVENTS.find(x=>x.id===cv.id);if(e){CUR_EV=e.id;noteEvent(e);e.run()}}catch(e){}},1000);
-function contactsHtml(){return`<h4>Anrufen</h4><div class="list">${CONTACTS.map((c,i)=>{const cd=(S.callCd&&S.callCd[c.k]||0)>S.tot;return`<div class="row${cd?' off':''}"><img src="sprites/${c.img}.webp" alt="" style="width:38px;height:44px;object-fit:cover;object-position:top;border-radius:8px;margin-right:8px"><div class="t"><b>${c.n}</b><span>${cd?'hat gerade keinen Bock auf dich':'anrufen'}</span></div><button class="btn pri" data-call="${i}" ${cd?'disabled':''}>📞</button></div>`}).join('')}</div>`}
+function contactsHtml(){return`<h4>Anrufen</h4><div class="list">${CONTACTS.map((c,i)=>{const cd=(S.callCd&&S.callCd[c.k]||0)>S.tot;return`<div class="row${cd?' off':''}"><img src="sprites/${sprKey(c.img)}.webp" alt="" style="width:38px;height:44px;object-fit:cover;object-position:top;border-radius:8px;margin-right:8px"><div class="t"><b>${c.n}</b><span>${cd?'hat gerade keinen Bock auf dich':'anrufen'}</span></div><button class="btn pri" data-call="${i}" ${cd?'disabled':''}>📞</button></div>`}).join('')}</div>`}
 function callContact(c){if(!S.callCd)S.callCd={};S.callCd[c.k]=S.tot+30;
-  openModal(`<div style="text-align:center"><img src="sprites/${c.img}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p id="callSt">Klingelt …</p></div>`,()=>{});
+  openModal(`<div style="text-align:center"><img src="sprites/${sprKey(c.img)}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p id="callSt">Klingelt …</p></div>`,()=>{});
   snd('ring');vib([200,100,200]);setTimeout(()=>snd('ring'),1400);
   setTimeout(()=>{if(!M||M.style.display==='none')return;
     const pickUp=c.k==='police'||Math.random()<.85;
     if(!pickUp){document.getElementById('callSt').textContent='Geht nicht ran. Vermutlich mit Absicht.';setTimeout(()=>{closeModal()},1800);return}
     const acts=c.a.filter(a=>!a.c||a.c());
-    M.innerHTML=`<div style="text-align:center"><img src="sprites/${c.img}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p>„${esc(pick(c.hi))}“</p></div><div class="list">${acts.map((a,i)=>`<button class="btn pri" data-a2="${i}">${esc(a.t)}</button>`).join('')}<button class="btn" data-hang>Auflegen</button></div>`;
+    M.innerHTML=`<div style="text-align:center"><img src="sprites/${sprKey(c.img)}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p>„${esc(pick(c.hi))}“</p></div><div class="list">${acts.map((a,i)=>`<button class="btn pri" data-a2="${i}">${esc(a.t)}</button>`).join('')}<button class="btn" data-hang>Auflegen</button></div>`;
     bindAll({'[data-a2]':el=>{const r=acts[+el.dataset.a2].f()||{};const sub=[r.fx?fx(r.fx):'',r.extra||''].filter(Boolean).join(' · ');addXP(1);checkAch();
-      M.innerHTML=`<div style="text-align:center"><img src="sprites/${c.img}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p>„${esc(r.say||'…')}“</p>${sub?'<p style="color:#f2c14e;font-weight:800">'+esc(sub)+'</p>':''}</div><div class="list"><button class="btn" data-hang>Auflegen</button></div>`;
+      M.innerHTML=`<div style="text-align:center"><img src="sprites/${sprKey(c.img)}.webp" alt="" style="height:150px;margin:6px auto 4px;display:block"><h2 style="margin:4px 0">${esc(c.n)}</h2><p>„${esc(r.say||'…')}“</p>${sub?'<p style="color:#f2c14e;font-weight:800">'+esc(sub)+'</p>':''}</div><div class="list"><button class="btn" data-hang>Auflegen</button></div>`;
       bindAll({'[data-hang]':()=>{snd('pop');closeModal()}})},'[data-hang]':()=>{snd('pop');closeModal()}})},2400)}
 
 // ================= RANGLISTE (alle, die gerade spielen) =================
@@ -1668,11 +1670,11 @@ const GUEST_COMMON=[
 const gEl=document.createElement('div');gEl.id='guestB';document.getElementById('stage').appendChild(gEl);
 function startGuest(who){const G=GUESTS[who];if(!G)return;snd(Math.random()<.5?'knock':'bell');S.guest={who,until:S.tot+45,mood:0,talkAt:S.tot+R(6,10)};const r=G.arrive();clampAll();toast(r.t,r.fx||'',5000);addXP(2);guestDraw();setTimeout(()=>{try{promCheck()}catch(e){}},2500)}
 function guestLeave(msg){if(!S.guest)return;const n=GUESTS[S.guest.who].n;S.guest=null;guestDraw();toast(msg||n+' geht wieder. Die Tür knallt.','',3500)}
-function guestDraw(){const g=S.guest;if(!g||!GUESTS[g.who]){gEl.style.display='none';return}const G=GUESTS[g.who];gEl.style.display='block';gEl.innerHTML=`<div class="gh" style="background-image:url(sprites/${G.img}.webp)"></div><div class="gn">${esc(G.n)}</div>`}
+function guestDraw(){const g=S.guest;if(!g||!GUESTS[g.who]){gEl.style.display='none';return}const G=GUESTS[g.who];gEl.style.display='block';gEl.innerHTML=`<div class="gh" style="background-image:url(sprites/${sprKey(G.img)}.webp)"></div><div class="gn">${esc(G.n)}</div>`}
 gEl.onclick=()=>{initAudio();snd('pop');guestMenu()};
 function guestMenu(){const g=S.guest;if(!g)return;const G=GUESTS[g.who];const acts=[...(G.own||[]),...GUEST_COMMON].filter(a=>!a.c||a.c());
-  openModal(`<div style="text-align:center"><img src="sprites/${G.img}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)} ist zu Besuch</h2><p style="color:var(--dim);font-size:13px">bleibt noch etwa ${Math.max(1,Math.round((g.until-S.tot)/10))} Std.</p></div><div class="list">${acts.map((a,i)=>`<button class="btn${i<(G.own||[]).filter(x=>!x.c||x.c()).length?' pri':''}" data-g="${i}">${esc(a.t)}</button>`).join('')}<button class="btn" data-gx>Zurück</button></div>`,()=>bindAll({'[data-g]':el=>{const a=acts[+el.dataset.g];const r=a.f(g)||{};const sub=r.fx?fx(r.fx):'';checkAch();
-    M.innerHTML=`<div style="text-align:center"><img src="sprites/${G.img}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)}</h2><p>„${esc(r.say||'…')}“</p>${sub?'<p style="color:#f2c14e;font-weight:800">'+esc(sub)+'</p>':''}</div><div class="list"><button class="btn" data-gx>Weiter</button></div>`;
+  openModal(`<div style="text-align:center"><img src="sprites/${sprKey(G.img)}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)} ist zu Besuch</h2><p style="color:var(--dim);font-size:13px">bleibt noch etwa ${Math.max(1,Math.round((g.until-S.tot)/10))} Std.</p></div><div class="list">${acts.map((a,i)=>`<button class="btn${i<(G.own||[]).filter(x=>!x.c||x.c()).length?' pri':''}" data-g="${i}">${esc(a.t)}</button>`).join('')}<button class="btn" data-gx>Zurück</button></div>`,()=>bindAll({'[data-g]':el=>{const a=acts[+el.dataset.g];const r=a.f(g)||{};const sub=r.fx?fx(r.fx):'';checkAch();
+    M.innerHTML=`<div style="text-align:center"><img src="sprites/${sprKey(G.img)}.webp" alt="" style="height:140px;display:block;margin:4px auto"><h2 style="margin:4px 0">${esc(G.n)}</h2><p>„${esc(r.say||'…')}“</p>${sub?'<p style="color:#f2c14e;font-weight:800">'+esc(sub)+'</p>':''}</div><div class="list"><button class="btn" data-gx>Weiter</button></div>`;
     if(r.leave){S.guest=null;guestDraw()}else g.until=Math.min(g.until+6,S.tot+60);
     bindAll({'[data-gx]':()=>{closeModal();clampAll();if(r.leave)toast(G.n+' ist weg.');setTimeout(()=>{try{promCheck()}catch(e){}},400)}})},'[data-gx]':()=>closeModal()}))}
 setInterval(()=>{try{const g=S.guest;if(!g){if(gEl.style.display!=='none')guestDraw();return}if(gEl.style.display==='none')guestDraw();if(!S.started||busyUI)return;
@@ -1716,13 +1718,13 @@ Object.assign(TAT_ANCHOR,{
 ['lh_full_bare','lh_empty_bare','drink_1_bare'].forEach(k=>TAT_ANCHOR[k]=TAT_ANCHOR.lh_open_bare);
 // Ab dem ersten Tattoo auf einem Arm: Ärmel weg, nackter Unterarm (Bild <name>_bare), sobald vorhanden
 function armTat(arm){const tt=S.tat;return!!tt&&TATS.some(T=>T.arm===arm&&tt[T.id])}
-function bareKey(arm,key){if(!armTat(arm))return key;const b=key+'_bare',i=SP[b];return i&&i.naturalWidth?b:key}
+function bareKey(arm,key){if(isW()){const w=key+'_w',iw=SP[w];if(iw&&iw.naturalWidth)return w}if(!armTat(arm))return key;const b=key+'_bare',i=SP[b];return i&&i.naturalWidth?b:key}
 let tatOC=null;
-function drawTattoos(arm,key,b){const tt=S.tat;if(!tt)return;const an=TAT_ANCHOR[key]||TAT_ANCHOR[key.replace('_bare','')];if(!an)return;const r=sprRect(key,b);if(!r)return;
+function drawTattoos(arm,key,b){const tt=S.tat;if(!tt)return;const kb=key.replace(/_w$/,''),an=TAT_ANCHOR[key]||TAT_ANCHOR[kb+'_bare']||TAT_ANCHOR[kb.replace('_bare','')];if(!an)return;const r=sprRect(key,b);if(!r)return;
   const list=TATS.filter(T=>T.arm===arm&&tt[T.id]&&an[+T.id[1]-1]);if(!list.length)return;
   // Tattoos erst auf eine eigene Fläche malen und auf die Hand zuschneiden, damit nichts in die Luft ragt
   const w=Math.ceil(r.w),h=Math.ceil(r.h);if(!tatOC)tatOC=document.createElement('canvas');tatOC.width=w;tatOC.height=h;const o=tatOC.getContext('2d');o.clearRect(0,0,w,h);
-  for(const T of list){const a=an[+T.id[1]-1],x=w*a[0],y=h*a[1],sz=w*a[2];o.save();o.translate(x,y);o.rotate(a[3]);const im=SP['tat_'+T.id];
+  for(const T of list){const a=an[+T.id[1]-1],x=w*a[0],y=h*a[1],sz=w*a[2];o.save();o.translate(x,y);o.rotate(a[3]);const im=(isW()&&T.id==='r3'&&SP.tat_r3_w&&SP.tat_r3_w.naturalWidth)?SP.tat_r3_w:SP['tat_'+T.id];
     if(im&&im.naturalWidth){const ih=sz*im.naturalHeight/im.naturalWidth;o.drawImage(im,-sz/2,-ih/2,sz,ih)}
     else{o.fillStyle='#24406e';o.font='900 '+Math.max(7,sz*(T.txt.length>4?.22:.34))+'px Nunito,sans-serif';o.textAlign='center';o.textBaseline='middle';o.fillText(T.txt,0,0)}o.restore()}
   o.globalCompositeOperation='destination-in';o.drawImage(SP[key],0,0,w,h);o.globalCompositeOperation='source-over';
@@ -1923,6 +1925,146 @@ function guideStash(){if(S.stashGuide)return;S.stashGuide=1;save();
    {t:'📕 Dein Geheimversteck',d:'Das hohle Buch steht jetzt oben links im Regal: „Kapital“ von Karl Marx, innen ausgehöhlt. Antippen öffnet es – wir machen’s gleich mal auf.',r:()=>stashR()},
    {t:'Was bringt’s?',d:'Steck Geld rein, bevor Gerichtsvollzieher, Bullen oder Kevin es dir abknöpfen. Hier finden die nix. Pro Tag gehen höchstens '+eur(STASH_DAY)+' rein, insgesamt '+eur(STASH_MAX)+'. Rausholen geht jederzeit.',r:()=>stashR()}],()=>{stat('versteck-erklaert');setTimeout(()=>{try{stashMenu()}catch(e){}},250)})}
 function stashR(){const r=cvRect(L.stash);if(!r)return null;const e=10;return{x:r.x-e,y:r.y-e,w:r.w+e*2,h:r.h+e*2}}
+// ================= FRAUEN-MODUS =================
+// S.sex: 'w' = Frau, sonst Mann. Als Frau: Jessica -> Ronny (Ex), Frau Kowalski -> Horst (Nachbar), Heft -> Rüttel-Rudi, Frauenhände.
+function isW(){try{return S&&S.sex==='w'}catch(e){return false}}
+function sprKey(k){if(!isW()||!k)return k;return String(k).replace(/^jessica_/,'ronny_').replace(/^kowalski_/,'horst_')}
+const RN_W=['Chantal Chipstüte','Jacqueline Jägermeister','Gabi Gammel','Uschi Unterhemd','Doris Dosenbier','Sabine Saufnase','Biggi Bierbauch','Moni Mundgeruch','Babsi Bratwurst','Heike Hackedicht','Petra Pfandflasche','Silke Sofaschnecke'];
+// Ganze Sätze zuerst, dann einzelne Namen und Wörter. Ersetzt wird überall, wo Text angezeigt wird.
+const FEM=[
+ // Selbstgespräche
+ ['Mir ist so langweilig… der Busen-Express guckt mich schon so an.','Mir ist so langweilig… Rudi guckt mich schon so an.'],
+ ['Gisela ruft. Seite 34. Ich hör sie bis hierher.','Rudi ruft. Stufe 10. Ich hör ihn bis hierher brummen.'],
+ ['Langeweile. Hose. Heft. Du weißt Bescheid.','Langeweile. Rudi. Batterien. Du weißt Bescheid.'],
+ ['Wenn jetzt keiner klingelt, gönn ich mir das Heft.','Wenn jetzt keiner klingelt, gönn ich mir Rudi.'],
+ ['Ohne Kippe zittern mir die Wichsgriffel.','Ohne Kippe zittern mir die Krallen.'],
+ ['Achseln, Sack, fertig.','Achseln, Bikinizone, fertig.'],
+ ['Wenn das die Gisela wüsste…','Wenn das der Rudi wüsste…'],
+ // Rüttel-Rudi-Szene
+ ['Mal gucken, was der Busen-Express diesen Monat so bringt…','So, Rudi. Nur wir zwei. Wie immer.'],
+ ['So. Hose auf, Hirn aus.','Batterien aus der Fernbedienung geklaut. Zappen wird überbewertet.'],
+ ['Seite 34… Gisela, 71, aus Castrop-Rauxel. Ohhh Gisela…','Stufe 1… Stufe 3… ohhh, Stufe 5…'],
+ ['Uiii, die Doppelseite. Mit Ausklapper.','Uiii, Turbo-Modus. Wusste gar nicht, dass er den hat.'],
+ ['Die Lesebrille… wo ist die Lesebrille… egal, Fantasie reicht.','Ich denk an Ronny… nee. Doch lieber an den Pizzaboten.'],
+ ['Schneller, Gerhard, schneller!','STUFE ZEHN, RUDI! STUFE ZEHN!'],
+ ['Es klingelt. Hose hoch, Heft unters Kissen, Puls auf 180. Fehlalarm, Kinderstreich.','Batterie leer. Mittendrin. Wie jeder Mann, den du je hattest.'],
+ ['Kowalski klopft: „Ich hör doch, dass du da bist, Schätzchen!“ Alles erschlafft.','Horst klopft: „Ich hör doch was brummen! Brauchst du Hilfe, Puppächen?“ Stimmung im Keller.'],
+ ['Hach… Gisela…','OHHH RUDI!'],
+ ['Kowalski klopft an die Wand: „Gesundheit!“','Herr Brandt hämmert an die Wand: „Bohren nach 22 Uhr ist verboten!“'],
+ ['Gekommen, gesehen, Taschentuch verbraucht.','Gekommen, gesehen, Batterien leer.'],
+ ['Seite 34 klebt jetzt an Seite 35. Für immer.','Die Nachbarn denken jetzt, du renovierst.'],
+ ['Schon wieder? Dein Schwanz hat Urlaub beantragt.','Schon wieder? Rudi hat Urlaub beantragt.'],
+ ['Gib ihm ’ne Pause, der ist wund gescheuert.','Gib ihm ’ne Pause, der Motor glüht noch.'],
+ ['Der Kleine liegt noch im Koma. Lass ihn schlafen.','Rudi lädt noch. Also, die Batterien liegen auf der Heizung.'],
+ ['Das Heft ist durch. Die Seiten kleben zu einem Ziegelstein zusammen. Ab in den Müll.','Rudi ist hin. Raucht, brummt nicht mehr. Ab in den Müll.'],
+ ['Busen-Express Nr. 47 hat fertig. Würdevoll im Mülleimer bestattet.','Rüttel-Rudi hat fertig. Würdevoll im Mülleimer bestattet.'],
+ ['Die Gisela erkennt man nicht mehr. Heft weggeworfen, neues gibt’s am Kiosk.','Rudi ist nur noch Klebeband. Weggeworfen, einen neuen gibt’s im Shop.'],
+ ['Neues Heft im Shop kaufen','Neuen Rudi im Shop kaufen'],
+ ['Du hast doch schon eins, du Sammler. Geld zurück.','Du hast doch schon einen, du Sammlerin. Geld zurück.'],
+ // Ronny statt Jessica
+ ['Mein Neuer hat mir gezeigt, wo die Klitoris ist. Du hast drei Jahre lang an meinem Knie gesucht.','Meine Neue kocht, putzt und meckert nicht, wenn ich Fußball gucke. Du hast nur gemeckert.'],
+ ['Na, Schlappschwanz? Immer noch am Sofa festgewachsen? Mein Neuer kann’s übrigens dreimal am Abend.','Na, Sofakartoffel? Immer noch am Sofa festgewachsen? Meine Neue kann übrigens kochen. Du konntest nur Pizza auftauen.'],
+ ['Na, Schlappschwanz? Immer noch am Sofa festgewachsen? Mein Neuer kann’s dreimal am Abend.','Na, Sofakartoffel? Immer noch am Sofa festgewachsen? Meine Neue kann übrigens kochen.'],
+ ['Ich war zufällig in der Gegend. Mit meinem Neuen. Der hat Auto, Arbeit und einen, den man ohne Lupe findet.','Ich war zufällig in der Gegend. Mit meiner Neuen. Die hat Auto, Arbeit und keinen Damenbart.'],
+ ['Hast du noch mein Glätteisen? Und Bier? Bier war ja das Einzige, was bei dir je steif war. Die Flasche.','Hast du noch meine Hantel? Und Bier? Bier war ja das Einzige, was du je mit mir geteilt hast.'],
+ ['Ich hab meinen Freundinnen erzählt, wie klein er war. Die haben geweint vor Lachen.','Ich hab meinen Kumpels erzählt, wie du schnarchst. Die haben geweint vor Lachen.'],
+ ['Ich nehm den alten Röhrenfernseher mit. Der war das Einzige hier mit Ausdauer. Tschüssi, Minipimmel!','Ich nehm den alten Röhrenfernseher mit. Der war das Einzige hier, das ich vermisse. Tschüssi, Sofawal!'],
+ ['Sie säuft zwei von deinen Bieren, erzählt im Detail, was ihr Neuer im Bett draufhat, und wirft dir zum Abschied eine mitleidige Kusshand zu.','Er säuft zwei von deinen Bieren, erzählt im Detail, was seine Neue im Bett draufhat, und wirft dir zum Abschied eine mitleidige Kusshand zu.'],
+ ['Sie macht ein Selfie mit dir im Hintergrund. Bildunterschrift: „Warum ich jetzt einen Richtigen hab“.','Er macht ein Selfie mit dir im Hintergrund. Bildunterschrift: „Warum ich jetzt eine Richtige hab“.'],
+ ['Leck mich, du Sofakartoffel mit Minischwanz!','Leck mich, du Sofakartoffel mit Damenbart!'],
+ ['Oh nein. Nicht du. Mein Neuer liegt neben mir.','Oh nein. Nicht du. Meine Neue liegt neben mir.'],
+ ['Du lallst „Ich liebe dich, Kevin“. Sie legt auf.','Du lallst „Ich liebe dich, Kevin“. Er legt auf.'],
+ ['Jessica stöckelt rein, rümpft die Nase und setzt sich ganz vorne auf die Kante.','Ronny schlurft rein, rümpft die Nase und setzt sich ganz vorne auf die Kante.'],
+ ['Mein Neuer hat ’nen Thermomix.','Meine Neue hat ’nen Thermomix.'],
+ ['Ich bin nur hier, weil mein Neuer beim Fußball ist.','Ich bin nur hier, weil meine Neue beim Yoga ist.'],
+ ['Über ihren Neuen lästern','Über seine Neue lästern'],
+ ['Sie zögert … dann lacht sie dir ins Gesicht. Aber sie bleibt noch.','Er zögert … dann lacht er dir ins Gesicht. Aber er bleibt noch.'],
+ ['Sie kippt dir dein Bier über die Hose und geht.','Er kippt dir dein Bier über die Hose und geht.'],
+ ['Und wer zum Teufel ist MANDY?!','Und wer zum Teufel ist DENNIS?!'],
+ ['Mehr als du je wert warst, du Schlaffi.','Mehr als du je wert warst, du Sofaschnecke.'],
+ ['Gutschein von Jessica','Gutschein von Ronny'],
+ // Horst statt Frau Kowalski
+ ['Na, Sofakönig? Ich hab heute die Strapse an. Also die Stützstrümpfe. Kommt aufs Gleiche, wenn das Licht aus ist.','Na, Sofakönigin? Ich hab heute den Seidenpyjama an. Also den Feinripp. Kommt aufs Gleiche, wenn das Licht aus ist.'],
+ ['Ich hab Eierlikör, Gleitgel und keine Hemmungen mehr seit dem Mauerfall.','Ich hab Kräuterlikör, Massageöl und keine Hemmungen mehr seit dem Mauerfall.'],
+ ['Mein Heinz ist seit 20 Jahren tot. Untenrum bin ich aber noch voll im Saft.','Meine Gerda ist seit 20 Jahren weg. Untenrum bin ich aber noch voll im Saft.'],
+ ['Du siehst aus wie einer, der seit Jahren nur seine rechte Hand kennt. Ich hab zwei.','Du siehst aus wie eine, die seit Jahren nur ihren Rudi kennt. Ich hab Puls UND Batterien.'],
+ ['Ich hab mir die Haare lila gemacht. Und woanders auch, willst du gucken?','Ich hab mir den Schnauzer gefärbt. Und woanders auch, willst du gucken?'],
+ ['Lust auf Kaffee und Kuchen? Oder gleich auf Omas Sahneschnitte?','Lust auf Kaffee und Mettbrötchen? Oder gleich auf Horsts Bockwurst?'],
+ ['Mach auf, Bärchen. Im Dunkeln sieht man meine Krampfadern nicht.','Mach auf, Puppächen. Im Dunkeln sieht man die Haare auf meinem Rücken nicht.'],
+ ['Ich hab mir die Beine rasiert, Schätzchen. Also eins. Beim zweiten ist der Rasierer stumpf geworden.','Ich hab mir den Rücken rasiert, Puppächen. Also halb. Weiter bin ich nicht gekommen.'],
+ ['Na, mein Hengst? Ich hab heute nichts drunter. Also, außer der Inkontinenzeinlage.','Na, mein Täubchen? Ich hab heute nichts drunter. Also, außer dem Bruchband.'],
+ ['Schätzchen, mein Heinz hat immer gesagt, ich sei eine Wildkatze. Dann ist er gestorben. Zufall.','Puppächen, meine Gerda hat immer gesagt, ich sei ein Tier im Bett. Dann ist sie ausgezogen. Zufall.'],
+ ['Genau wie mein dritter Mann. Mach auf!','Genau wie meine dritte Frau. Mach auf!'],
+ ['Du undankbarer Fettsack! Ich hab dir drei Jahre Kuchen gebracht.','Du undankbare Sofaschnecke! Ich hab dir drei Jahre Mettbrötchen gebracht.'],
+ ['du impotenter Sofaschimmel','du frigide Sofaschnecke'],
+ ['Nicht mal Blumen, du geiziger Schlappschwanz?!','Nicht mal Blumen, du geizige Schnepfe?!'],
+ ['Oh… Nelken von der Tanke. Na gut, du Schlawiner.','Oh… Nelken von der Tanke. Für MICH? Na gut, du Luder.'],
+ ['Selber schuld, Oma','Selber schuld, Opa'],
+ ['Verpiss dich, Oma','Verpiss dich, Opa'],
+ ['DU KLEINER SCHWANZ WIRST DAS BEREUEN!','DU EINGEBILDETE ZICKE WIRST DAS BEREUEN!'],
+ ['Komm rein, Schätzchen','Komm rein, Horst'],
+ ['Eine Stunde, eine Flasche Eierlikör und ein ausgerenktes Becken später… Sie steckt dir Geld zu wie einem Stricher und verspricht Kuchen.','Eine Stunde, eine Flasche Kräuterlikör und ein Hexenschuss später… Er steckt dir Geld in den BH und verspricht Mettbrötchen.'],
+ ['Pff, du Schlappschwanz. Bei mir hätte sogar deiner noch funktioniert.','Pff, du Zicke. Bei mir hätte sogar deine Frisur gehalten.'],
+ ['Hast du mal ein Bierchen für eine alte Schlampe?','Hast du mal ein Bierchen für einen alten Bock?'],
+ ['Morgen gibt’s Kuchen. Und vielleicht mehr, Hengst.','Morgen gibt’s Mettbrötchen. Und vielleicht mehr, Täubchen.'],
+ ['Geiziger Sack. Mit dem Ding in deiner Hose wärst du eh nicht weit gekommen.','Geizige Kuh. Mit der Laune wärst du bei mir eh nicht weit gekommen.'],
+ ['Kein Danke? Typisch Kerl.','Kein Danke? Typisch Weiber.'],
+ ['Schätzchen! Ich wusste, dass du anrufst. Ich hab schon die Stützstrümpfe aus.','Puppächen! Ich wusste, dass du anrufst. Ich hab den Bademantel schon offen.'],
+ ['Kowalski. Wer da? Ach DU, mein Hengst.','Pieper. Wer da? Ach DU, mein Täubchen.'],
+ ['Ich bring Eierlikör und schlechte Absichten.','Ich bring Kräuterlikör und schlechte Absichten.'],
+ ['Frau Kowalski kommt mit Eierlikör und schlechten Absichten.','Horst kommt mit Kräuterlikör und schlechten Absichten.'],
+ ['Kuchen schnorren','Mettbrötchen schnorren'],
+ ['Morgen steht ein Kuchen vor deiner Tür. Mit Liebe gebacken. Und Haaren.','Morgen stehen Mettbrötchen vor deiner Tür. Mit Liebe geschmiert. Und Brusthaaren.'],
+ ['Kuchen gibt’s nur gegen Gegenleistung, Bärchen.','Mettbrötchen gibt’s nur gegen Gegenleistung, Puppächen.'],
+ ['Mein Heinz hatte auch so ein Sofa. Er ist drauf gestorben. Glücklich.','Meine Gerda hatte auch so ein Sofa. Sie ist drauf eingeschlafen und nie wieder aufgewacht. Glücklich.'],
+ ['Schätzchen, du hast so starke Hände. Zum Bierhalten.','Puppächen, du hast so zarte Hände. Zum Bierhalten.'],
+ ['Ich hab heute meine guten Stützstrümpfe an. Nur für dich.','Ich hab heute mein gutes Feinripp an. Nur für dich.'],
+ ['Früher war ich Miss Castrop-Rauxel. 1971. Zweite.','Früher war ich Mister Castrop-Rauxel. 1971. Zweiter.'],
+ ['Sie kuschelt sich an. Riecht nach Melissengeist und Katze.','Er kuschelt sich an. Riecht nach Kräuterlikör und Rasierwasser.'],
+ ['Noch’n Eierlikör','Noch’n Kräuterlikör'],
+ ['Prost, Bärchen. Auf uns. Und auf Heinz.','Prost, Puppächen. Auf uns. Und auf Gerda.'],
+ ['„Ach Schätzchen, ich bleib noch ein bisschen.“ Sie bleibt einfach sitzen.','„Ach Puppächen, ich bleib noch ein bisschen.“ Er bleibt einfach sitzen.'],
+ ['Diese Tattoos … da wird mir ganz warm unter der Kittelschürze.','Diese Tattoos … da wird mir ganz warm unterm Bademantel.'],
+ ['Kuchen von Frau Kowalski','Mettbrötchen von Horst'],
+ ['Kowalskis Gebiss auch','Horsts Toupet auch'],
+ ['Frau Kowalski hat schon drei Hausmeister verschlissen.','Horst von gegenüber hat schon drei Putzfrauen vergrault.'],
+ ['Tag 4: Frau Kowalski hat mir zugezwinkert. Oder sie hat was im Auge.','Tag 4: Horst von gegenüber hat mir zugezwinkert. Oder er hat was im Auge.'],
+ // Spieler selbst
+ ['Willst du das mit deinem Pimmel halten? Ach so, zu klein. Erst was weglegen.','Willst du das mit deinen Gelnägeln halten? Die brechen ab. Erst was weglegen.'],
+ ['Deine Wichsgriffel sind voll, du Sackgesicht.','Deine Krallen sind voll, du Schnapsdrossel.'],
+ ['Sixpack leer. Wie dein Sack seit Jessica.','Sixpack leer. Wie dein Bett seit Ronny.'],
+ ['du verwichster Schandfleck','du verpennter Schandfleck'],
+ ['außer einer Morgenlatte, und selbst die ist wieder weg.','außer einem Kissenabdruck im Gesicht, und selbst der ist wieder weg.'],
+ ['Weiter, du Daumenwichser.','Weiter, du Sofaschnecke.'],
+ ['du Reiherkönig','du Reiherkönigin'],
+ ['Tätowiert? Jetzt siehst du aus wie ein echter Kerl. Ein versoffener, aber echt.','Tätowiert? Jetzt siehst du aus wie eine echte Rockerbraut. Eine versoffene, aber echt.'],
+ ['du gieriger Sack','du gierige Schnepfe'],
+ ['Ich klingel seit fünf Minuten. Wichst du wieder?','Ich klingel seit fünf Minuten. Brummt da was?'],
+ ['und Ihr Gestöhne beim Pornogucken ist eine Zumutung!','und Ihr Gebrumme um Mitternacht ist eine Zumutung!'],
+ ['RUHE, Sie asozialer Dreckssack! Ihre Glotze dröhnt durch die Wand, und Ihr Gestöhne beim Pornogucken auch!','RUHE, Sie asoziale Dreckschleuder! Ihre Glotze dröhnt durch die Wand, und Ihr Gebrumme um Mitternacht auch!'],
+ ['und Ihr Gegrunze beim Wichsen auch!','und Ihr Gebrumme um Mitternacht auch!'],
+ ['und Ihre Ex-Freundin aus dem Gedächtnis','und Ihren Ex aus dem Gedächtnis'],
+ ['hier schreit nachts jemand „Gisela“','hier schreit nachts jemand „Rudi“'],
+ ['Wir suchen einen Mann mit Bierbauch','Wir suchen eine Frau mit Bierbauch'],
+ ['Hier gibt’s ja nix zu pfänden. Nicht mal Würde oder Eier.','Hier gibt’s ja nix zu pfänden. Nicht mal Würde oder echte Fingernägel.'],
+ ['ein Foto von deinem Schwanz mit Lupe drüber','ein Foto von deinem Damenbart mit Lupe drüber'],
+ ['Du langweiliger Wichser. Ich geh zu Dieter, der hat wenigstens Pornos.','Du langweilige Schnarchnase. Ich geh zu Dieter, der hat wenigstens Netflix.'],
+ ['Das wirst du bereuen, du Wichser!','Das wirst du bereuen, du Schreckschraube!'],
+ ['Opa? Ich bin’s!','Oma? Ich bin’s!'],
+ ['Ehrenmann. Jetzt weiterglotzen.','Ehrenfrau. Jetzt weiterglotzen.'],
+ ['Wie dein Bett seit Jessica.','Wie dein Bett seit Ronny.'],
+ // Bilder in HTML
+ ['sprites/jessica_','sprites/ronny_'],['sprites/kowalski_','sprites/horst_'],
+ // Namen und einzelne Wörter zuletzt
+ ['Frau Kowalskis','Horsts'],['Frau Kowalski','Horst'],['Kowalskis','Horsts'],['Kowalski','Horst'],
+ ['Jessica (Ex)','Ronny (Ex)'],['Jessicas','Ronnys'],['JESSICA','RONNY'],['Jessica','Ronny'],
+ ['Schätzchen','Puppächen'],['Bärchen','Puppächen'],['Hengst','Täubchen'],
+ ['Schmuddelheft „Busen-Express“','„Rüttel-Rudi“ (Massagestab)'],['Busen-Express','Rüttel-Rudi'],['Schmuddelheft','Massagestab']];
+function fem(s){if(s==null||!isW())return s;s=String(s);for(const p of FEM)if(s.indexOf(p[0])>=0)s=s.split(p[0]).join(p[1]);return s}
+
+// ---- Rüttel-Rudi (Bilder: toy, toy_on, toy_worn, toy_dead) ----
+function toyKey(){const n=S.magUses||0;return n>=3&&SP.toy_dead&&SP.toy_dead.naturalWidth?'toy_dead':n>=2&&SP.toy_worn&&SP.toy_worn.naturalWidth?'toy_worn':'toy'}
+function drawToyFallback(w,h){cx.fillStyle='#e8417a';cx.beginPath();cx.roundRect?cx.roundRect(-w*.12,-h*.15,w*.24,h*.6,w*.1):cx.rect(-w*.12,-h*.15,w*.24,h*.6);cx.fill();cx.beginPath();cx.arc(0,-h*.27,w*.2,0,7);cx.fill();cx.fillStyle='#fff';cx.beginPath();cx.arc(0,h*.05,w*.05,0,7);cx.fill()}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
