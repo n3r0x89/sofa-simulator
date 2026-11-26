@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 131</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 132</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=131;
+const APPVER=132;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -748,11 +748,11 @@ function fridgeTap(){FX.fridgeOpen=S.tot+1.2;if(S.fridge>0&&S.tot>=S.fridgeColdA
   if(S.fridge>0){toast('Wird noch kalt. Noch '+Math.ceil(S.fridgeColdAt-S.tot)+' Sekunden, du zappelige Sackratte.');return}
   if(S.beer<=0){toast('Kühlschrank leer, Sixpack leer, Leben leer. Respekt, du Nullnummer.');return}
   const n=Math.min(6,S.beer);S.beer-=n;S.fridge=n;S.fridgeColdAt=S.tot+10;toast(n+' Flaschen in den Kühlschrank gestellt.','In einer Stunde kalt')}
-function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=true;snd('plop');vib(30);handAnim.capT=1;toast(pick(['Plopp. Das einzige Loch, das du heute aufmachst.','Kronkorken ab. Zum Glück kriegst du wenigstens das noch auf.','Zisch. Feierabend, obwohl du seit 2011 nicht angefangen hast.']));doneHint('open')}
+function openBottle(){const b=S.bottle;if(!b||b.opened!==false)return;b.opened=true;snd('plop');vib(30);handAnim.capT=1;if(b.sekt){handAnim.capT=0;toast(pick(['PLOPP! Der Korken fliegt Richtung Fernseher. Knapp vorbei.','Sekt auf. Es schäumt über deine Finger. Ableckt. Elegant.','Plopp. Silvester-Feeling. Im November. Allein.']));doneHint('open');return}toast(pick(['Plopp. Das einzige Loch, das du heute aufmachst.','Kronkorken ab. Zum Glück kriegst du wenigstens das noch auf.','Zisch. Feierabend, obwohl du seit 2011 nicht angefangen hast.']));doneHint('open')}
 function sip(){const b=S.bottle;if(!b)return;if(b.opened===false){toast('Erst aufmachen, du hirnloser Nuckelbubi. Flasche antippen.');snd('bad');return}if(b.sips<=0){toast(pick(['Die Flasche ist leer, du Flaschenlutscher. Saugen bringt nix.','Da ist nix mehr drin. Wie in deinem Kopf und deiner Hose.']));return}
-  b.sips--;S.lastBeer=S.tot;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=.19*pl;S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
+  b.sips--;S.lastBeer=S.tot;const pl=S.tot<S.plasmaUntil?1.5:1;S.th-=b.cold?18:12;S.prom+=(b.sekt?.15:.19)*pl;if(b.sekt)S.bo=Math.max(0,S.bo-4);S.chaos+=1.5;addXP(1);handAnim.drink=1.2;snd('gulp');vib(20);
   if(b.sips===2){S.st.beers++;}
-  if(b.sips<=0){setTimeout(()=>{if(S.bottle===b&&b.sips<=0&&!busyUI){S.bottle=null;S.empties++;S.pfandStock++;snd('clink');checkAch()}},1600)}
+  if(b.sips<=0){setTimeout(()=>{if(S.bottle===b&&b.sips<=0&&!busyUI){S.bottle=null;if(b.sekt){toast(pick(['Piccolo leer. Klein, aber gemein.','Leer. Die Flasche fliegt hinters Sofa. Da liegen schon sieben.']));return}S.empties++;S.pfandStock++;snd('clink');checkAch()}},1600)}
   clampAll();doneHint('drink');checkAch();promCheck()}
 function throwBottle(){if(!S.bottle)return;if(S.prom<.8){toast('Nüchtern traust du dich nicht mal, ’ne Flasche zu schmeißen. Eierlose Lusche.');return}
   handAnim.throwT=1;snd('whoosh');setTimeout(()=>{snd('smash');vib(80);{const z=L.stainZone||{x:150,y:H*.15,w:270,h:L.wall-60-H*.15};S.stains.push({x:R(z.x,z.x+z.w),y:R(z.y,z.y+z.h)})};if(S.stains.length>14)S.stains.shift()},420);
@@ -2074,17 +2074,16 @@ Object.assign(VIS,{mandy:{n:'Mandy',c:'#e8417a',h:'#a3122a',s:1},natascha:{n:'Na
 const wDays=k=>S[k]==null?99:S.day-S[k];
 // ---- Läden ----
 SHOP.push(
- {w:1,n:'Sekt-Piccolo „Rotkäppchen für Arme“ (4 Stück)',p:3,d:'Steht auf dem Tisch. Antippen = einer auf ex',f:()=>{S.sekt=(S.sekt||0)+4;return'Steht auf dem Tisch. Prickelt wie dein Leben. Also gar nicht.'}},
+ {w:1,n:'Sekt-Piccolo „Rotkäppchen für Arme“ (4 Stück)',p:3,d:'Steht auf dem Tisch. Antippen = einen in die Hand nehmen',f:()=>{S.sekt=(S.sekt||0)+4;return'Steht auf dem Tisch. Prickelt wie dein Leben. Also gar nicht.'}},
  {w:1,n:'Solarium-Gutschein „Turbo-Bräune“',p:6,d:'20 Minuten Turbo. Danach ein paar Tage orange',f:()=>{S.tan=S.day;return'Du leuchtest jetzt orange. Herr Brandt hält dich für eine Warnweste. '+fx({bo:-20,xp:3})}},
  {w:1,n:'Blondierung „Blond Extrem“',p:5,d:'Selber färben am Tisch. Stinkt, hilft gegen Langeweile',f:()=>{S.hair=S.day;S.dirt=clamp((S.dirt||0)+15,0,100);return'Eine Stunde später: Platinblond. Also eher Zitronengelb. Die Bude riecht nach Chemieunfall. '+fx({bo:-30,xp:3})}});
 // ---- Sekt auf dem Tisch ----
 function drawSekt(){if(!isW()||!L.roomMode||!(S.sekt>0))return;const p=L.mm(575,1050),w=L.bottleH*1.05,k=S.sekt>=3?'sekt_full':'sekt_low';const im=SP[k];if(!(im&&im.naturalWidth))return;const h=w*im.naturalHeight/im.naturalWidth;cx.drawImage(im,p.x-w/2,p.y-h,w,h);hit('sekt',{x:p.x-w/2,y:p.y-h,w,h})}
-let SEKTF=null;
-function sektTap(){if(!(S.sekt>0)||SEKTF)return;S.sekt--;
- const done=()=>{SEKTF=null;toast(pick(['Plopp. Ein Piccolo auf ex. Fühlt sich an wie Silvester. Ein trauriges.','Sekt aus der Flasche. Wie die Reichen. Nur ohne Geld.','Prickelt in der Nase. Und im Kopf. Und im Magen. Oh.','Ein Piccolo zum Frühstück. Du bist quasi Adel.']),fx({th:-15,prom:.25,bo:-10,xp:1}));if(!S.sekt)setTimeout(()=>toast('Sekt alle. Neuer im Späti-Shop.'),2500)};
- if(!(SP.sekt_drink_2_w&&SP.sekt_drink_2_w.naturalWidth)){snd('plop');vib(30);return done()}
- SEKTF='sekt_hold_w';setTimeout(()=>{SEKTF='sekt_open_w';snd('plop');vib(30)},600);setTimeout(()=>{SEKTF='sekt_drink_1_w'},1300);setTimeout(()=>{SEKTF='sekt_drink_2_w';snd('gulp')},1800);setTimeout(()=>snd('gulp'),2400);setTimeout(done,3100)}
-const _bareKeyM=bareKey;bareKey=function(arm,key){if(arm==='l'&&SEKTF&&SP[SEKTF]&&SP[SEKTF].naturalWidth)return SEKTF;return _bareKeyM(arm,key)};
+function sektTap(){if(!(S.sekt>0))return;if(S.bottle&&S.bottle.sips>0){toast(pick(['Erst das andere austrinken, du Schluckspecht.','Zwei Flaschen gleichzeitig? Du hast nur eine Hand frei, du Saufnase.']));return}
+ if(S.bottle){if(!S.bottle.sekt){S.empties++;S.pfandStock++}S.bottle=null}
+ S.sekt--;S.bottle={sips:3,cold:false,opened:false,sekt:1};snd('pop');addXP(1);if(!S.sekt)setTimeout(()=>toast('Das war der letzte Piccolo. Neue im Späti-Shop.'),1500)}
+const SEKT_K={lh_full:'sekt_hold_w',lh_open:'sekt_open_w',lh_empty:'sekt_open_w',drink_1:'sekt_drink_1_w',drink_2:'sekt_drink_2_w',drink_3:'sekt_drink_2_w'};
+const _bareKeyM=bareKey;bareKey=function(arm,key){if(arm==='l'&&S.bottle&&S.bottle.sekt&&SEKT_K[key]){const k=SEKT_K[key];if(SP[k]&&SP[k].naturalWidth)return k}return _bareKeyM(arm,key)};
 // ---- Rot gefärbte Hände nach dem Solarium ----
 const _drawHandsM=drawHands;drawHands=function(t){if(isW()&&wDays('tan')<=3){cx.save();cx.filter='sepia(.35) saturate(1.7) hue-rotate(-10deg)';try{_drawHandsM(t)}finally{cx.restore()}}else _drawHandsM(t)};
 // ---- Besucher sagen was zu Bräune, Haaren, Nägeln ----
