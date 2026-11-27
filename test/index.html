@@ -2857,21 +2857,21 @@ const WALLS={0:'Originaltapete „Senfgelb 1983“',1:'70er-Kreise „Orangen-Ra
 const WALL_P={1:18,2:22,3:8,4:25};
 const POSTERS={1:'Pin-up „Autohaus Bremser 1987“',2:'Feuerwehr-Kalender „Hinterdupfing – Mai“',3:'Schlagerstar „Dieter Diamant“',4:'„FC Bierbauch 09“'};
 const PETS={cat:{n:'Fettsack',a:'die Katze',p:25,k:'pet_cat',box:[760,870,925,995],d:'Fette, faule Katze. Kotzt Haarballen, hasst dich.'},
- ham:{n:'Rambo',a:'der Hamster',p:12,k:'pet_ham',box:[14,872,174,998],d:'Kampfhamster im Käfig. Beißt. Rennt nachts im Rad.'},
+ ham:{n:'Rambo',a:'der Hamster',p:12,k:'pet_ham',box:[34,598,200,724],d:'Kampfhamster im Käfig. Beißt. Rennt nachts im Rad.'},
  bird:{n:'Hansi',a:'der Wellensittich',p:18,k:'pet_bird',box:[706,92,812,236],d:'Plappert Beleidigungen nach. Laut.'}};
 function B(){if(!S.bude)S.bude={wall:0,walls:[],poster:0,posters:[],dart:0,shisha:null};return S.bude}
 function mmR(b){const p=L.mm(b[0],b[1]),q=L.mm(b[2],b[3]);return{x:p.x,y:p.y,w:q.x-p.x,h:q.y-p.y}}
 // Tapete (gleich nach dem Grundbild) + Wanddeko
 function drawWallpaper(R0){const b=B();if(b.wall){const im=SP['wl_'+b.wall];if(im&&im.naturalWidth)cx.drawImage(im,R0.ox+WALLBOX[0]*R0.s,R0.oy+WALLBOX[1]*R0.s,(WALLBOX[2]-WALLBOX[0])*R0.s,(WALLBOX[3]-WALLBOX[1])*R0.s)}
  if(b.poster){spr('poster_'+b.poster,mmR([280,112,420,322]))}
- if(b.dart){const r=mmR([566,256,706,410]);spr('dart_'+(b.dartEx?1:0),r);if(b.dartEx){const rc=sprRect('dart_1',r),f=SP[sprKey('jessica_0')];if(rc&&f&&f.naturalWidth){const hx=rc.x+rc.w*.414,hy=rc.y+rc.h*.363,hw=rc.w*.17,hh=rc.h*.22;cx.save();cx.beginPath();cx.ellipse(hx+hw/2,hy+hh/2,hw/2,hh/2,0,0,7);cx.clip();const fw=hw*2.2;cx.drawImage(f,hx+hw/2-fw/2,hy-hh*.08,fw,fw*f.naturalHeight/f.naturalWidth);cx.restore()}}hit('dartb',r)}}
+ if(b.dart){const r=mmR([566,256,706,410]);spr('dart_0',r);if(b.dartEx){const rc=sprRect('dart_0',r);if(rc)drawExPhoto(cx,rc.x+rc.w*.5,rc.y+rc.h*.5,rc.w*.36)}hit('dartb',r)}}
 // Haustiere + Wasserpfeife (nach den Möbeln)
 function petPose(k){const P=S.pets[k],n=isNight();if(P.poseT>S.tot)return P.pose;
  if(k==='cat')return n||S.hour%5===2?1:0;if(k==='ham')return n||Math.floor(S.tot/40)%3===0?0:1;if(k==='bird')return n||P.cover?2:0;return 0}
 function drawPets(){if(!S.pets||!L.roomMode)return;for(const k in PETS){if(!S.pets[k])continue;const r=mmR(PETS[k].box);spr(PETS[k].k+'_'+petPose(k),r);hit('pet_'+k,r)}}
 function drawShisha(){const s=B().shisha;if(!s||!L.roomMode)return;const k=s.down?'shisha_2':(s.lit>S.tot?'shisha_1':'shisha_0');const r=s.down?mmR([540,930,690,1015]):mmR([560,800,662,1014]);spr(k,r);hit('shisha',r)}
 {const _ds2=drawStash;drawStash=function(){const r=_ds2.apply(this,arguments);try{drawPets();drawShisha()}catch(e){}return r}}
-{const _pb=poopBlocked;poopBlocked=function(x,y){if(_pb(x,y))return true;const Bx=[];if(B().shisha)Bx.push([555,900,665,1030]);if(S.pets){for(const k in S.pets)if(S.pets[k]&&k!=='bird')Bx.push(PETS[k].box)}return Bx.some(b=>x>b[0]-15&&x<b[2]+15&&y>b[1]-10&&y<b[3]+10)}}
+{const _pb=poopBlocked;poopBlocked=function(x,y){if(_pb(x,y))return true;const Bx=[];if(B().shisha)Bx.push([555,900,665,1030]);if(S.pets&&S.pets.cat)Bx.push(PETS.cat.box);return Bx.some(b=>x>b[0]-15&&x<b[2]+15&&y>b[1]-10&&y<b[3]+10)}}
 // Antippen
 const _tapB=tap;tap=function(id,p){if(id==='dartb')return dartGame();if(id==='shisha')return shishaTap();if(id&&id.startsWith('pet_'))return petTap(id.slice(4));return _tapB(id,p)};
 
@@ -2933,12 +2933,12 @@ function shishaTap(){const s=B().shisha;if(!s)return;if(s.down){s.down=false;S.d
 const DART_SEC=[20,1,18,4,13,6,10,15,2,17,3,19,7,16,8,11,14,9,12,5];
 function dartGame(onEnd,vsTxt){if(busyUI&&!onEnd)return;busyUI=true;const b=B(),ex=!onEnd&&!!b.dartEx,exN=isW()?'Ronny':'Jessica';let darts=3,score=0,exHits=0,t0=performance.now(),raf=0,hits=[];
  openModal(`<h2>🎯 Dart${vsTxt?' '+esc(vsTxt):ex?' auf '+exN:''}</h2><p style="font-size:13px;color:var(--dim)">Tippen zum Werfen. Je besoffener, desto mehr wackelt’s. 3 Pfeile.</p><canvas id="dc" width="320" height="340" style="display:block;margin:0 auto;touch-action:none;max-width:100%"></canvas><p id="dres" style="text-align:center;font-weight:800;min-height:22px">Punkte: 0</p><div class="list" id="dl"></div>`,()=>{
-  const c=document.getElementById('dc'),x=c.getContext('2d');const im=SP['dart_'+(ex?1:0)],ar=SP.dart_arrow;const bw=300,bh=im&&im.naturalWidth?bw*im.naturalHeight/im.naturalWidth:330,bx=10,by=(340-bh)/2;
-  const cxp=bx+bw*.5,cyp=by+bh*.532,R=bw*.49*.72;const face=ex?SP[sprKey('jessica_0')]:null;const hole={x:bx+bw*.414,y:by+bh*.363,w:bw*.17,h:bh*.22};
+  const c=document.getElementById('dc'),x=c.getContext('2d');const im=SP.dart_0,ar=SP.dart_arrow;const bw=300,bh=im&&im.naturalWidth?bw*im.naturalHeight/im.naturalWidth:330,bx=10,by=(340-bh)/2;
+  const cxp=bx+bw*.5,cyp=by+bh*.532,R=bw*.49*.72;const pw=bw*.36,hole={x:cxp-pw/2,y:cyp-pw*.62,w:pw,h:pw*1.1};
   const sway=8+S.prom*28,spd=1+S.prom*.6;let aim={x:cxp,y:cyp};
   const draw=now=>{const t=(now-t0)/1000;aim={x:cxp+Math.sin(t*1.9*spd)*sway+Math.sin(t*4.3)*sway*.35,y:cyp+Math.cos(t*1.5*spd)*sway*.9+Math.sin(t*3.1)*sway*.3};
    x.clearRect(0,0,320,340);if(im&&im.naturalWidth)x.drawImage(im,bx,by,bw,bh);else{x.fillStyle='#222';x.beginPath();x.arc(cxp,cyp,R*1.3,0,7);x.fill()}
-   if(face&&face.naturalWidth){x.save();x.beginPath();x.ellipse(hole.x+hole.w/2,hole.y+hole.h/2,hole.w/2,hole.h/2,0,0,7);x.clip();const fw=hole.w*2.2,fh=fw*face.naturalHeight/face.naturalWidth;x.drawImage(face,hole.x+hole.w/2-fw/2,hole.y-hole.h*.08,fw,fh);x.restore()}
+   if(ex)drawExPhoto(x,cxp,cyp,pw);
    for(const h of hits){if(ar&&ar.naturalWidth){x.save();x.translate(h.x,h.y);x.rotate(-2.4);x.drawImage(ar,-46,-7,46,13);x.restore()}else{x.fillStyle='#d22';x.beginPath();x.arc(h.x,h.y,4,0,7);x.fill()}}
    if(darts>0){x.strokeStyle='#ff2';x.lineWidth=2;x.beginPath();x.arc(aim.x,aim.y,9,0,7);x.moveTo(aim.x-14,aim.y);x.lineTo(aim.x+14,aim.y);x.moveTo(aim.x,aim.y-14);x.lineTo(aim.x,aim.y+14);x.stroke()}
    if(!document.getElementById('dc'))return;raf=requestAnimationFrame(draw)};raf=requestAnimationFrame(draw);
@@ -2953,6 +2953,16 @@ function dartGame(onEnd,vsTxt){if(busyUI&&!onEnd)return;busyUI=true;const b=B(),
     if(onEnd){setTimeout(()=>{closeModal();onEnd(score)},1300);return}const dl=document.getElementById('dl');dl.innerHTML='<button class="btn pri" data-ag>Nochmal</button><button class="btn" data-x>Fertig</button>';
     bindAll({'[data-ag]':()=>{closeModal();busyUI=false;dartGame()},'[data-x]':()=>{closeModal();toast('Dart: '+score+' Punkte',fx({bo:-12-exHits*6,xp:Math.round(score/20)+exHits}))}})},700)};
   const R2=()=>(Math.random()-.5)*(4+S.prom*6);c.onpointerdown=e=>{e.preventDefault();throwD()}})}
+
+// Ex-Foto: kleines schiefes Polaroid mit dem Gesicht der Ex, Reißzwecke und „EX“
+const EXHEAD={jessica_0:[.17,0,.66,.205],ronny_0:[.09,0,.6,.215]};
+function drawExPhoto(c,mx,my,w){const k=sprKey('jessica_0'),f=SP[k],cr=EXHEAD[k]||[.15,0,.7,.2];const h=w*1.18;c.save();c.translate(mx,my-w*.08);c.rotate(-.13);
+ c.fillStyle='#f3ecd8';c.shadowColor='#0008';c.shadowBlur=w*.08;c.shadowOffsetY=w*.03;c.fillRect(-w/2,-h/2,w,h);c.shadowColor='transparent';
+ const ix=-w/2+w*.08,iy=-h/2+w*.08,iw=w*.84,ih=w*.84;c.fillStyle='#6b5a4a';c.fillRect(ix,iy,iw,ih);
+ if(f&&f.naturalWidth){const sx=f.naturalWidth*cr[0],sy=f.naturalHeight*cr[1],sw=f.naturalWidth*cr[2],sh=f.naturalHeight*cr[3];const sc=Math.max(iw/sw,ih/sh);c.save();c.beginPath();c.rect(ix,iy,iw,ih);c.clip();c.drawImage(f,sx,sy,sw,sh,ix+(iw-sw*sc)/2,iy,sw*sc,sh*sc);c.restore()}
+ c.fillStyle='#111';c.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';c.textAlign='center';c.fillText('EX',0,h/2-w*.06);c.strokeStyle='#111';c.lineWidth=Math.max(1,w*.025);c.beginPath();c.moveTo(-w*.22,h/2-w*.04);c.lineTo(w*.22,h/2-w*.02);c.stroke();
+ c.strokeStyle='#c11';c.lineWidth=Math.max(1,w*.03);c.beginPath();c.moveTo(ix+iw*.15,iy+ih*.15);c.lineTo(ix+iw*.85,iy+ih*.85);c.moveTo(ix+iw*.85,iy+ih*.15);c.lineTo(ix+iw*.15,iy+ih*.85);c.globalAlpha=.55;c.stroke();c.globalAlpha=1;
+ c.fillStyle='#d22';c.beginPath();c.arc(0,-h/2+w*.04,w*.055,0,7);c.fill();c.fillStyle='#fff8';c.beginPath();c.arc(-w*.015,-h/2+w*.025,w*.018,0,7);c.fill();c.restore()}
 // ================= KNEIPE „ZUM FEUCHTEN FURZ“ =================
 const KN_P={moni:{n:'Wirtin Moni',x:68,h:40},klaus:{n:'Klaus',x:22,h:38},ralle:{n:'Schläger-Ralle',x:44,h:41},erwin:{n:'Zocker-Erwin',x:0,h:37}};
 let KN=null;
