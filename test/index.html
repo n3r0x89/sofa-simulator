@@ -3165,6 +3165,50 @@ function knAmbStart(){if(!soundOn)return;try{if(!KN_AMB){KN_AMB=new Audio('sound
 function knAmbStop(){try{if(KN_AMB){const a=KN_AMB;KN_AMB=null;let v=a.volume;const iv=setInterval(()=>{v=Math.max(0,v-.06);a.volume=v;if(v<=0){clearInterval(iv);a.pause()}},80)}}catch(e){}}
 {const _kg2=kneipeGo;kneipeGo=function(){_kg2.apply(this,arguments);if(KN)knAmbStart()}}
 {const _kc=knClose;knClose=function(){knAmbStop();return _kc.apply(this,arguments)}}
+
+// ================= Trinken wie im Wohnzimmer + Kippen/Aschenbecher auf der Theke =================
+const KN_CP=[600,1105,668,1200],KN_AS=[672,1150,782,1212];   // Kippenschachtel, Aschenbecher (Kneipen-Koordinaten)
+{const _ds=knDrawScene;knDrawScene=function(t){
+ const c=document.getElementById('kncv');if(c&&KN){const g=c.getContext('2d');
+  // Zeichnen erfolgt nach dem Glas-Clear: daher eigenes Zeichnen vor dem Glas
+ }
+ _ds.apply(this,arguments);
+ if(c&&KN){const g=c.getContext('2d');const r=c.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);g.save();g.setTransform(dpr*r.width/941,0,0,dpr*r.height/1671,0,0);
+  const d=(k,b)=>{const im=SP[k];if(!im||!im.naturalWidth)return;const s=Math.min((b[2]-b[0])/im.naturalWidth,(b[3]-b[1])/im.naturalHeight),w=im.naturalWidth*s,h=im.naturalHeight*s;g.drawImage(im,b[0]+(b[2]-b[0]-w)/2,b[3]-h,w,h)};
+  const al=S.ash>=12?2:S.ash>=4?1:0;d('ash_'+al,KN_AS);
+  d(S.cigs<=0?'cigpack_empty':S.cigs<10?'cigpack_half':'cigpack',KN_CP);
+  if(S.cigs>0){g.font='800 26px Nunito,sans-serif';g.textAlign='center';g.fillStyle='#000a';g.fillRect(KN_CP[0]+10,KN_CP[1]-30,46,30);g.fillStyle='#fff';g.fillText(S.cigs,KN_CP[0]+33,KN_CP[1]-6)}
+  g.restore()}}}
+function knToKn(cx2,cy2){const w=document.getElementById('knw');if(!w)return null;const r=w.getBoundingClientRect();return{x:(cx2-r.left)/r.width*941,y:(cy2-r.top)/r.height*1671}}
+const inB2=(p,b,m)=>p&&p.x>b[0]-(m||0)&&p.x<b[2]+(m||0)&&p.y>b[1]-(m||0)&&p.y<b[3]+(m||0);
+// Tippen/Halten/Wischen über eigene Pointer-Logik (wie im Wohnzimmer)
+let KPD=null;
+function knWhich(e){const hc=document.getElementById('knh');if(!hc||!KN)return null;const r=hc.getBoundingClientRect(),lx=e.clientX-r.left,ly=e.clientY-r.top;
+ if(KN.lhb&&lx>KN.lhb.x&&lx<KN.lhb.x+KN.lhb.w&&ly>KN.lhb.y&&e.clientY>=r.top)return 'L';
+ if(KN.rhb&&lx>KN.rhb.x&&lx<KN.rhb.x+KN.rhb.w&&ly>KN.rhb.y&&e.clientY>=r.top)return 'R';
+ const p=knToKn(e.clientX,e.clientY);if(inB2(p,KN_CP,20))return 'CP';if(inB2(p,KN_AS,10))return 'AS';
+ if(KN.glass&&KN.glass.at==='counter'){const gr=knGlassRect();if(gr&&e.clientX>gr.x-20&&e.clientX<gr.x+gr.w+20&&e.clientY>gr.y-20&&e.clientY<gr.y+gr.h+20)return 'G'}
+ return null}
+function knSipHold(){const g=KN&&KN.glass;if(!g||g.at!=='hand'||g.fill<=0)return false;g.fill--;KN.drinkT=performance.now()+700;S.prom+=.075;S.th=Math.max(0,S.th-6);S.bo=Math.max(0,S.bo-4);S.lastBeer=S.tot;snd('gulp');vib(20);
+ if(g.fill===0){S.st.drinks=(S.st.drinks||0)+1;S.st.beers=(S.st.beers||0)+1;addXP(1);setTimeout(()=>{if(Math.random()<.4)snd('burp')},800);knSay('Glas leer.','Antippen = auf die Theke stellen · schnell nach oben wischen = an die Wand')}
+ clampAll();knBar();if(S.prom>=2.6)setTimeout(()=>knAct('b'),900);return true}
+function knDown(e){const w=knWhich(e);if(!w)return;KN.swal=performance.now()+99999;e.stopPropagation();e.preventDefault();initAudio();KPD={w,x:e.clientX,y:e.clientY,t:performance.now(),last:0,acted:false};
+ try{e.target.setPointerCapture&&e.target.setPointerCapture(e.pointerId)}catch(_){}}
+function knHold(){if(!KPD||!KN)return;const now=performance.now();if(now-KPD.t<350)return;if(KPD.cx!=null&&Math.hypot(KPD.cx-KPD.x,KPD.cy-KPD.y)>30)return;if(KPD.acted&&now-KPD.last<650)return;
+ if(KPD.w==='L'&&KN.glass&&KN.glass.at==='hand'&&KN.glass.fill>0){KPD.acted=true;KPD.last=now;knSipHold()}
+ else if(KPD.w==='R'&&S.right==='cig'){KPD.acted=true;KPD.last=now;puff();setTimeout(knBar,50)}}
+setInterval(()=>{try{knHold()}catch(e){}},80);
+function knUp(e){if(!KPD)return;const P=KPD;KPD=null;if(KN)KN.swal=performance.now()+400;const dt=performance.now()-P.t,dx=e.clientX-P.x,dy=e.clientY-P.y;e.stopPropagation();
+ if(P.w==='L'&&KN&&KN.glass&&KN.glass.at==='hand'&&dy<-60&&dt<450&&Math.abs(dy)>Math.abs(dx)){knThrow();return}
+ if(P.acted||dt>450||Math.hypot(dx,dy)>25)return;
+ if(P.w==='G'){KN.glass.at='hand';snd('clink');knSay(KN.glass.fill>0?'Glas in der Hand.':'Leeres Glas in der Hand.','Glas gedrückt halten = trinken · schnell nach oben wischen = an die Wand');return}
+ if(P.w==='CP'){if(S.right==='cig'){toast('Du hast doch schon eine an, du Doppelschlot.');return}if(S.cigs<=0){toast('Schachtel leer. Wie dein Konto.');snd('bad');return}S.right='empty';takeCig();knBar();if(Math.random()<.4)knSay(pick(['Kippe an. Moni schiebt den Aschenbecher näher, ohne hinzugucken.','Klaus ruft rüber: „Haste mal eine?“ Nein.']));return}
+ if(P.w==='AS'){toast(S.ash>=12?'Der Aschenbecher quillt über. Moni leert ihn. In dein Bier. Fast.':'Ein Aschenbecher. Moni hat ihn 1983 aus Italien mitgebracht.');return}
+ if(P.w==='L'){const g=KN.glass;if(!g){knMenu('moni');return}if(g.at==='hand'&&g.fill<=0){knPutBack();return}if(g.at==='hand'){knSay('Glas gedrückt halten = trinken.','Leer antippen = auf die Theke stellen');return}}
+ if(P.w==='R'){if(S.right==='cig')knSay('Hand gedrückt halten = ziehen.');else knSay('Die Kippen liegen auf der Theke. Antippen zum Anzünden.');return}}
+{const _kg3=kneipeGo;kneipeGo=function(){_kg3.apply(this,arguments);const d=document.getElementById('kneipe');if(d&&KN){d.addEventListener('pointerdown',knDown,true);d.addEventListener('pointermove',e=>{if(KPD){KPD.cx=e.clientX;KPD.cy=e.clientY}},true);d.addEventListener('pointerup',knUp,true);d.addEventListener('pointercancel',()=>KPD=null,true)}}}
+// alte Klick-Logik für Hände/Glas/Kippen abschalten (läuft jetzt über Halten/Wischen)
+{const _kht=knHandTap;knHandTap=function(e){if(!KN)return true;if(KN.swal&&performance.now()<KN.swal)return true;return !!knWhich(e)||_kht(e)}}
 // ================= Zurück-Knopf immer oben (klebt beim Scrollen fest) =================
 const BACK_TXT=/^(←\s*)?(Zurück|Schließen|Doch nicht|Tür zu)$/;
 function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.querySelectorAll('button')].filter(b=>BACK_TXT.test(b.textContent.trim())&&!b.closest('.backbar'));if(!bs.length)return;
