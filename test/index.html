@@ -2978,13 +2978,13 @@ function kneipeGo(){if(!S.kn)S.kn={deckel:0,ban:-1,rep:0};
  const sw=st.clientWidth,sh=st.clientHeight;let w=sw,h=w*1672/941;if(h<sh){h=sh;w=h*941/1672}
  const IM='<img src="sprites/kneipe2.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;';
  d.innerHTML=`<div id="knw" style="position:absolute;left:${(sw-w)/2}px;bottom:0;width:${w}px;height:${h}px">${IM}">
-  <div id="knm" style="position:absolute;inset:0"></div>${IM}clip-path:polygon(40.8% 43.5%,100.0% 43.5%,100.0% 100.0%,50.6% 100.0%)"><div id="knb" style="position:absolute;inset:0"></div>
+  <div id="knm" style="position:absolute;inset:0"></div>${IM}clip-path:polygon(43.0% 50.4%,100.0% 50.4%,100.0% 100.0%,50.6% 100.0%)">${IM}clip-path:inset(37.7% 11.8% 45.1% 68.0%)"><div id="knb" style="position:absolute;inset:0"></div>
   <div id="knp" style="position:absolute;inset:0"></div></div>
   <div id="knui" style="position:absolute;left:8px;right:8px;bottom:8px;max-height:40%;overflow:auto;background:rgba(25,15,8,.9);border:1px solid #f2c14e55;border-radius:14px;padding:10px"></div>`;
  st.appendChild(d);knDraw();const da=ppl.filter(k=>k!=='moni').map(k=>KN_P[k].n.replace('Schläger-','').replace('Zocker-',''));knSay((da.length?'Heute da: '+da.join(', ')+'. ':'')+pick(['Moni: „Na, wen haben wir denn da? Der Penner von gegenüber. Setz dich, aber fass nix an.“','Moni: „Ach du Scheiße. Du schon wieder. Bier?“','Klaus hebt sein Glas: „Prost, Kollege! Du siehst ja noch schlimmer aus als ich!“']))}
 function knDraw(){const m=document.getElementById('knm'),box=document.getElementById('knp');if(!m||!box)return;const kb=document.getElementById('knb');if(kb)kb.innerHTML=KN.beer?`<img src="sprites/bottle_${Math.min(5,KN.beer-1)}.webp" alt="" style="position:absolute;left:${520/941*100}%;top:${870/1672*100}%;height:${190/1672*100}%;transform:rotate(-4deg)">`:'';
  // Moni steht hinterm Tresen: Unterkörper wird vom Tresen verdeckt
- m.innerHTML=`<img src="sprites/moni_${KN.pose.moni||0}.webp" alt="" style="position:absolute;left:${(545-74)/941*100}%;top:${480/1672*100}%;height:${345/1672*100}%">`;
+ m.innerHTML=`<img src="sprites/moni_${KN.pose.moni||0}.webp" alt="" style="position:absolute;left:${(530-117)/941*100}%;top:${545/1672*100}%;height:${540/1672*100}%">`;
  const k=KN.show;if(!k||!KN.ppl.includes(k)||k==='moni'){box.innerHTML='';return}
  box.innerHTML=`<img src="sprites/${k}_${k==='batch'?batchPose():KN.pose[k]||0}.webp" alt="" style="position:absolute;left:1%;top:${(1400-760)/1672*100}%;height:${760/1672*100}%;animation:knIn .35s ease-out">`}
 if(!document.getElementById('knCss')){const c=document.createElement('style');c.id='knCss';c.textContent='@keyframes knIn{from{transform:translateX(-40%);opacity:0}to{transform:none;opacity:1}}';document.head.appendChild(c)}
