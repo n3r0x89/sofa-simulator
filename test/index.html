@@ -3029,6 +3029,9 @@ function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.query
  const par=b.parentNode;b.style.cssText+=';width:auto;min-width:0;padding:6px 14px;font-size:14px;flex:0 0 auto';if(!/^←/.test(b.textContent.trim()))b.textContent='← '+b.textContent.trim();bar.appendChild(b);M.insertBefore(bar,M.firstChild);
  if(par&&par.classList&&par.classList.contains('list')&&!par.children.length)par.remove()}catch(e){}}
 {const _om=openModal;openModal=function(){const r=_om.apply(this,arguments);backToTop();return r}}
+// „Spendier dem Assi ein Bier“ immer direkt unter „Erfolge“
+function supUnderAch(){try{const sup=M.querySelector('[data-a="sup"]'),ach=M.querySelector('[data-a="ach"]');if(sup&&ach&&ach.nextElementSibling!==sup)ach.after(sup)}catch(e){}}
+{const _om2=openModal;openModal=function(){const r=_om2.apply(this,arguments);supUnderAch();return r}}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
