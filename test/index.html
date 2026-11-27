@@ -2577,7 +2577,8 @@ const _openD=openBottle;openBottle=function(){const b=S.bottle;if(!b||!b.t||b.op
  if(b.t==='d'){snd('plop');handAnim.capT=0;toast(pick(['Zzzisch. Die Lasche bricht fast ab. Wie dein Rücken.','Dose auf. Der Schaum läuft über deine Finger. Abschlecken, du Sau.','Zisch. Der Sound deiner Kindheit.']))}
  else{snd('plop');handAnim.capT=0;toast(pick(['Deckel ab. Es riecht nach Hustensaft und Waldboden.','Aufgeschraubt. Der Keiler grinst. Gleich grinst du auch.']))}doneHint('open')};
 const _sipD=sip;sip=function(){const b=S.bottle,s0=b&&b.sips;_sipD();if(!b||!b.t||b.sips===s0)return;
- if(b.t==='k'){S.prom+=.22;S.th+=5;S.bo=Math.max(0,S.bo-5);if(b.sips===0&&Math.random()<.5)setTimeout(()=>{snd('retch');toast(pick(['Brrrr. Der Keiler kotzt innerlich mit.','Bäh. Schmeckt wie ein nasser Hund im Wald. Noch einen!','Uargh. Dein Magen hat gerade „Keilerkotze“ wörtlich genommen.']))},700)}
+ if(b.t==='k'){S.prom+=.22;S.th+=5;S.bo=Math.max(0,S.bo-5);if(b.sips>0&&Math.random()<.18+S.prom*.06){setTimeout(()=>{if(S.bottle!==b)return;snd('retch');vib([80,40,160]);b.sips=0;epPush(b);S.bottle=null;S.empties++;S.pfandStock++;toast(pick(['Würg. Der Keiler will wieder raus. Du gibst auf, die Flasche fliegt in die Ecke.','Uargh. Dein Magen sagt Nein. Der Rest Keilerkotze ist jetzt Leergut.','Bäh. Schmeckt wie ein nasser Hund im Wald. Schluss damit, ab in die Ecke.']))},700)}
+  else if(b.sips===0&&Math.random()<.4)setTimeout(()=>{snd('retch');toast(pick(['Brrrr. Der Keiler kotzt innerlich mit.','Leer. Du schüttelst dich wie ein nasser Köter.']))},700)}
  else{S.prom=Math.max(0,S.prom-.08);if(b.sips===0&&Math.random()<.4)setTimeout(()=>{snd('burp');toast(pick(['Rülps. Selbst dein Rülpser schmeckt nach Discounter.','Dose leer. Zerdrückt am Kopf. Aua.']))},600)}
  if(b.sips<=0)epPush(b);clampAll()};
 // linke Hand: eigene Bilder für Flasche/Dose
@@ -2591,6 +2592,32 @@ const _tapD=tap;tap=function(id,p){if(id&&id.startsWith('dsel_')){S.dsel=id.slic
 // Größe/Lage an die Bier-Hand angleichen
 function drinkBox(lb,lk){const i=SP[lk],bi=SP[lk.slice(2)];if(!i||!bi||!bi.naturalWidth)return lb;const s=Math.min(lb.w/bi.naturalWidth,lb.h/bi.naturalHeight),bw=bi.naturalWidth*s,bh=bi.naturalHeight*s,bx=lb.x+(lb.w-bw)/2;
  const big=/drink_2/.test(lk),h=bh*(big?.95:.9),w=h*i.naturalWidth/i.naturalHeight;return{x:big?bx:bx-bw*.04,y:lb.y+lb.h-h,w,h}}
+
+// Kotzen = Flasche ist sofort Leergut
+const _pukeD=puke;puke=function(){const b=S.bottle;if(b&&b.sips>0){b.sips=0;S.bottle=null;if(!b.sekt){epPush(b);S.empties++;S.pfandStock++}setTimeout(()=>toast(pick(['Beim Kotzen fliegt dir die Flasche aus der Hand. Leergut. Wie du.','Die Flasche ist weg, der Mageninhalt auch. Gleichstand.'])),4600)}return _pukeD.apply(this,arguments)};
+// Beim Anbieten auswählen: Bier, Keilerkotze oder BilloPisse
+const DRK_TXT={k:{e:'🐗',n:'Keilerkotze',re:[' – „Keilerkotze?! Willst du mich umbringen? … Noch einen.“',' – Ein Schluck, und das Gesicht verzieht sich wie ein Pavianarsch.',' – „Schmeckt wie Hustensaft aus dem Gully. Geil.“']},
+ d:{e:'🥫',n:'BilloPisse',re:[' – „BilloPisse? Hältst du mich für einen Penner? … Gib her.“',' – „Warm und billig. Wie deine Ex.“',' – „Hier schmeckt sogar das Dosenblech besser.“']}};
+function isDrinkOpt(o){if(!o||typeof o.f!=='function'||!/Bier|[Gg]eben|schenken|anbieten|ausgeben|Prost|[Ss]aufen|Runde/.test(o.t||''))return false;const src=o.f.toString()+(o.c?o.c.toString():'');return/S\.beer\s*(-=|--)|beer:\s*-|S\.beer\s*<|S\.beer\s*>=|S\.beer\s*>/.test(src)&&!/S\.beer\s*\+=/.test(o.f.toString())}
+function asDrink(t,fn){return function(){const st=DRK[t].st,b0=S.beer;S.beer=S[st]||0;let r;try{r=fn.apply(this,arguments)}finally{S[st]=Math.max(0,S.beer);S.beer=b0}
+ const T=DRK_TXT[t];if(r&&typeof r==='object'){if(typeof r.say==='string'&&!/[Kk]ein|nix|nichts/.test(r.say.slice(0,30)))r.say=r.say.replace(/Bier(e|en|chen)?/g,T.n)+pick(T.re);if(typeof r.fx==='string')r.fx=r.fx.replace(/Bier/g,T.n)}return r}}
+function drinkOpts(opts,live){if(!Array.isArray(opts)||opts._dx)return opts;const out=[];let any=false;for(const o of opts){if(!isDrinkOpt(o)){out.push(o);continue}const oi=out.length;out.push(o);
+ for(const t of['k','d']){const st=DRK[t].st;if(live&&!((S[st]||0)>0))continue;const T=DRK_TXT[t];any=true;
+  const lbl=/Bier/.test(o.t)?o.t.replace(/🍺|🍻/,T.e).replace(/ein Bier/g,'eine '+T.n).replace(/Bier(e|en|chen)?/g,T.n):T.e+' '+o.t.replace(/^\S*[^\wÄÖÜäöü\s]\s*/,'')+': '+T.n;const v=Object.assign({},o,{t:lbl,f:asDrink(t,o.f)});
+  if(!live){const c0=o.c?asDrink(t,o.c):null;v.c=function(){return (S[st]||0)>0&&(!c0||c0.apply(this,arguments))}}else if(o.c)v.c=asDrink(t,o.c);
+  out.push(v)}
+  if(out.length>oi+1&&!/Bier/.test(o.t))out[oi]=Object.assign({},o,{t:'🍺 '+o.t+': Bier'})}
+ if(!any&&live)return opts;out._dx=1;return out}
+const _visitD=visit;visit=function(who,text,opts,pose){return _visitD(who,text,drinkOpts(opts,true),pose)};
+const _cardD=showCard;showCard=function(title,text,opts){return _cardD(title,text,drinkOpts(opts,true))};
+try{const g=drinkOpts(GUEST_COMMON,false);GUEST_COMMON.length=0;g.forEach(o=>GUEST_COMMON.push(o));for(const k in GUESTS){const G=GUESTS[k];if(Array.isArray(G.own)){const a=drinkOpts(G.own,false);G.own.length=0;a.forEach(o=>G.own.push(o))}}}catch(e){}
+// Tattoos auf den neuen Handbildern (nackter Arm und Frau)
+(function(){const A={
+ k_bare:[[[.2,.75,.26,-.6],[.38,.32,.14,-.4],[.3,.55,.15,-.6]],[[.15,.8,.24,-.5],[.32,.3,.14,-.3],[.25,.58,.15,-.5]],[[.1,.82,.18,-.4],[.4,.12,.13,-.1],[.18,.5,.13,-.4]]],
+ d_bare:[[[.2,.75,.26,-.6],[.38,.35,.14,-.4],[.3,.55,.15,-.6]],[[.15,.8,.24,-.5],[.32,.3,.14,-.3],[.25,.58,.15,-.5]],[[.12,.78,.18,-.4],[.38,.13,.13,-.1],[.2,.47,.13,-.4]]],
+ k_w:[[[.13,.85,.22,-.6],[.38,.42,.14,-.5],[.25,.65,.14,-.6]],[[.15,.85,.22,-.5],[.42,.3,.14,-.4],[.3,.6,.14,-.5]],[[.1,.85,.16,-.3],[.45,.12,.12,0],[.2,.55,.12,-.3]]],
+ d_w:[[[.18,.88,.2,-.6],[.4,.5,.14,-.5],[.3,.72,.14,-.6]],[[.15,.85,.22,-.5],[.35,.35,.14,-.4],[.28,.62,.14,-.5]],[[.08,.82,.16,-.3],[.4,.12,.12,0],[.16,.5,.12,-.3]]]};
+ for(const g in A){const[t,suf]=g.split('_');['lh_full','lh_open','lh_empty','drink_1'].forEach(s=>TAT_ANCHOR[t+'_'+s+'_'+suf]=A[g][0]);TAT_ANCHOR[t+'_drink_3_'+suf]=A[g][1];TAT_ANCHOR[t+'_drink_2_'+suf]=A[g][2]}})();
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
