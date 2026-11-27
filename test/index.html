@@ -3012,6 +3012,13 @@ function knSlot(){const SY=['🍒','🍋','🔔','🍺','7️⃣'];const ui=docu
    setTimeout(()=>knSay(pay?(pay>=40?'DREI SIEBENER! Der Automat spuckt '+eur(pay)+' aus. Erwin springt vor Freude im Kreis, obwohl es dein Geld ist.':'Gewonnen: '+eur(pay)+'. Die Klingel bimmelt. Klaus wacht kurz auf.'):pick(['Nix. Der Automat lacht dich mit einem Dudelsound aus.','Verloren. Erwin klopft dir auf die Schulter: „Der nächste kommt bestimmt.“ Er sagt das seit 1993.']),pay?'+'+eur(pay):''),900)}},90)}
 // Knopf im Handy
 {const _op=openPhone;openPhone=function(){_op.apply(this,arguments);try{const f=M.querySelector('[data-tinda]');if(f&&!M.querySelector('[data-kn]')){const b=document.createElement('button');b.className='btn pri';b.dataset.kn=1;b.style.background='#8a5a1e';b.style.color='#fff';b.textContent='🍺 Ab in die Kneipe „Zum feuchten Furz“';f.after(b);b.onclick=()=>{initAudio();snd('pop');kneipeGo()}}}catch(e){}}}
+// ================= Zurück-Knopf immer oben (klebt beim Scrollen fest) =================
+const BACK_TXT=/^(←\s*)?(Zurück|Schließen|Doch nicht|Tür zu)$/;
+function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.querySelectorAll('button')].filter(b=>BACK_TXT.test(b.textContent.trim())&&!b.closest('.backbar'));if(!bs.length)return;
+ const b=bs[bs.length-1];const bar=document.createElement('div');bar.className='backbar';bar.style.cssText='position:sticky;top:-14px;z-index:5;margin:-14px -14px 6px;padding:8px 14px 8px;background:#0d0907;box-shadow:0 6px 8px -4px #000c;display:flex;justify-content:flex-start';
+ const par=b.parentNode;b.style.cssText+=';width:auto;min-width:0;padding:6px 14px;font-size:14px;flex:0 0 auto';if(!/^←/.test(b.textContent.trim()))b.textContent='← '+b.textContent.trim();bar.appendChild(b);M.insertBefore(bar,M.firstChild);
+ if(par&&par.classList&&par.classList.contains('list')&&!par.children.length)par.remove()}catch(e){}}
+{const _om=openModal;openModal=function(){const r=_om.apply(this,arguments);backToTop();return r}}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
