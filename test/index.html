@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=156;
+const APPVER=154;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1049,16 +1049,16 @@ function splashHtml(){const PAIR='<img src="sprites/splash_pair.webp" alt="" sty
 function mainMenu(){const has=S.started;openModal(`${splashHtml()}<div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER} · Freigegeben ab 16 Jahren</div>
  <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
- <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button>
+ <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();(newsCheck()||rateCheck());stat('spiel-start');setTimeout(()=>startTut(),700)});S.started=true;closeModal();showDay();(newsCheck()||rateCheck());stat('spiel-start');setTimeout(()=>startTut(),700)}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);if(a==='code')codeMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofatest_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
 function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
- <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
- <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="sex">👫 Mann/Frau wechseln</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
+ <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
+ <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="sex">👫 Mann/Frau wechseln</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='sex')sexSwitchMenu();
   if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='sup')supportMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofatest_snd',soundOn?'1':'0')}catch(e){}musicSet();pauseMenu()}
@@ -1080,8 +1080,11 @@ const SHOP=[
  {n:'Sixpack',p:4,d:'+6 Bier',f:()=>fx({beer:6})},
  {n:'Schmuddelheft „Busen-Express“',p:6,d:'Gegen Langeweile. Bleibt auf dem Tisch liegen',f:()=>{if(S.mag){S.money+=6;return 'Du hast doch schon eins, du Sammler. Geld zurück.'}S.mag=true;return 'Liegt jetzt auf dem Tisch. Antippen, wenn dir langweilig ist.'}},
  {n:'Zigaretten „Gelbe Lunge“',p:5,d:'+20 Kippen',f:()=>{S.packClosed=true;return fx({cigs:20})}}];
+const SHOP_CATS=[['🍺 Saufen',/Sixpack|Keilerkotze|BilloPisse|Glühkotze|Sekt/],['🍕 Fressen',/Chips|Döner|Pommes|Pizza|Fleischwurst|Ravioli|Mett|Fressen/],['🚬 Kippen & Rauchen',/Zigaretten|Shisha|Kippen/],['🎰 Zocken',/Rubbellos|Lotto/],['🛍️ Sonstiges',/./]];
+function shopRows(){const used=new Set();return SHOP_CATS.map(([h,re])=>{const rows=SHOP.map((it,i)=>[it,i]).filter(([it,i])=>!used.has(i)&&re.test(it.n)&&!((it.w&&!isW())||(it.c&&!it.c())));rows.forEach(([it,i])=>used.add(i));if(!rows.length)return'';
+ return`<h4 style="margin:12px 0 4px;text-align:left">${h}</h4>`+rows.map(([it,i])=>`<div class="row${S.money<it.p?' off':''}"><div class="t"><b>${esc(it.n)}</b><span>${esc(it.d)}</span></div><button class="btn pri" data-b="${i}" ${S.money<it.p?'disabled':''}>${eur(it.p)}</button></div>`).join('')}).join('')}
 function shopMenu(){const pf=S.basket;openModal(`<h2>Späti-Shop</h2><p>Kasse: <b>${eur(S.money)}</b> · Bier ${S.beer} · Snacks ${S.snacks} · Kippen ${S.cigs}</p><div class="list">
- ${SHOP.map((it,i)=>(it.w&&!isW())||(it.c&&!it.c())?'':`<div class="row${S.money<it.p?' off':''}"><div class="t"><b>${esc(it.n)}</b><span>${esc(it.d)}</span></div><button class="btn pri" data-b="${i}" ${S.money<it.p?'disabled':''}>${eur(it.p)}</button></div>`).join('')}
+ ${shopRows()}
  <div class="row${pf?'':' off'}"><div class="t"><b>Pfand abgeben</b><span>${pf} Flaschen im Korb × 0,25 €${S.empties?' · '+S.empties+' stehen noch auf dem Tisch – erst in den Korb legen':''}</span></div><button class="btn pri" data-pf ${pf?'':'disabled'}>+${eur(pf*.25)}</button></div></div>${closeBtn}`,()=>bindAll({
   '[data-b]':el=>{const it=SHOP[+el.dataset.b];if(S.money<it.p)return;S.money-=it.p;const r=it.f();snd('cash');addXP(1);toast('Gekauft: '+it.n,r);shopMenu()},
   '[data-pf]':()=>{const n=S.basket;const m=n*.25;S.money+=m;S.st.pfandBottles+=n;S.st.pfandMoney+=m;S.basket=0;S.pfandStock=0;snd('cash');toast('Pfand: +'+eur(m),'Die Kassiererin hält die Luft an.');checkAch();shopMenu()},
@@ -2483,7 +2486,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
- {v:154,t:['🎲 Trinkspiele mit Gästen: „Ich hab noch nie …“ und Flaschendrehen','🍄 Rubbellose und Lotto 6 aus 49 im Shop','🎯 Neue Tagesaufgaben und eine Wochen-Challenge mit Pokal fürs Regal']},
+ {v:154,t:['🎲 Trinkspiele mit Gästen: „Ich hab noch nie …“ und Flaschendrehen','🍄 Rubbellose und Lotto 6 aus 49 im Shop','🎯 Neue Tagesaufgaben und eine Wochen-Challenge mit Pokal fürs Regal','🍕 Essen im Vorratspack: Pizza, Fleischwurst und Mett für den Kühlschrank, Ravioli für den Schrank','🛒 Späti-Shop nach Saufen, Fressen, Kippen und Zocken sortiert']},
  {v:153,t:['💔 Dein Ex meldet sich: fiese Nachrichten und besoffene Anrufe','🥊 Ex trifft Date: Prügelei im Treppenhaus','💕 Fuggi: Feste Beziehung nach zwei guten Dates, bis es kracht','🐗 Neu im Shop: Keilerkotze (Kräuterschnaps) und BilloPisse-Dosen, wechselbar am Sixpack','🎄 Ab dem 1. Advent: Glühkotze im Shop, und an Heiligabend steht Mutti vor der Tür']},
  {v:152,t:['👫 Spiel als Mann oder Frau, jederzeit im Pausenmenü wechselbar','🔥 Fuggi: Dating-App mit 40 Profilen, fiesen Chats, Fotos, Dates und heißen Anrufen','👺 Der Dreckskobold kommt, wenn die Bude vermüllt ist','🥂 Sekt für die Damen, neue Startbilder','🍺 Leere Flaschen: genau die angetippte wird weggeräumt']}];
 const NEWS_KEY='sofatest_newsv';
@@ -2723,18 +2726,21 @@ function drawTrophy(){if(!(S.trophies>0)||!L.roomMode||!L.mm)return;const p=L.mm
 {const _ds=drawStash;drawStash=function(){const r=_ds.apply(this,arguments);try{drawTrophy()}catch(e){}return r}}
 
 // ---- Rubbellos „GlücksPilz“ ----
-const LOS_SYM=['🍄','🍺','💩','🚬','🐀','💰'];
-SHOP.push({n:'Rubbellos „GlücksPilz“',p:2,d:'Rubbeln und hoffen. Meistens Niete. Wie du.',f:()=>{setTimeout(scratchGame,150);return'Rubbel, du Zocker.'}});
-function scratchGame(){busyUI=true;const r=Math.random();let win=0;S.st.loseSince=(S.st.loseSince||0)+1;if(S.st.loseSince>=10&&Math.random()<.2){win=100;S.st.loseSince=0}else if(r<.06)win=RI(10,20);else if(r<.24)win=RI(2,5);
- const sym=win===100?'💰':win>=10?'🍄':win>0?'🍺':null;let f=LOS_SYM.slice().sort(()=>Math.random()-.5);
+const LOS_SYM=['🍄','🍺','💩','🚬','🐀','💰','🎟️'];
+SHOP.push({n:'Rubbellos „GlücksPilz“',p:2,d:'Rubbeln und hoffen. Kleine Gewinne, Gutscheine, manchmal mehr.',f:()=>{setTimeout(scratchGame,150);return'Rubbel, du Zocker.'}});
+function losVoucher(){const pool=SHOP.filter(it=>!/Rubbellos|Lotto/.test(it.n)&&!(it.w&&!isW())&&!(it.c&&!it.c())&&it.p<=8);return pick(pool)}
+function scratchGame(){busyUI=true;const r=Math.random();let win=0,vou=null;S.st.loseSince=(S.st.loseSince||0)+1;
+ if(S.st.loseSince>=10&&Math.random()<.2){win=100;S.st.loseSince=0}else if(r<.06)win=RI(10,20);else if(r<.2)vou=losVoucher();else if(r<.45)win=RI(1,5);
+ const sym=win===100?'💰':win>=10?'🍄':vou?'🎟️':win>0?'🍺':null;
  let fields;if(sym){const oth=LOS_SYM.filter(s=>s!==sym);fields=[sym,sym,sym,...oth.sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5)}else{fields=[];const cnt={};while(fields.length<6){const s=pick(LOS_SYM);if((cnt[s]||0)<2){cnt[s]=(cnt[s]||0)+1;fields.push(s)}}}
- const card=SP.lotto_0&&SP.lotto_0.naturalWidth;
  openModal(`<h2>🍄 GlücksPilz</h2><p style="font-size:13px;color:var(--dim)">Mit dem Finger freirubbeln. Drei gleiche Zeichen gewinnen.</p>
-  <div style="position:relative;width:300px;height:200px;margin:8px auto;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#2f7a2f,#c9a227)"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;height:100%;box-sizing:border-box">${fields.map(s=>`<div style="background:#fff8;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px">${s}</div>`).join('')}</div><canvas id="scr" width="300" height="200" style="position:absolute;left:0;top:0;touch-action:none;cursor:crosshair"></canvas></div>
+  <div id="losBox" style="position:relative;width:300px;height:200px;margin:8px auto;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#2f7a2f,#c9a227)"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;height:100%;box-sizing:border-box">${fields.map(s=>`<div style="background:#fff8;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:40px">${s}</div>`).join('')}</div><canvas id="scr" width="300" height="200" style="position:absolute;left:0;top:0;touch-action:none;cursor:crosshair"></canvas></div>
   <div class="list"><button class="btn" data-all>Alles auf einmal aufrubbeln</button></div><p id="scrRes" style="font-weight:800;text-align:center;min-height:22px"></p>`,()=>{
   const c=document.getElementById('scr'),x=c.getContext('2d');const g=x.createLinearGradient(0,0,300,200);g.addColorStop(0,'#bfc3c7');g.addColorStop(.5,'#eef0f2');g.addColorStop(1,'#9da2a8');x.fillStyle=g;x.fillRect(0,0,300,200);x.fillStyle='#777';x.font='900 22px Nunito,sans-serif';x.textAlign='center';x.fillText('RUBBEL MICH',150,108);
   let done=false,down=false,last=0;const fin=()=>{if(done)return;done=true;x.clearRect(0,0,300,200);S.st.lose=(S.st.lose||0)+1;const res=document.getElementById('scrRes');
-   if(win){S.money+=win;snd('cash');res.innerHTML='GEWINN! +'+eur(win)+(win===100?' – Der Hauptgewinn! Heute wird gesoffen!':'');if(win===100)setTimeout(halfGone,RI(25,50)*1000)}else{snd('bad');S.st.loseNiete=(S.st.loseNiete||0)+1;res.textContent=pick(['NIETE. Wie erwartet. Wie du.','Niete. Die 2 Euro hätten für zwei BilloPisse gereicht.','Niete. Der Pilz lacht dich aus.'])}
+   const ban=t=>{const d=document.createElement('div');d.style.cssText='position:absolute;left:-10%;right:-10%;top:38%;transform:rotate(-12deg);background:linear-gradient(90deg,#e8b830,#fff1a8,#e8b830);color:#7a1a1a;font:900 20px Nunito,sans-serif;text-align:center;padding:6px 0;box-shadow:0 3px 10px #0008;letter-spacing:1px;pointer-events:none';d.textContent=t;document.getElementById('losBox').appendChild(d)};
+   if(vou){const fxr=vou.f();snd('cash');ban('GUTSCHEIN!');res.innerHTML='Gutschein eingelöst: '+esc(vou.n)+(typeof fxr==='string'&&fxr.length<80?'<br><span style="font-weight:600;font-size:13px">'+esc(fxr)+'</span>':'')}
+   else if(win){S.money+=win;snd('cash');ban(win===100?'HAUPTGEWINN 100 €!':'GEWINN '+eur(win));res.innerHTML='GEWINN! +'+eur(win)+(win===100?' – Heute wird gesoffen!':'');if(win===100)setTimeout(halfGone,RI(25,50)*1000)}else{snd('bad');S.st.loseNiete=(S.st.loseNiete||0)+1;res.textContent=pick(['NIETE. Wie erwartet. Wie du.','Niete. Die 2 Euro hätten für zwei BilloPisse gereicht.','Niete. Der Pilz lacht dich aus.'])}
    M.querySelector('.list').innerHTML=`<button class="btn pri" data-again ${S.money<2?'disabled':''}>Noch eins (2,00 €)</button><button class="btn" data-x>Fertig</button>`;
    bindAll({'[data-again]':()=>{if(S.money<2)return;S.money-=2;scratchGame()},'[data-x]':()=>{closeModal();if((S.st.loseNiete||0)%6===5)toast('Spielsucht? Quatsch. Nur noch eins.','')}})};
   const at=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*300/r.width,(e.clientY-r.top)*200/r.height]};
@@ -2744,18 +2750,19 @@ function scratchGame(){busyUI=true;const r=Math.random();let win=0;S.st.loseSinc
   bindAll({'[data-all]':fin})})}
 
 // ---- Lotto 6 aus 49 (Ziehung um 20 Uhr im Spiel) ----
-SHOP.push({n:'Lottoschein „6 aus 49“',p:3,d:'Ziehung heute um 20 Uhr im Fernsehen. Jackpot 1.000.000 €',c:()=>!S.lotto,f:()=>{setTimeout(lottoPick,150);return'Kreuz deine Zahlen an.'}});
-function lottoPick(){busyUI=true;const sel=new Set();const draw=()=>{openModal(`<h2>🎱 Lotto 6 aus 49</h2><p style="font-size:13px;color:var(--dim)">${sel.size}/6 Kreuze. Ziehung ${S.hour<20?'heute':'morgen'} um 20 Uhr.</p><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:330px;margin:0 auto">${Array.from({length:49},(_,i)=>i+1).map(n=>`<button class="btn${sel.has(n)?' pri':''}" data-n="${n}" style="padding:6px 0;min-width:0;font-size:14px">${n}</button>`).join('')}</div>
+SHOP.push({n:'Lottoschein „6 aus 49“',p:3,d:'Eine Ziehung, um 20 Uhr im Fernsehen. Jackpot 1.000.000 €',c:()=>!S.lotto,f:()=>{setTimeout(()=>lottoPick(1),150);return'Kreuz deine Zahlen an.'}},
+ {n:'Lotto-Dauerschein 5 Tage',p:12,d:'Gleiche Zahlen, 5 Ziehungen hintereinander. Spart 3 €',c:()=>!S.lotto,f:()=>{setTimeout(()=>lottoPick(5),150);return'Kreuz deine Zahlen an.'}});
+function lottoPick(days){days=days||1;busyUI=true;const sel=new Set();const draw=()=>{openModal(`<h2>🎱 Lotto 6 aus 49${days>1?' · '+days+' Tage':''}</h2><p style="font-size:13px;color:var(--dim)">${sel.size}/6 Kreuze. Ziehung ${S.hour<20?'heute':'morgen'} um 20 Uhr.</p><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:330px;margin:0 auto">${Array.from({length:49},(_,i)=>i+1).map(n=>`<button class="btn${sel.has(n)?' pri':''}" data-n="${n}" style="padding:6px 0;min-width:0;font-size:14px">${n}</button>`).join('')}</div>
   <div class="list" style="margin-top:10px"><button class="btn" data-qt>🎲 Quicktipp</button><button class="btn pri" data-go ${sel.size===6?'':'disabled'}>Schein abgeben</button></div>`,()=>bindAll({
   '[data-n]':el=>{const n=+el.dataset.n;if(sel.has(n))sel.delete(n);else if(sel.size<6)sel.add(n);draw()},
   '[data-qt]':()=>{sel.clear();while(sel.size<6)sel.add(RI(1,49));draw()},
-  '[data-go]':()=>{S.lotto={nums:[...sel].sort((a,b)=>a-b),day:S.hour<20?S.day:S.day+1};closeModal();toast('Schein abgegeben: '+S.lotto.nums.join(', '),'Ziehung '+(S.lotto.day===S.day?'heute':'morgen')+' um 20 Uhr')}}))};draw()}
+  '[data-go]':()=>{S.lotto={nums:[...sel].sort((a,b)=>a-b),day:S.hour<20?S.day:S.day+1,left:days};closeModal();toast('Schein abgegeben: '+S.lotto.nums.join(', '),'Ziehung '+(S.lotto.day===S.day?'heute':'morgen')+' um 20 Uhr')}}))};draw()}
 function lottoDue(){return!!S.lotto&&(S.day>S.lotto.day||(S.day===S.lotto.day&&S.hour>=20))&&!busyUI&&S.started}
 setInterval(()=>{try{if(lottoDue())lottoDraw()}catch(e){}},2500);
-function lottoDraw(){busyUI=true;const L0=S.lotto;S.lotto=null;S.st.lottoSince=(S.st.lottoSince||0)+1;const jack=S.st.lottoSince>=10&&Math.random()<.25;if(jack)S.st.lottoSince=0;let pool=Array.from({length:49},(_,i)=>i+1).sort(()=>Math.random()-.5).slice(0,6).sort((a,b)=>a-b);if(jack)pool=L0.nums.slice();else if(pool.every(n=>L0.nums.includes(n)))pool[0]=[...Array(49)].map((_,i)=>i+1).find(n=>!L0.nums.includes(n));const hit=pool.filter(n=>L0.nums.includes(n)).length;
+function lottoDraw(){busyUI=true;const L0=S.lotto;S.lotto=(L0.left||1)>1?{nums:L0.nums,day:L0.day+1,left:L0.left-1}:null;S.st.lottoSince=(S.st.lottoSince||0)+1;const jack=S.st.lottoSince>=10&&Math.random()<.25;if(jack)S.st.lottoSince=0;let pool=Array.from({length:49},(_,i)=>i+1).sort(()=>Math.random()-.5).slice(0,6).sort((a,b)=>a-b);if(jack)pool=L0.nums.slice();else if(pool.every(n=>L0.nums.includes(n)))pool[0]=[...Array(49)].map((_,i)=>i+1).find(n=>!L0.nums.includes(n));const hit=pool.filter(n=>L0.nums.includes(n)).length;
  const pay={3:10,4:100,5:2000,6:1000000}[hit]||0;let shown=0;
- const show=()=>{openModal(`<h2>📺 Ziehung der Lottozahlen</h2><p style="font-size:13px;color:var(--dim)">Deine Zahlen: ${L0.nums.join(', ')}</p><div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0">${pool.slice(0,shown).map(n=>`<div style="width:40px;height:40px;border-radius:50%;background:${L0.nums.includes(n)?'#f2c14e':'#eee'};color:#222;font:900 17px Nunito,sans-serif;display:flex;align-items:center;justify-content:center">${n}</div>`).join('')}</div>
-  ${shown>=6?`<p style="font-weight:800;text-align:center">${hit} Richtige. ${pay?'GEWONNEN: '+(pay>=1e4?pay.toLocaleString('de-DE')+',00 €':eur(pay))+'!':pick(['Nix. Die Lottofee hat dich persönlich verarscht.','Niete. Zocker-Erwin lacht dich aus.','Wieder nix. Nächste Woche bestimmt. Wie immer.'])}</p><div class="list"><button class="btn pri" data-ok>${hit===6?'ICH BIN MILLIONÄR! Sofort zur Lottoannahme!':pay?'Ich bin reich!':'Scheiße'}</button></div>`:''}`,()=>bindAll({'[data-ok]':()=>{closeModal();if(hit===6)return jackpotStory();if(pay){S.money+=pay;snd('cash');toast('Lottogewinn: '+eur(pay),'')}else{S.st.lottoLoss=(S.st.lottoLoss||0)+1}}}))};
+ const show=()=>{openModal(`<h2>📺 Ziehung der Lottozahlen</h2><p style="font-size:13px;color:var(--dim)">Deine Zahlen: ${L0.nums.join(', ')}${(L0.left||1)>1?' · noch '+(L0.left-1)+' Ziehung'+(L0.left-1>1?'en':'')+' auf dem Schein':''}</p><div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:10px 0">${pool.slice(0,shown).map(n=>`<div style="width:40px;height:40px;border-radius:50%;background:${L0.nums.includes(n)?'#f2c14e':'#eee'};color:#222;font:900 17px Nunito,sans-serif;display:flex;align-items:center;justify-content:center">${n}</div>`).join('')}</div>
+  ${shown>=6?`<p style="font-weight:800;text-align:center">${hit} Richtige. ${pay?'GEWONNEN: '+(pay>=1e4?pay.toLocaleString('de-DE')+',00 €':eur(pay))+'!':pick(['Nix. Die Lottofee hat dich persönlich verarscht.','Niete. Zocker-Erwin lacht dich aus.','Wieder nix. Nächste Woche bestimmt. Wie immer.'])}</p><div class="list"><button class="btn pri" data-ok>${hit===6?'ICH BIN MILLIONÄR! Sofort zur Lottoannahme!':pay?'Ich bin reich!':'Scheiße'}</button></div>`:''}`,()=>bindAll({'[data-ok]':()=>{closeModal();if(hit===6){S.lotto=null;return jackpotStory()}if(pay){S.money+=pay;snd('cash');toast('Lottogewinn: '+eur(pay),'')}else{S.st.lottoLoss=(S.st.lottoLoss||0)+1}}}))};
  show();const iv=setInterval(()=>{shown++;snd('pop');show();if(shown>=6)clearInterval(iv)},900)}
 
 // ---- Trinkspiele mit Gästen ----
@@ -2817,6 +2824,32 @@ function jackpotPolice(){if(VISIT){setTimeout(jackpotPolice,3000);return}setTime
 function jackpotTrost(){if(busyUI||VISIT){setTimeout(jackpotTrost,2500);return}const t=pick(['b','k','d','g'].filter(x=>x!=='g'||xSeason()));const nm=t==='b'?'assibräu':DRK[t].n;
  if(t==='b')S.beer+=6;else S[DRK[t].st]=(S[DRK[t].st]||0)+6;S.dsel=t;S.money+=50;snd('cash');
  openModal(`<h2>🎁 Trostpreis</h2><p>Am nächsten Morgen klingelt es. Vor der Tür steht ein Sixpack ${esc(nm)} und ein Umschlag mit 50 € von der Lottogesellschaft. Auf dem Zettel steht: „Als kleiner Trost. Die ganze Abteilung hat über Sie gelacht. Wirklich alle. Frohes Saufen, Herr Millionär.“</p><p style="font-size:13px;color:var(--dim)">Gegenüber hängt Herr Brandt aus dem Fenster und brüllt: „MIL-LI-O-NÄR! MIL-LI-O-NÄR!“</p><p style="color:#f2c14e;font-weight:800">Sixpack ${esc(nm)} · Geld +50,00 €</p><div class="list"><button class="btn pri" data-ok>Danke für nix</button></div>`,()=>bindAll({'[data-ok]':()=>{closeModal();toast('Millionär für einen Abend. Immerhin.','',4000)}}))}
+// ================= ESSEN: Packungen, Vorrat und Kühlschrank =================
+const FOOD={
+ pizza:{n:'Tiefkühlpizza „Salami-Pappe“',e:'🍕',hu:-45,fr:1,t:['Pizza in den Ofen, 12 Minuten. Du wartest 8. Innen noch gefroren. Egal.','Pizza. Der Rand ist so hart, damit könnte man Herrn Brandt erschlagen.']},
+ wurst:{n:'Fleischwurst-Ring',e:'🌭',hu:-30,fr:1,t:['Du beißt in den Fleischwurst-Ring wie ein Wolf. Ohne Brot. Ohne Würde.','Fleischwurst. Die Haut hängt dir noch aus dem Mundwinkel.']},
+ mett:{n:'Mettbrötchen',e:'🥖',hu:-25,fr:1,t:['Mettbrötchen mit Zwiebeln. Dein Atem ist jetzt eine Waffe.','Mett. Rohes Schwein am Morgen vertreibt Kummer und Sorgen.']},
+ ravioli:{n:'Dosenravioli',e:'🥫',hu:-35,fr:0,t:['Ravioli kalt aus der Dose. Mit dem Löffel. Wie ein Gentleman.','Dosenravioli. Die Soße läuft dir übers Kinn auf die Brust. Abendessen und Deko.']}};
+SHOP.push(
+ {n:'Tiefkühlpizza 3er-Pack',p:6.5,d:'3 Pizzen für den Kühlschrank (Gefrierfach). Antippen: Kühlschrank',c:()=>!!S.furn.fridge,f:()=>foodAdd('pizza',3)},
+ {n:'Fleischwurst-Ring 2er-Pack',p:4,d:'Hunger −30 pro Ring. Kommt in den Kühlschrank',c:()=>!!S.furn.fridge,f:()=>foodAdd('wurst',2)},
+ {n:'Mettbrötchen 3er „Zwiebel-Atem“',p:4.5,d:'Hunger −25 pro Brötchen. Kommt in den Kühlschrank',c:()=>!!S.furn.fridge,f:()=>foodAdd('mett',3)},
+ {n:'Dosenravioli 4er-Pack',p:5,d:'Hunger −35 pro Dose. Braucht keinen Kühlschrank',f:()=>foodAdd('ravioli',4)});
+function foodAdd(k,n){if(!S.food)S.food={};S.food[k]=(S.food[k]||0)+n;return FOOD[k].fr?n+'× '+FOOD[k].n+' liegen jetzt im Kühlschrank.':n+'× '+FOOD[k].n+' stehen im Schrank.'}
+function foodCount(){return S.food?Object.values(S.food).reduce((a,b)=>a+b,0):0}
+function foodEat(k){if(!(S.food&&S.food[k]>0))return;S.food[k]--;const F=FOOD[k];snd('pop');handAnim.snack=1.2;S.hang=Math.max(0,(S.hang||0)-1);toast(pick(F.t),fx({hu:F.hu,prom:-.1,xp:1}));checkAch()}
+function foodMenu(){const ks=Object.keys(FOOD).filter(k=>S.food&&S.food[k]>0);
+ openModal(`<h2>Was fressen?</h2><div class="list">${S.snacks>0?`<button class="btn" data-fs>🥨 Snack (${S.snacks} da)</button>`:''}${ks.map(k=>`<button class="btn pri" data-f="${k}">${FOOD[k].e} ${esc(FOOD[k].n)} (${S.food[k]} da) · Hunger ${FOOD[k].hu}</button>`).join('')}<button class="btn" data-x>Doch nicht</button></div>`,
+  ()=>bindAll({'[data-f]':el=>{closeModal();foodEat(el.dataset.f)},'[data-fs]':()=>{closeModal();eatSnack(true)},'[data-x]':closeModal}))}
+// Snack-Knopf: mit Vorrat erst fragen, was es sein soll
+const _eatSnackF=eatSnack;eatSnack=function(direct){if(direct!==true&&foodCount()>0)return foodMenu();return _eatSnackF()};
+// Kühlschrank: Getränke UND Essen
+const _fridgeTapF=fridgeTap;fridgeTap=function(){const fk=Object.keys(FOOD).filter(k=>FOOD[k].fr&&S.food&&S.food[k]>0);if(!fk.length)return _fridgeTapF.apply(this,arguments);
+ FX.fridgeOpen=S.tot+1.2;const cold=S.fridge>0&&S.tot>=S.fridgeColdAt,warm=S.fridge>0&&!cold;
+ openModal(`<h2>🧊 Kühlschrank</h2><p style="font-size:13px;color:var(--dim)">${S.fridge>0?S.fridge+' Flaschen '+(cold?'eiskalt':'noch warm'):'Keine Flaschen drin'} · ${fk.map(k=>S.food[k]+'× '+FOOD[k].n).join(' · ')}</p><div class="list">
+  ${cold?'<button class="btn pri" data-c="b">🍺 Kaltes Bier nehmen</button>':''}${S.fridge<=0&&S.beer>0?'<button class="btn" data-c="fill">🍺 Bier reinstellen</button>':''}${warm?`<button class="btn" disabled>Bier wird noch kalt (${Math.ceil(S.fridgeColdAt-S.tot)} s)</button>`:''}
+  ${fk.map(k=>`<button class="btn" data-f="${k}">${FOOD[k].e} ${esc(FOOD[k].n)} essen</button>`).join('')}<button class="btn" data-x>Tür zu</button></div>`,
+  ()=>bindAll({'[data-c]':el=>{closeModal();if(el.dataset.c==='b')takeBeer(true);else _fridgeTapF()},'[data-f]':el=>{closeModal();foodEat(el.dataset.f)},'[data-x]':closeModal}))};
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
