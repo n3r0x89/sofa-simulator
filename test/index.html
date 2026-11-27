@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 158</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 159</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=158;
+const APPVER=159;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2486,7 +2486,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
- {v:158,t:['🎲 Trinkspiele mit Gästen: „Ich hab noch nie …“ und Flaschendrehen','🍄 Rubbellos mit Gutscheinen und Lotto 6 aus 49 im Shop','🎯 Neue Tagesaufgaben und eine Wochen-Challenge mit Pokal fürs Regal','🏠 Bude einrichten: Tapeten, Poster, Dartscheibe mit Ex-Foto, Wasserpfeife','🐾 Haustiere: Katze Fettsack, Hamster Rambo, Wellensittich Hansi','🍺 Ab in die Kneipe „Zum feuchten Furz“: Saufen, Zocken, Dart und Prügeln. Stammgast Batchman ist immer da']},
+ {v:159,t:['🎲 Trinkspiele mit Gästen: „Ich hab noch nie …“ und Flaschendrehen','🍄 Rubbellos mit Gutscheinen und Lotto 6 aus 49 im Shop','🎯 Neue Tagesaufgaben und eine Wochen-Challenge mit Pokal fürs Regal','🏠 Bude einrichten: Tapeten, Poster, Dartscheibe mit Ex-Foto, Wasserpfeife','🐾 Haustiere: Katze Fettsack, Hamster Rambo, Wellensittich Hansi','🍺 Ab in die Kneipe „Zum feuchten Furz“: Saufen, Zocken, Dart und Prügeln. Stammgast Batchman ist immer da']},
  {v:154,t:['🍕 Essen im Vorratspack: Pizza, Fleischwurst und Mett für den Kühlschrank, Ravioli für den Schrank','🧊 Kühlschrank-Menü: kaltes Bier oder was zu fressen','🛒 Späti-Shop nach Saufen, Fressen, Kippen und Zocken sortiert']},
  {v:153,t:['💔 Dein Ex meldet sich: fiese Nachrichten und besoffene Anrufe','🥊 Ex trifft Date: Prügelei im Treppenhaus','💕 Fuggi: Feste Beziehung nach zwei guten Dates, bis es kracht','🐗 Neu im Shop: Keilerkotze (Kräuterschnaps) und BilloPisse-Dosen, wechselbar am Sixpack','🎄 Ab dem 1. Advent: Glühkotze im Shop, und an Heiligabend steht Mutti vor der Tür']},
  {v:152,t:['👫 Spiel als Mann oder Frau, jederzeit im Pausenmenü wechselbar','🔥 Fuggi: Dating-App mit 40 Profilen, fiesen Chats, Fotos, Dates und heißen Anrufen','👺 Der Dreckskobold kommt, wenn die Bude vermüllt ist','🥂 Sekt für die Damen, neue Startbilder','🍺 Leere Flaschen: genau die angetippte wird weggeräumt']}];
@@ -2980,33 +2980,51 @@ function kneipeGo(){if(!S.kn)S.kn={deckel:0,ban:-1,rep:0};
  d.innerHTML=`<div id="knw" style="position:absolute;left:${(sw-w)/2}px;bottom:0;width:${w}px;height:${h}px">${IM}">
   <div id="knm" style="position:absolute;inset:0;pointer-events:none"></div><div id="knb" style="position:absolute;inset:0"></div>
   <div id="knp" style="position:absolute;inset:0;pointer-events:none"></div></div>
-  <div id="knui" style="position:absolute;left:8px;right:8px;bottom:8px;max-height:40%;overflow:auto;background:rgba(25,15,8,.9);border:1px solid #f2c14e55;border-radius:14px;padding:10px"></div>`;
- st.appendChild(d);knDraw();const da=ppl.filter(k=>k!=='moni').map(k=>KN_P[k].n.replace('Schläger-','').replace('Zocker-',''));knSay((da.length?'Heute da: '+da.join(', ')+'. ':'')+pick(['Moni: „Na, wen haben wir denn da? Der Penner von gegenüber. Setz dich, aber fass nix an.“','Moni: „Ach du Scheiße. Du schon wieder. Bier?“','Klaus hebt sein Glas: „Prost, Kollege! Du siehst ja noch schlimmer aus als ich!“']))}
-function knDraw(){const m=document.getElementById('knm'),box=document.getElementById('knp');if(!m||!box)return;const kb=document.getElementById('knb');setTimeout(()=>{const e=kb&&kb.querySelector('[data-kbeer]');if(e)e.onclick=()=>{initAudio();knSip()}},0);if(kb)kb.innerHTML=KN.beer!=null?`<img src="sprites/bottle_${[5,4,2,0][KN.beer]}.webp" alt="" data-kbeer style="pointer-events:auto;cursor:pointer;position:absolute;left:${520/941*100}%;top:${870/1672*100}%;height:${190/1672*100}%;transform:rotate(-4deg)">`:'';
+  <div id="knh" style="position:absolute;left:0;right:0;bottom:0;height:34%;pointer-events:none"></div><div id="knui" style="position:absolute;left:8px;right:8px;top:50px;max-height:34%;overflow:auto;background:rgba(25,15,8,.86);border:1px solid #f2c14e55;border-radius:14px;padding:8px 10px;font-size:14px"></div><div id="knmenu" style="position:absolute;left:8px;right:8px;top:34%;display:none;background:rgba(25,15,8,.94);border:1px solid #f2c14e88;border-radius:14px;padding:8px"></div><div id="knbar" style="position:absolute;left:8px;right:8px;top:6px;display:flex;gap:8px;align-items:center"></div>`;
+ st.appendChild(d);d.addEventListener('click',knTap);knDraw();const da=ppl.filter(k=>k!=='moni').map(k=>KN_P[k].n.replace('Schläger-','').replace('Zocker-',''));knSay((da.length?'Heute da: '+da.join(', ')+'. ':'')+pick(['Moni: „Na, wen haben wir denn da? Der Penner von gegenüber. Setz dich, aber fass nix an.“','Moni: „Ach du Scheiße. Du schon wieder. Bier?“','Klaus hebt sein Glas: „Prost, Kollege! Du siehst ja noch schlimmer aus als ich!“']))}
+function knDraw(){const m=document.getElementById('knm'),box=document.getElementById('knp');if(!m||!box)return;const kb=document.getElementById('knb');setTimeout(()=>{const e=kb&&kb.querySelector('[data-kbeer]');if(e)e.onclick=()=>{initAudio();knSip()}},0);if(kb)kb.innerHTML=false?`<img src="sprites/bottle_${[5,4,2,0][KN.beer]}.webp" alt="" data-kbeer style="pointer-events:auto;cursor:pointer;position:absolute;left:${520/941*100}%;top:${870/1672*100}%;height:${190/1672*100}%;transform:rotate(-4deg)">`:'';
  // Moni steht hinterm Tresen: Unterkörper wird vom Tresen verdeckt
  const pct=(x,y,h)=>`left:${x/941*100}%;top:${y/1672*100}%;height:${h/1672*100}%`;
  const mp=KN.pose.moni===1?3:(KN.mp!=null?KN.mp:0);
  const MV={0:[555,471,280,419],2:[430,462,404,648],1:[430,473,393,637],3:[461,385,365,480],4:[430,463,396,647]};const mk=MV[mp]?mp:0,mv=MV[mk];
- m.innerHTML=`<img src="sprites/kv_moni_${mk}.webp" alt="" style="position:absolute;left:${mv[0]/941*100}%;top:${mv[1]/1671*100}%;width:${mv[2]/941*100}%">`;
+ m.innerHTML=`<img src="sprites/kv_moni_${mk}.webp" alt="" data-kp="moni" style="position:absolute;left:${mv[0]/941*100}%;top:${mv[1]/1671*100}%;width:${mv[2]/941*100}%">`;
  const has=k=>KN.ppl.includes(k);let h='';
- const EV={"0": [161, 593, 195], "1": [143, 594, 230]};if(has('erwin')){const ep=KN.pose.erwin===1?1:0,e=EV[ep];h+=`<img src="sprites/kv_erwin_${ep}.webp" alt="" style="position:absolute;left:${e[0]/941*100}%;top:${e[1]/1671*100}%;width:${e[2]/941*100}%">`}
- const TV={"0": [0, 643, 468], "1": [0, 737, 412], "2": [0, 657, 468]};if(has('ralle')||has('klaus')){const kr=KN.kr;const tp=kr===3?0:kr===2?2:(kr===0||kr===1)?1:(KN.pose.klaus===1?2:1),tq=TV[tp];h+=`<img src="sprites/kv_tisch_${tp}.webp" alt="" style="position:absolute;left:${tq[0]/941*100}%;top:${tq[1]/1671*100}%;width:${tq[2]/941*100}%">`}
+ const EV={"0": [161, 593, 195], "1": [143, 594, 230]};if(has('erwin')){const ep=KN.pose.erwin===1?1:0,e=EV[ep];h+=`<img src="sprites/kv_erwin_${ep}.webp" alt="" data-kp="erwin" style="position:absolute;left:${e[0]/941*100}%;top:${e[1]/1671*100}%;width:${e[2]/941*100}%">`}
+ const TV={"0": [0, 643, 468], "1": [0, 737, 412], "2": [0, 657, 468]};if(has('ralle')||has('klaus')){const kr=KN.kr;const tp=kr===3?0:kr===2?2:(kr===0||kr===1)?1:(KN.pose.klaus===1?2:1),tq=TV[tp];h+=`<img src="sprites/kv_tisch_${tp}.webp" alt="" data-kp="tisch" style="position:absolute;left:${tq[0]/941*100}%;top:${tq[1]/1671*100}%;width:${tq[2]/941*100}%">`}
  
- const BV={"0": [40, 753, 698], "1": [40, 745, 843], "2": [40, 689, 701], "3": [40, 742, 744], "4": [40, 754, 901]},bv=BV[batchPose()]||BV[0];h+=`<img src="sprites/kv_batch_${BV[batchPose()]?batchPose():0}.webp" alt="" style="position:absolute;left:${bv[0]/941*100}%;top:${bv[1]/1671*100}%;width:${bv[2]/941*100}%">`;
+ const BV={"0": [167, 756, 568], "1": [167, 757, 713], "2": [167, 690, 572], "3": [137, 754, 619], "4": [123, 757, 815]},bv=BV[batchPose()]||BV[0];h+=`<img src="sprites/kv_batch_${BV[batchPose()]?batchPose():0}.webp" alt="" data-kp="batch" style="position:absolute;left:${bv[0]/941*100}%;top:${bv[1]/1671*100}%;width:${bv[2]/941*100}%">`;
  box.innerHTML=h}
 if(!document.getElementById('knCss')){const c=document.createElement('style');c.id='knCss';c.textContent='@keyframes knIn{from{transform:translateX(-40%);opacity:0}to{transform:none;opacity:1}}';document.head.appendChild(c)}
 function knClose(msg){const d=document.getElementById('kneipe');if(d)d.remove();KN=null;busyUI=false;advance(2);if(msg)toast(msg,'',4500);setTimeout(()=>{try{promCheck()}catch(e){}},600)}
-function knSay(t,sub){const ui=document.getElementById('knui');if(!ui)return;const has=k=>KN.ppl.includes(k);const pr=S.prom;
- const acts=[['b','🍺 Bier bestellen (3,50 €)',S.money>=3.5],['k','🥃 Runde Kurze für alle (12,00 €)',S.money>=12],['d','📝 Anschreiben lassen (Deckel: '+eur(S.kn.deckel)+')',S.kn.deckel<20],
-  ...(S.kn.deckel>0?[['zd','💶 Deckel bezahlen ('+eur(S.kn.deckel)+')',S.money>=S.kn.deckel]]:[]),
-  ['s','🎰 Spielautomat (2,00 €)',S.money>=2],...(has('ralle')?[['dart','🎯 Dart gegen Ralle (5,00 € Einsatz)',S.money>=5],['f','👊 Ralle provozieren',true]]:[]),
-  ['bm','🍻 Mit Batchman saufen (Runde 7,00 €)',S.money>=7],...(has('ralle')&&has('klaus')?[['aw','💪 Armdrücken Klaus gegen Ralle: wetten (5,00 €)',S.money>=5]]:[]),['q','💬 Quatschen',true],['m','😏 Mit Moni flirten',true],['h','🚪 Heimgehen',true]];
- ui.innerHTML=`<p style="margin:0 0 6px;font-size:15px">${esc(t)}</p>${sub?`<p style="margin:0 0 6px;color:#f2c14e;font-weight:800;font-size:13px">${esc(sub)}</p>`:''}<p style="margin:0 0 8px;font-size:12px;color:var(--dim)">${hourStr()} Uhr · ${eur(S.money)} · ${pr.toFixed(2).replace('.',',')} ‰</p><div class="list">${acts.map(a=>`<button class="btn${a[0]==='b'?' pri':''}" data-ka="${a[0]}" ${a[2]?'':'disabled'}>${esc(a[1])}</button>`).join('')}</div>`;
- ui.querySelectorAll('[data-ka]').forEach(el=>el.onclick=()=>{initAudio();snd('pop');knAct(el.dataset.ka)});ui.scrollTop=0}
+function knSay(t,sub){const ui=document.getElementById('knui');if(!ui)return;
+ ui.innerHTML=`<div style="line-height:1.35">${esc(t)}</div>${sub?`<div style="margin-top:4px;color:#f2c14e;font-weight:800;font-size:13px">${esc(sub)}</div>`:''}`;ui.style.display=t?'block':'none';ui.scrollTop=0;knBar()}
+function knBar(){const b=document.getElementById('knbar');if(!b)return;b.innerHTML=`<button class="btn" data-kh style="flex:0 0 auto;padding:8px 12px">🚪 Heim</button><div style="flex:1;background:rgba(25,15,8,.8);border-radius:10px;padding:6px 10px;font-size:12px;color:#eadfcf">${hourStr()} Uhr · ${eur(S.money)} · ${S.prom.toFixed(2).replace('.',',')} ‰${S.kn.deckel>0?' · Deckel '+eur(S.kn.deckel):''}<br><span style="color:var(--dim)">Leute antippen · Hände: trinken und rauchen</span></div>`;
+ b.querySelector('[data-kh]').onclick=()=>{initAudio();snd('pop');knMenuClose();knAct('h')}}
+const KN_ACTS={
+ moni:{n:'Wirtin Moni',a:()=>[['b','🍺 Bier bestellen (3,50 €)',S.money>=3.5],['d','📝 Anschreiben lassen',S.kn.deckel<20],...(S.kn.deckel>0?[['zd','💶 Deckel bezahlen ('+eur(S.kn.deckel)+')',S.money>=S.kn.deckel]]:[]),['k','🥃 Runde Kurze für alle (12,00 €)',S.money>=12],['m','😏 Flirten',true],['q:moni','💬 Quatschen',true]]},
+ batch:{n:'Batchman',a:()=>[['bm','🍻 Zusammen saufen (Runde 7,00 €)',S.money>=7],['q:batch','💬 Quatschen',true]]},
+ erwin:{n:'Zocker-Erwin',a:()=>[['s','🎰 Am Automaten zocken (2,00 €)',S.money>=2],['q:erwin','💬 Quatschen',true]]},
+ tisch:{n:'Klaus & Ralle',a:()=>[['aw','💪 Armdrücken: Wette (5,00 €)',S.money>=5],['dart','🎯 Dart gegen Ralle (5,00 €)',S.money>=5],['f','👊 Ralle provozieren',true],['q:klaus','💬 Mit Klaus quatschen',true],['q:ralle','💬 Mit Ralle quatschen',true]]},
+ slot:{n:'Spielautomat',a:()=>[['s','🎰 Zocken (2,00 €)',S.money>=2]]},
+ dart:{n:'Dartscheibe',a:()=>[['dart','🎯 Dart gegen Ralle (5,00 €)',S.money>=5]]}};
+function knMenuClose(){const m=document.getElementById('knmenu');if(m)m.style.display='none'}
+function knMenu(who){const M2=document.getElementById('knmenu');if(!M2||!KN_ACTS[who])return;const A=KN_ACTS[who];snd('pop');
+ M2.innerHTML=`<div style="display:flex;align-items:center;margin-bottom:6px"><b style="flex:1;color:#f2c14e">${esc(A.n)}</b><button class="btn" data-kx style="padding:2px 10px;min-width:0">✕</button></div><div class="list" style="display:flex;flex-direction:column;gap:6px">${A.a().map(x=>`<button class="btn" data-ka="${x[0]}" ${x[2]?'':'disabled'} style="text-align:left">${esc(x[1])}</button>`).join('')}</div>`;
+ M2.style.display='block';M2.querySelector('[data-kx]').onclick=knMenuClose;
+ M2.querySelectorAll('[data-ka]').forEach(el=>el.onclick=()=>{initAudio();snd('pop');knMenuClose();const a=el.dataset.ka;if(a.startsWith('q:')){KN.qwho=a.slice(2);knAct('q')}else knAct(a)})}
+// Antippen: über die echten Umrisse (Transparenz) der Figuren
+const KN_ALPHA={};function knAlpha(key){if(KN_ALPHA[key])return KN_ALPHA[key];const im=SP[key];if(!im||!im.naturalWidth)return null;const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const g=c.getContext('2d');g.drawImage(im,0,0);try{KN_ALPHA[key]={w:c.width,h:c.height,d:g.getImageData(0,0,c.width,c.height).data}}catch(e){return null}return KN_ALPHA[key]}
+function knHitImg(img,cx,cy){const r=img.getBoundingClientRect();if(cx<r.left||cx>r.right||cy<r.top||cy>r.bottom)return false;const key=(img.getAttribute('src')||'').replace('sprites/','').replace('.webp','');const A=knAlpha(key);if(!A)return true;const x=Math.floor((cx-r.left)/r.width*A.w),y=Math.floor((cy-r.top)/r.height*A.h);return A.d[(y*A.w+x)*4+3]>40}
+function knTap(e){const w=document.getElementById('knw');if(!w||!KN)return;if(e.target.closest('#knui,#knmenu,#knbar,[data-kbeer],[data-hand]'))return;const cx=e.clientX,cy=e.clientY;
+ for(const img of [...w.querySelectorAll('img[data-kp]')].reverse()){if(knHitImg(img,cx,cy)){initAudio();return knMenu(img.dataset.kp)}}
+ const r=w.getBoundingClientRect(),x=(cx-r.left)/r.width*941,y=(cy-r.top)/r.height*1671;
+ if(x>70&&x<230&&y>470&&y<760){initAudio();return knMenu(KN.ppl.includes('erwin')?'erwin':'slot')}
+ if(x>235&&x<380&&y>490&&y<640){initAudio();return knMenu('dart')}
+ knMenuClose()}
 function knAct(a){const pr=S.prom;let t='',sub='';KN.show=null;KN.mp=0;KN.kr=null;KN.kp=0;advance(a==='h'?0:5);
  if(S.prom>=2.6&&a!=='h'){KN.pose.moni=1;knDraw();S.kn.ban=S.day;return setTimeout(()=>knClose('Moni hat dich rausgeschmissen: „Du kotzt mir nicht noch mal auf den Billardtisch! Hausverbot bis morgen!“ Wir haben gar keinen Billardtisch.'),1400)}
- if((a==='b'||a==='d')&&KN.beer>0){t='Moni: „Erst austrinken, du Gierschlund. Die Flasche steht vor dir.“';sub='Flasche antippen = trinken'}
- else if(a==='b'||a==='d'){KN.beer=3;KN.mp=1;if(a==='b')S.money-=3.5;else S.kn.deckel+=3.5;snd('clink');sub='Flasche antippen = trinken';
+ if((a==='b'||a==='d')&&KN.beer>0){t='Moni: „Erst austrinken, du Gierschlund. Die Flasche steht vor dir.“';sub='Linke Hand antippen = trinken'}
+ else if(a==='b'||a==='d'){KN.beer=3;KN.mp=1;if(a==='b')S.money-=3.5;else S.kn.deckel+=3.5;snd('clink');sub='Linke Hand antippen = trinken';
   t=a==='d'?pick(['Moni schreibt’s auf den Deckel. Mit Edding. Fett. „Wird langsam ein Roman, Freundchen.“','Moni: „Anschreiben? Du hast mehr Striche auf dem Deckel als Haare am Sack.“']):pick(['Moni knallt dir ein Pils hin. Der Schaum ist schon zusammengefallen. Wie du.','Frisch gezapft. Also gestern. Schmeckt trotzdem.','Moni: „Wohl bekomm’s. Und kotz nicht wieder ins Klo daneben.“'])}
  else if(a==='zd'){S.money-=S.kn.deckel;t='Deckel bezahlt: '+eur(S.kn.deckel)+'. Moni ist so gerührt, dass sie fast lächelt.';S.kn.deckel=0;S.kn.rep++}
  else if(a==='k'){KN.show=KN.ppl.includes('klaus')?'klaus':null;S.money-=12;S.prom+=.25;S.bo=Math.max(0,S.bo-25);S.kn.rep++;addXP(4);KN.pose.klaus=0;t=pick(['Die ganze Kneipe grölt deinen Namen. Klaus weint vor Rührung. Ralle klopft dir auf die Schulter und brennt dir dabei fast die Lunge raus.','Runde Kurze! Erwin will dir zum Dank ein Rubbellos schenken. Es ist schon gerubbelt. Niete.'])}
@@ -3017,7 +3035,7 @@ function knAct(a){const pr=S.prom;let t='',sub='';KN.show=null;KN.mp=0;KN.kr=nul
  else if(a==='f'){KN.kr=2;KN.show='ralle';knDraw();const win=Math.random()<Math.max(.15,.55-pr*.15);
   if(win){addXP(10);S.kn.ban=S.day;S.bo=Math.max(0,S.bo-30);return setTimeout(()=>knClose('Du haust Ralle eine rein. Er fällt. Wie ein Sack Zement. Die ganze Kneipe ist still. Dann schmeißt Moni dich raus. Hausverbot bis morgen. Legende.'),1400)}
   const lost=Math.min(S.money,RI(5,15));S.money-=lost;S.bo=Math.min(100,S.bo+15);S.hu=Math.min(100,S.hu+10);return setTimeout(()=>knClose('Ralle haut dich mit einem Schlag vom Barhocker. Du wachst draußen neben dem Mülleimer auf. '+(lost?eur(lost)+' fehlen. ':'')+'Klaus hat dir seine Jacke als Kissen dagelassen.'),1400)}
- else if(a==='q'){const who=pick(KN.ppl.filter(k=>k!=='moni').concat(['moni']));KN.show=who;const L={
+ else if(a==='q'){const who=KN.qwho&&(KN.ppl.includes(KN.qwho))?KN.qwho:pick(KN.ppl.filter(k=>k!=='moni').concat(['moni']));KN.qwho=null;KN.show=who;const L={
    batch:BATCH_TALK,
    klaus:['Klaus: „Ich war mal verheiratet. Drei Wochen. Dann hat sie gemerkt, dass ich das immer so bin.“','Klaus: „Weißt du, was das Geheimnis eines langen Lebens ist? Ich auch nicht. Prost.“','Klaus: „Ich hab 1987 mal einen Hecht gefangen. So groß. Oder war’s ein Schuh?“'],
    erwin:['Erwin flüstert: „Morgen kommt die 7. Ganz sicher. Ich spür das im Knie.“','Erwin: „Ich hab ein System für den Automaten. Hat mich bisher nur 40.000 Euro gekostet.“','Erwin: „Lotto ist Mathematik. Und ich war in Mathe … ach, egal.“','Erwin zieht seine leeren Hosentaschen raus. Eine Motte fliegt weg. „Leihst du mir zwei Euro? Ich spür, dass die 7 kommt.“'],
@@ -3058,6 +3076,22 @@ function knArm(){const ui=document.getElementById('knui');ui.innerHTML=`<p style
   setTimeout(()=>{KN.kr=1;knDraw();vib([60,40,60]);ui.innerHTML='<p style="font-size:16px">Die Adern platzen fast. Klaus’ Gebiss klappert. Ralle grinst wie ein Psychopath.</p>'},1300);
   setTimeout(()=>{const win=(on==='k')===kw;const pay=win?(on==='k'?25:6.5):0;if(pay)S.money+=pay;KN.kr=kw?3:2;knDraw();snd(win?'cash':'bad');S.st.dgame=(S.st.dgame||0)+(win?1:0);
    knSay(kw?'SENSATION! Klaus drückt Ralles Arm auf den Tisch. Ralle guckt, als hätte er gerade seine Mutter verloren. Dann lachen beide und saufen zusammen.':'Ralle knallt Klaus’ Hand auf den Tisch. Klaus bleibt einfach liegen und schläft ein. Ralle brüllt: „NÄCHSTER!“',win?'Gewonnen: +'+eur(pay):'Wette verloren: −5,00 €')},3000)})}
+
+// ---- Eigene Hände in der Kneipe (wie zuhause) ----
+function knHands(){const hd=document.getElementById('knh');if(!hd||!KN)return;
+ let lk='lh_none';if(KN.beer!=null){if(KN.drinkT>performance.now())lk=KN.beer===0?'drink_3':'drink_2';else lk=KN.beer>0?'lh_open':'lh_empty'}
+ const rk=KN.cig>0?'rh_cig':'rh_empty';const L2=bareKey('l',lk),R2=bareKey('r',rk);
+ hd.innerHTML=`<img data-hand="l" src="sprites/${L2}.webp" alt="" style="position:absolute;left:-1%;bottom:-2%;height:${/^drink/.test(lk)?112:100}%;pointer-events:auto;cursor:pointer">`+
+  `<img data-hand="r" src="sprites/${R2}.webp" alt="" style="position:absolute;right:-1%;bottom:-2%;height:100%;pointer-events:auto;cursor:pointer">`+
+  (KN.cig>0&&KN.smokeT>performance.now()?'<div style="position:absolute;right:28%;bottom:62%;width:60px;height:60px;border-radius:50%;background:radial-gradient(#fff8,#fff0 70%);filter:blur(4px);animation:knSmoke 1.4s ease-out forwards"></div>':'');
+ hd.querySelector('[data-hand="l"]').onclick=e=>{e.stopPropagation();initAudio();if(KN.beer==null){knMenu('moni');return}knSip()};
+ hd.querySelector('[data-hand="r"]').onclick=e=>{e.stopPropagation();initAudio();knSmoke()}}
+function knSmoke(){if(!KN)return;if(!(KN.cig>0)){if(!(S.cigs>0)){toast('Keine Kippen mehr. Klaus schnorrt dir sonst auch keine.');snd('bad');return}S.cigs--;KN.cig=5;snd('lighter');toast(pick(['Kippe an. Moni stellt dir den Aschenbecher hin, ohne hinzugucken.','Du zündest dir eine an. Klaus schnorrt sofort mit.']))}
+ else{KN.cig--;snd('puff');S.bo=Math.max(0,S.bo-1.5);S.lastCig=S.tot;KN.smokeT=performance.now()+1400;if(KN.cig<=0){S.butts=(S.butts||0)+1;toast('Kippe aus. Im Aschenbecher von Moni liegen jetzt 300 Stück.')}}
+ knHands();clampAll();knBar()}
+{const _ks=knSip;knSip=function(){if(KN&&KN.beer>0)KN.drinkT=performance.now()+900;_ks();knHands();setTimeout(knHands,950);knBar()}}
+{const _kd=knDraw;knDraw=function(){_kd.apply(this,arguments);knHands()}}
+if(!document.getElementById('knCss2')){const c=document.createElement('style');c.id='knCss2';c.textContent='@keyframes knSmoke{from{transform:translateY(0) scale(.6);opacity:.9}to{transform:translateY(-80px) scale(1.8);opacity:0}}';document.head.appendChild(c)}
 // ================= Zurück-Knopf immer oben (klebt beim Scrollen fest) =================
 const BACK_TXT=/^(←\s*)?(Zurück|Schließen|Doch nicht|Tür zu)$/;
 function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.querySelectorAll('button')].filter(b=>BACK_TXT.test(b.textContent.trim())&&!b.closest('.backbar'));if(!bs.length)return;
