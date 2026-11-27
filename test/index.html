@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=155;
+const APPVER=156;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1047,17 +1047,17 @@ function splashHtml(){const PAIR='<img src="sprites/splash_pair.webp" alt="" sty
   if(xm)return'<img src="sprites/splash_xmas'+sw+'.webp" alt="Assi Simulator" style="width:100%;max-height:50vh;object-fit:contain;display:block;margin:0 auto 2px">';
   return PAIR}
 function mainMenu(){const has=S.started;openModal(`${splashHtml()}<div class="menuS">Ziel? Gibt’s nicht. Wie bei dir.</div>${assiName()?'<div style="text-align:center;font:800 16px Nunito,sans-serif;color:#f2c14e;margin-top:4px">Assi: '+esc(assiName())+'</div>':''}<div style="text-align:center;font-size:11px;color:var(--dim);margin-top:2px">Version ${APPVER} · Freigegeben ab 16 Jahren</div>
- <div class="list"><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
+ <div class="list">${UPD?'<button class="btn upd" data-a="upd">Update da! Jetzt aktualisieren (Version '+UPD+')</button>':''}${has?'<button class="btn pri" data-a="go">Weiterglotzen</button>':'<button class="btn pri" data-a="go">Spiel starten</button>'}
  ${has?'<button class="btn" data-a="new">Neues Spiel</button>':''}
- <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
+ <button class="btn" data-a="rank">🏆 Rangliste</button><button class="btn" data-a="ach">Erfolge</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="code">💾 Spielstand sichern/laden</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button>
  ${UPD?'':'<button class="btn" data-a="upd" id="updLow">Aktualisieren</button>'}</div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>{mainOpen=true;checkUpdate();bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='go'){if(!assiName())return nameMenu(()=>{S.started=true;closeModal();showDay();(newsCheck()||rateCheck());stat('spiel-start');setTimeout(()=>startTut(),700)});S.started=true;closeModal();showDay();(newsCheck()||rateCheck());stat('spiel-start');setTimeout(()=>startTut(),700)}
   if(a==='new')confirmBox('Wirklich neu anfangen? Dein ganzes verkorkstes Leben ist dann weg.',()=>newGameWithName('Tag 1. Du sitzt auf dem Sofa. Für immer.'),mainMenu);
   if(a==='ach')achMenu(mainMenu);if(a==='home')homeMenu(mainMenu);if(a==='how')howMenu(mainMenu);if(a==='img')imgMenu(mainMenu);if(a==='upd')doUpdate();if(a==='rank')rankMenu(mainMenu);if(a==='idea')ideaMenu(mainMenu);if(a==='sup')supportMenu(mainMenu);if(a==='code')codeMenu(mainMenu);
   if(a==='snd'){soundOn=!soundOn;try{localStorage.setItem('sofatest_snd',soundOn?'1':'0')}catch(e){}musicSet();mainMenu()}}})})}
-function pauseMenu(){openModal(`<h2>Pause</h2><div class="list"><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button>
- <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
+function pauseMenu(){openModal(`<h2>Pause</h2><div class="list">
+ <button class="btn pri" data-a="go">Weiterspielen</button><button class="btn" data-a="ach">Erfolge</button><button class="btn sup" data-a="sup">🍺 Spendier dem Assi ein Bier</button><button class="btn" data-a="home">Wohnung</button><button class="btn" data-a="diary">Tagebuch</button><button class="btn" data-a="how">So geht’s</button>
  <button class="btn" data-a="snd">Ton: ${soundOn?'an':'aus'}</button><button class="btn" data-a="sex">👫 Mann/Frau wechseln</button><button class="btn" data-a="quest">Aufgaben</button><button class="btn" data-a="idea">Verbesserungsvorschlag</button><button class="btn red" data-a="new">Neu starten</button><button class="btn" data-a="main">Hauptmenü</button></div><div style="text-align:center;font-size:12px;margin:10px 0 4px"><a href="/impressum.html" target="_blank" rel="noopener" style="color:var(--dim)">Impressum</a> · <a href="/impressum.html#datenschutz" target="_blank" rel="noopener" style="color:var(--dim)">Datenschutz</a></div>`,()=>bindAll({'[data-a]':el=>{const a=el.dataset.a;
   if(a==='sex')sexSwitchMenu();
   if(a==='quest')questMenu(pauseMenu);if(a==='idea')ideaMenu(pauseMenu);if(a==='sup')supportMenu(pauseMenu);if(a==='go')closeModal();if(a==='ach')achMenu(pauseMenu);if(a==='home')homeMenu(pauseMenu);if(a==='diary')diaryMenu(pauseMenu);if(a==='how')howMenu(pauseMenu);if(a==='img')imgMenu(pauseMenu);if(a==='main')mainMenu();
