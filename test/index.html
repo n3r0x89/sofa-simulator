@@ -2978,11 +2978,11 @@ function kneipeGo(){if(!S.kn)S.kn={deckel:0,ban:-1,rep:0};
  const sw=st.clientWidth,sh=st.clientHeight;let w=sw,h=w*1672/941;if(h<sh){h=sh;w=h*941/1672}
  const IM='<img src="sprites/kneipe2.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;';
  d.innerHTML=`<div id="knw" style="position:absolute;left:${(sw-w)/2}px;bottom:0;width:${w}px;height:${h}px">${IM}">
-  <div id="knm" style="position:absolute;inset:0"></div>${IM}clip-path:polygon(43.0% 50.4%,100.0% 50.4%,100.0% 100.0%,50.6% 100.0%)">${IM}clip-path:inset(37.7% 11.8% 45.1% 68.0%)"><div id="knb" style="position:absolute;inset:0"></div>
-  <div id="knp" style="position:absolute;inset:0"></div></div>
+  <div id="knm" style="position:absolute;inset:0;pointer-events:none"></div>${IM}clip-path:polygon(43.0% 50.4%,100.0% 50.4%,100.0% 100.0%,50.6% 100.0%)">${IM}clip-path:inset(37.7% 11.8% 45.1% 68.0%)"><div id="knb" style="position:absolute;inset:0"></div>
+  <div id="knp" style="position:absolute;inset:0;pointer-events:none"></div></div>
   <div id="knui" style="position:absolute;left:8px;right:8px;bottom:8px;max-height:40%;overflow:auto;background:rgba(25,15,8,.9);border:1px solid #f2c14e55;border-radius:14px;padding:10px"></div>`;
  st.appendChild(d);knDraw();const da=ppl.filter(k=>k!=='moni').map(k=>KN_P[k].n.replace('Schläger-','').replace('Zocker-',''));knSay((da.length?'Heute da: '+da.join(', ')+'. ':'')+pick(['Moni: „Na, wen haben wir denn da? Der Penner von gegenüber. Setz dich, aber fass nix an.“','Moni: „Ach du Scheiße. Du schon wieder. Bier?“','Klaus hebt sein Glas: „Prost, Kollege! Du siehst ja noch schlimmer aus als ich!“']))}
-function knDraw(){const m=document.getElementById('knm'),box=document.getElementById('knp');if(!m||!box)return;const kb=document.getElementById('knb');if(kb)kb.innerHTML=KN.beer?`<img src="sprites/bottle_${Math.min(5,KN.beer-1)}.webp" alt="" style="position:absolute;left:${520/941*100}%;top:${870/1672*100}%;height:${190/1672*100}%;transform:rotate(-4deg)">`:'';
+function knDraw(){const m=document.getElementById('knm'),box=document.getElementById('knp');if(!m||!box)return;const kb=document.getElementById('knb');setTimeout(()=>{const e=kb&&kb.querySelector('[data-kbeer]');if(e)e.onclick=()=>{initAudio();knSip()}},0);if(kb)kb.innerHTML=KN.beer!=null?`<img src="sprites/bottle_${[5,4,2,0][KN.beer]}.webp" alt="" data-kbeer style="pointer-events:auto;cursor:pointer;position:absolute;left:${520/941*100}%;top:${870/1672*100}%;height:${190/1672*100}%;transform:rotate(-4deg)">`:'';
  // Moni steht hinterm Tresen: Unterkörper wird vom Tresen verdeckt
  m.innerHTML=`<img src="sprites/moni_${KN.pose.moni||0}.webp" alt="" style="position:absolute;left:${(530-117)/941*100}%;top:${545/1672*100}%;height:${540/1672*100}%">`;
  const k=KN.show;if(!k||!KN.ppl.includes(k)||k==='moni'){box.innerHTML='';return}
@@ -2998,7 +2998,8 @@ function knSay(t,sub){const ui=document.getElementById('knui');if(!ui)return;con
  ui.querySelectorAll('[data-ka]').forEach(el=>el.onclick=()=>{initAudio();snd('pop');knAct(el.dataset.ka)});ui.scrollTop=0}
 function knAct(a){const pr=S.prom;let t='',sub='';KN.show=null;advance(a==='h'?0:5);
  if(S.prom>=2.6&&a!=='h'){KN.pose.moni=1;knDraw();S.kn.ban=S.day;return setTimeout(()=>knClose('Moni hat dich rausgeschmissen: „Du kotzt mir nicht noch mal auf den Billardtisch! Hausverbot bis morgen!“ Wir haben gar keinen Billardtisch.'),1400)}
- if(a==='b'||a==='d'){KN.beer=1;if(a==='b')S.money-=3.5;else S.kn.deckel+=3.5;S.prom+=.22;S.th=Math.max(0,S.th-18);S.bo=Math.max(0,S.bo-10);S.st.drinks=(S.st.drinks||0)+1;snd('gulp');
+ if((a==='b'||a==='d')&&KN.beer>0){t='Moni: „Erst austrinken, du Gierschlund. Die Flasche steht vor dir.“';sub='Flasche antippen = trinken'}
+ else if(a==='b'||a==='d'){KN.beer=3;if(a==='b')S.money-=3.5;else S.kn.deckel+=3.5;snd('clink');sub='Flasche antippen = trinken';
   t=a==='d'?pick(['Moni schreibt’s auf den Deckel. Mit Edding. Fett. „Wird langsam ein Roman, Freundchen.“','Moni: „Anschreiben? Du hast mehr Striche auf dem Deckel als Haare am Sack.“']):pick(['Moni knallt dir ein Pils hin. Der Schaum ist schon zusammengefallen. Wie du.','Frisch gezapft. Also gestern. Schmeckt trotzdem.','Moni: „Wohl bekomm’s. Und kotz nicht wieder ins Klo daneben.“'])}
  else if(a==='zd'){S.money-=S.kn.deckel;t='Deckel bezahlt: '+eur(S.kn.deckel)+'. Moni ist so gerührt, dass sie fast lächelt.';S.kn.deckel=0;S.kn.rep++}
  else if(a==='k'){KN.show=KN.ppl.includes('klaus')?'klaus':null;S.money-=12;S.prom+=.25;S.bo=Math.max(0,S.bo-25);S.kn.rep++;addXP(4);KN.pose.klaus=0;t=pick(['Die ganze Kneipe grölt deinen Namen. Klaus weint vor Rührung. Ralle klopft dir auf die Schulter und brennt dir dabei fast die Lunge raus.','Runde Kurze! Erwin will dir zum Dank ein Rubbellos schenken. Es ist schon gerubbelt. Niete.'])}
@@ -3037,6 +3038,11 @@ const BATCH_TALK=['Batchman: „Ich programmier nebenbei ein Spiel über Assis. 
 const BATCH_DRINK=['Batchman knallt zwei Bier auf den Tresen: „Auf die Assis dieser Welt!“ Ihr exet. Er rülpst die Nationalhymne.','Batchman: „Eins geht noch!“ Es gehen drei. Moni schreibt schon mal seinen Deckel um.','Batchman legt dir den Arm um: „Du bist mein bester Spieler. Ehrlich. Der einzige vielleicht.“'];
 const BATCH_DRUNK=['Batchman macht ein Selfie mit Schmollmund. Dann noch eins. Dann eins mit dir. Das Foto landet sofort im Status.','Batchman schmollt in die Kamera: „Ich bin so ein hübscher Kerl …“ Moni: „Ja, Batchman. Ja.“','Batchman umarmt sein leeres Glas und flüstert: „Du verstehst mich wenigstens.“','Batchman lallt: „Im nächsten Update … mach ich … alles … schöner …“ Dann schläft er im Stehen ein.'];
 {const _ka=knAct;knAct=function(a){if(KN)KN.bTalk=false;const r=_ka.apply(this,arguments);if(KN&&a==='q'&&KN.show==='batch'){KN.bTalk=true;knDraw()}return r}}
+
+function knSip(){if(!KN||KN.beer==null)return;if(KN.beer<=0){KN.beer=null;knDraw();snd('clink');toast(pick(['Moni schnappt sich die leere Flasche: „Noch eins, oder hockst du hier nur rum?“','Leere Flasche weg. Moni wischt mit dem Lappen drüber. Der Lappen ist dreckiger als der Tresen.']));return}
+ KN.beer--;S.prom+=.075;S.th=Math.max(0,S.th-6);S.bo=Math.max(0,S.bo-4);S.lastBeer=S.tot;snd('gulp');vib(20);
+ if(KN.beer===0){S.st.drinks=(S.st.drinks||0)+1;S.st.beers=(S.st.beers||0)+1;addXP(1);toast(pick(['Leer. Antippen, dann holt Moni die Flasche.','Ausgetrunken. Rülps. Klaus applaudiert.']))}
+ clampAll();knDraw();if(S.prom>=2.6)knAct('b')}
 // ================= Zurück-Knopf immer oben (klebt beim Scrollen fest) =================
 const BACK_TXT=/^(←\s*)?(Zurück|Schließen|Doch nicht|Tür zu)$/;
 function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.querySelectorAll('button')].filter(b=>BACK_TXT.test(b.textContent.trim())&&!b.closest('.backbar'));if(!bs.length)return;
