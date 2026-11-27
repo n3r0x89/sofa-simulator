@@ -2618,6 +2618,7 @@ try{const g=drinkOpts(GUEST_COMMON,false);GUEST_COMMON.length=0;g.forEach(o=>GUE
  d_bare:[[[.2,.75,.26,-.6],[.38,.35,.14,-.4],[.3,.55,.15,-.6]],[[.15,.8,.24,-.5],[.32,.3,.14,-.3],[.25,.58,.15,-.5]],[[.12,.78,.18,-.4],[.38,.13,.13,-.1],[.2,.47,.13,-.4]]],
  k_w:[[[.13,.85,.22,-.6],[.38,.42,.14,-.5],[.25,.65,.14,-.6]],[[.15,.85,.22,-.5],[.42,.3,.14,-.4],[.3,.6,.14,-.5]],[[.1,.85,.16,-.3],[.45,.12,.12,0],[.2,.55,.12,-.3]]],
  d_w:[[[.18,.88,.2,-.6],[.4,.5,.14,-.5],[.3,.72,.14,-.6]],[[.15,.85,.22,-.5],[.35,.35,.14,-.4],[.28,.62,.14,-.5]],[[.08,.82,.16,-.3],[.4,.12,.12,0],[.16,.5,.12,-.3]]]};
+ A.g_bare=A.d_bare;A.g_w=A.d_w;
  for(const g in A){const[t,suf]=g.split('_');['lh_full','lh_open','lh_empty','drink_1'].forEach(s=>TAT_ANCHOR[t+'_'+s+'_'+suf]=A[g][0]);TAT_ANCHOR[t+'_drink_3_'+suf]=A[g][1];TAT_ANCHOR[t+'_drink_2_'+suf]=A[g][2]}})();
 
 Object.assign(DRK.k,{take:['Eine Keilerkotze. Der Keiler auf dem Etikett schielt dich an. Du schielst zurück.','Kräuterschnaps. Für die Verdauung. Und gegen das Leben.'],open:['Deckel ab. Es riecht nach Hustensaft und Waldboden.','Aufgeschraubt. Der Keiler grinst. Gleich grinst du auch.']});
@@ -2645,7 +2646,7 @@ function heiligDue(){const z=xSeason();return!!z&&z.day===24&&S.h.hlA!==z.y&&S.s
 EVENTS.unshift({id:'heiligabend',prio:1,c:heiligDue,run:()=>{S.h.hlA=xSeason().y;save();
  visit('mutti',isW()?'Frohe Weihnachten, mein Mädchen! Ich hab Plätzchen gebacken. Mach auf, ich seh doch, dass du da bist. Ich rieche dich bis hier.':'Frohe Weihnachten, mein Junge! Ich hab Plätzchen gebacken. Mach auf, ich seh doch, dass du da bist. Ich rieche dich bis hier.',[
   {t:'🎄 Reinlassen',f:()=>{setTimeout(muttiDuel,2400);return{say:'Mutti stellt die Plätzchen hin, wischt mit dem Finger über den Tisch und guckt dich an. Es geht los.',pose:0}}},
-  {t:'🙈 So tun, als wärst du nicht da',f:()=>{setTimeout(()=>toast('Mutti hat die Plätzchen vor die Tür gestellt. Mit Zettel: „Dein Vater hätte aufgemacht.“','',5000),3000);return{say:'Ich weiß, dass du da bist! Ich hör dich atmen! Dann eben nicht! Ich hab dich NEUN MONATE getragen!',fx:fx({bo:15,hu:-25}),pose:3}}}],0)}});
+  {t:'🙈 So tun, als wärst du nicht da',f:()=>{setTimeout(()=>toast('Mutti hat die Plätzchen vor die Tür gestellt. Mit Zettel: „Dein Vater hätte aufgemacht.“','',5000),3000);return{say:'Ich weiß, dass du da bist! Ich hör dich atmen! Dann eben nicht! Ich hab dich NEUN MONATE getragen!',fx:fx({bo:15,hu:-25}),pose:1}}}],0)}});
 function muttiDuel(){if(busyUI){setTimeout(muttiDuel,1500);return}busyUI=true;const g=isW()?'w':'m';const RN=8;const V=MUTTI_V[g].slice().sort(()=>Math.random()-.5);
  const Z=MUTTI_ZWISCHEN.slice().sort(()=>Math.random()-.5);const zAt=new Set([2,5]);
  const st={r:0,me:0,ma:0,drunk:0,peace:60,bomb:true,thrown:false};
@@ -2680,7 +2681,7 @@ const ICO_BTN={bSnack:'snack',bShop:'shop',bPrank:'prank',bWash:'wash',bSleep:'s
 const ICO_EMO={'🔥':'fuggi','🏆':'rank','💾':'save','👫':'sex','🍺':'b','🐗':'k','🥫':'d','🍷':'g'};
 function icoOk(k){const i=SP['ico_'+k];return!!(i&&i.complete&&i.naturalWidth)}
 function icoImg(k,sz){return`<img src="sprites/ico_${k}.webp" alt="" style="width:${sz};height:${sz};object-fit:contain;vertical-align:middle;pointer-events:none">`}
-function icoApply(){let n=0;for(const id in ICO_BTN){const el=document.getElementById(id),k=ICO_BTN[id];if(!el||el.dataset.ico)continue;if(icoOk(k)){const b=el.querySelector('.bdg');el.innerHTML=icoImg(k,'72%');if(b)el.appendChild(b);el.dataset.ico=1;n++}}return n}
+function icoApply(){let n=0;for(const id in ICO_BTN){const el=document.getElementById(id),k=ICO_BTN[id];if(!el||el.dataset.ico)continue;if(icoOk(k)){const b=el.querySelector('.bdg');el.innerHTML=icoImg(k,'1.7em');if(b)el.appendChild(b);el.dataset.ico=1;n++}}return n}
 const _openModalI=openModal;openModal=function(html,bind){if(typeof html==='string')html=html.replace(/(<button[^>]*>)\s*(🔥|🏆|💾|👫|🍺|🐗|🥫|🍷)/g,(m,a,e)=>icoOk(ICO_EMO[e])?a+icoImg(ICO_EMO[e],'1.35em'):m);return _openModalI(html,bind)};
 {let tries=0;const iv=setInterval(()=>{icoApply();if(++tries>40)clearInterval(iv)},500)}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
@@ -2693,7 +2694,7 @@ function hud(){if(S.lvl>=20&&!S.furn.lava)S.furn.lava=true;if(S.lvl>=50&&!S.furn
   setNeed('nTh',S.th);setNeed('nHu',S.hu);setNeed('nBo',S.bo);const b=S.bottle;setNeed('nBe',b?b.sips/3*100:0,b?(b.sips?Math.round(b.sips/3*100)+'%':'leer'):'–');
   const bits=['<b>'+eur(S.money)+'</b>','Bier <b>'+S.beer+'</b>','Snacks <b>'+S.snacks+'</b>','Kippen <b>'+S.cigs+'</b>','Tag <b>'+S.day+'</b> <b>'+hourStr()+'</b>','<b>'+S.prom.toFixed(2).replace('.',',')+' ‰</b>','Leergut <b>'+S.empties+'</b>','Korb <b>'+S.basket+'</b>','Chaos <b>'+Math.round(S.chaos)+'</b>'];
   bits.push('Gestank <b>'+Math.round(S.dirt||0)+'</b>');if(S.furn.stash)bits.push('Versteck <b>'+eur(S.stash||0)+'</b>');if(withdrawal().v>.2)bits.push('<b style="color:var(--red)">Entzug</b>');if(S.hang>0)bits.push('Kater <b>'+'●'.repeat(S.hang)+'</b>');if(S.mold>0)bits.push('Schimmel <b>'+S.mold+'</b>');if(S.h.police>=3)bits.push('<b style="color:var(--red)">Polizei '+S.h.police+'</b>');if(S.h.cutDays>0)bits.push('Kürzung');
-  $('info').innerHTML=bits.join(' · ');$('bSleep').disabled=!canSleep();{const IO=k=>typeof icoOk==='function'&&icoOk(k),sh=(el,h)=>{if(el._h!==h){el._h=h;el.innerHTML=h}};sh($('bDiary'),(IO('diary')?icoImg('diary','72%'):'📖')+(S.diaryNew?'•':''));if(S.quests){const d=S.quests.list.filter(q=>q.done).length;sh($('bQuest'),(IO('quest')?icoImg('quest','62%'):'🎯')+'<small>'+d+'/3</small>')}}
+  $('info').innerHTML=bits.join(' · ');$('bSleep').disabled=!canSleep();{const IO=k=>typeof icoOk==='function'&&icoOk(k),sh=(el,h)=>{if(el._h!==h){el._h=h;el.innerHTML=h}};sh($('bDiary'),(IO('diary')?icoImg('diary','1.7em'):'📖')+(S.diaryNew?'•':''));if(S.quests){const d=S.quests.list.filter(q=>q.done).length;sh($('bQuest'),(IO('quest')?icoImg('quest','1.5em'):'🎯')+'<small>'+d+'/3</small>')}}
   $('hint').textContent=busyUI?'':hintText()}
 // ================= LOOP =================
 let lastT=performance.now(),acc=0,idleFart=R(50,150),saveT=0;
