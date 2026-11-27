@@ -2896,8 +2896,8 @@ function budeMenu(back){const b=B();const row=(t,s,btn)=>`<div class="row"><div 
   '[data-sh]':()=>{if(S.money<20)return;S.money-=20;b.shisha={tab:5,lit:0,down:false};snd('cash');toast('Wasserpfeife steht auf dem Tisch. Ein Kopf Tabak ist dabei.');budeMenu(back)},
   '[data-pet]':el=>{const k=el.dataset.pet,P=PETS[k];if(S.money<P.p)return;S.money-=P.p;if(!S.pets)S.pets={};S.pets[k]={fed:S.day,pose:0,poseT:0};S.petfood=(S.petfood||0)+5;snd('cash');stat('pet-'+k);toast(P.n+' zieht ein. 5 Portionen Futter sind dabei.','Futter gibt’s im Späti-Shop',4000);budeMenu(back)},
   '[data-bk]':()=>back?back():closeModal()}))}
-// Knopf im Shop
-{const _sm=shopMenu;shopMenu=function(){_sm();try{const h=M.querySelector('h2');if(h){const d=document.createElement('div');d.className='list';d.innerHTML='<button class="btn" data-bude style="background:#6b4a2a;color:#fff">🏠 Bude einrichten: Tapete, Poster, Tiere, Dart …</button>';(h.nextElementSibling||h).after(d);d.querySelector('button').onclick=()=>{initAudio();snd('pop');budeMenu(shopMenu)}}}catch(e){}}}
+// Knopf im Möbel-Katalog
+{const _oc=openCatalog;openCatalog=function(){_oc();try{const h=M.querySelector('h2');if(h&&!M.querySelector('[data-bude]')){const d=document.createElement('div');d.className='list';d.style.margin='6px 0 10px';d.innerHTML='<button class="btn pri" data-bude style="background:#6b4a2a;color:#fff">🏠 Bude einrichten: Tapete, Poster, Tiere, Dart, Wasserpfeife</button>';(h.nextElementSibling||h).after(d);d.querySelector('button').onclick=()=>{initAudio();snd('pop');budeMenu(openCatalog)}}}catch(e){}}}
 SHOP.push({n:'Tierfutter-Sack (10 Portionen)',p:3,d:'Für Katze, Hamster und Vogel. Schmeckt nach Pappe',c:()=>!!(S.pets&&Object.values(S.pets).some(Boolean)),f:()=>{S.petfood=(S.petfood||0)+10;return'10 Portionen Futter. Die Viecher sind dir trotzdem nicht dankbar.'}},
  {n:'Shisha-Tabak „Doppelapfel-Diesel“',p:3,d:'5 Köpfe für die Wasserpfeife',c:()=>!!B().shisha,f:()=>{B().shisha.tab+=5;return'5 Köpfe Tabak. Riecht nach Tankstelle und Kaugummi.'}});
 
