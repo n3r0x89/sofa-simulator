@@ -3168,7 +3168,7 @@ function knAmbStop(){try{if(KN_AMB){const a=KN_AMB;KN_AMB=null;let v=a.volume;co
 {const _kc=knClose;knClose=function(){knAmbStop();return _kc.apply(this,arguments)}}
 
 // ================= Trinken wie im Wohnzimmer + Kippen/Aschenbecher auf der Theke =================
-const KN_CP=[600,1105,668,1200],KN_AS=[672,1150,782,1212];   // Kippenschachtel, Aschenbecher (Kneipen-Koordinaten)
+const KN_CP=[842,1350,912,1458],KN_AS=[640,1265,795,1360];   // Kippenschachtel, Aschenbecher (Kneipen-Koordinaten)
 {const _ds=knDrawScene;knDrawScene=function(t){
  const c=document.getElementById('kncv');if(c&&KN){const g=c.getContext('2d');
   // Zeichnen erfolgt nach dem Glas-Clear: daher eigenes Zeichnen vor dem Glas
@@ -3178,7 +3178,7 @@ const KN_CP=[600,1105,668,1200],KN_AS=[672,1150,782,1212];   // Kippenschachtel,
   const d=(k,b)=>{const im=SP[k];if(!im||!im.naturalWidth)return;const s=Math.min((b[2]-b[0])/im.naturalWidth,(b[3]-b[1])/im.naturalHeight),w=im.naturalWidth*s,h=im.naturalHeight*s;g.drawImage(im,b[0]+(b[2]-b[0]-w)/2,b[3]-h,w,h)};
   const al=S.ash>=12?2:S.ash>=4?1:0;d('ash_'+al,KN_AS);
   d(S.cigs<=0?'cigpack_empty':S.cigs<10?'cigpack_half':'cigpack',KN_CP);
-  if(S.cigs>0){g.font='800 26px Nunito,sans-serif';g.textAlign='center';g.fillStyle='#000a';g.fillRect(KN_CP[0]+10,KN_CP[1]-30,46,30);g.fillStyle='#fff';g.fillText(S.cigs,KN_CP[0]+33,KN_CP[1]-6)}
+  if(S.cigs>0){g.font='800 26px Nunito,sans-serif';g.textAlign='center';g.fillStyle='#000a';const mx=(KN_CP[0]+KN_CP[2])/2;g.fillRect(mx-23,KN_CP[1]-30,46,30);g.fillStyle='#fff';g.fillText(S.cigs,mx,KN_CP[1]-6)}
   g.restore()}}}
 function knToKn(cx2,cy2){const w=document.getElementById('knw');if(!w)return null;const r=w.getBoundingClientRect();return{x:(cx2-r.left)/r.width*941,y:(cy2-r.top)/r.height*1671}}
 const inB2=(p,b,m)=>p&&p.x>b[0]-(m||0)&&p.x<b[2]+(m||0)&&p.y>b[1]-(m||0)&&p.y<b[3]+(m||0);
