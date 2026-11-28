@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 168</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 169</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=168;
+const APPVER=169;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2513,6 +2513,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:169,t:['🍺 Moni stellt dir das Bier kurz hin und macht dann weiter mit Gläserpolieren']},
  {v:168,t:['🔧 Bilder werden nach Updates zuverlässig neu geladen']},
  {v:167,t:['🍺 Kneipe: Kippen liegen gut sichtbar auf der Theke, Klaus und Ralle haben wieder Beine']},
  {v:166,t:['🚬 Kippen alle in der Kneipe? Moni verkauft dir eine Schachtel unterm Tresen – bar oder auf Deckel']},
@@ -3017,8 +3018,8 @@ function kneipeGo(){if(!S.kn)S.kn={deckel:0,ban:-1,rep:0};
 function knDraw(){const m=document.getElementById('knm'),box=document.getElementById('knp');if(!m||!box)return;const kb=document.getElementById('knb');setTimeout(()=>{const e=kb&&kb.querySelector('[data-kbeer]');if(e)e.onclick=()=>{initAudio();knSip()}},0);if(kb)kb.innerHTML=false?`<img src="sprites/bottle_${[5,4,2,0][KN.beer]}.webp" alt="" data-kbeer style="pointer-events:auto;cursor:pointer;position:absolute;left:${520/941*100}%;top:${870/1672*100}%;height:${190/1672*100}%;transform:rotate(-4deg)">`:'';
  // Moni steht hinterm Tresen: Unterkörper wird vom Tresen verdeckt
  const pct=(x,y,h)=>`left:${x/941*100}%;top:${y/1672*100}%;height:${h/1672*100}%`;
- const mp=KN.pose.moni===1?3:(KN.mp!=null?KN.mp:0);
- const K5={"moni_0":[545,434,320],"moni_bier":[480,432,393],"moni_wut":[386,341,499],"moni_lach":[509,458,394],"moni_flirt":[454,427,402],"batch_prost":[138,707,594],"batch_laber":[137,704,802],"batch_selfie":[131,696,647],"batch_kuss":[119,804,709],"batch_koma":[78,918,908],"tisch_klaus":[0,555,579],"tisch_arm":[0,700,560],"tisch_ralle":[0,582,560],"erwin_spiel":[138,572,248],"erwin_pleite":[0,565,313],"moni_bier_top":[527,847,181]};const im=(who,k,top)=>{const r=K5[k];return`<img src="sprites/k5_${k}.webp?v=${APPVER}" alt="" ${top?"":`data-kp="${who}"`} style="position:absolute;left:${r[0]/941*100}%;top:${r[1]/1671*100}%;width:${r[2]/941*100}%;pointer-events:none">`};
+ const mp=KN.pose.moni===1?3:(KN.mp!=null?KN.mp:0);if(mp===1&&!KN.mpT)KN.mpT=setTimeout(()=>{if(!KN)return;KN.mpT=0;if(KN.mp===1){KN.mp=0;knDraw()}},1400);
+ const K5={"moni_0":[545,434,320],"moni_bier":[480,432,393],"moni_wut":[386,341,499],"moni_lach":[509,458,394],"moni_flirt":[454,427,402],"batch_prost":[138,707,594],"batch_laber":[137,704,802],"batch_selfie":[131,696,647],"batch_kuss":[119,804,709],"batch_koma":[78,918,908],"tisch_klaus":[0,555,579],"tisch_arm":[0,700,560],"tisch_ralle":[0,582,560],"erwin_spiel":[138,572,248],"erwin_pleite":[0,565,313],"moni_bier_top":[527,847,181]};const im=(who,k,top)=>{const r=K5[k];return`<img src="sprites/k5_${k}.webp?v=${APPVER}" alt="" ${top?"":`data-kp="${who}"`} style="position:absolute;left:${r[0]/941*100}%;top:${r[1]/1671*100}%;width:${r[2]/941*100}%;pointer-events:none;${k.startsWith('moni_bier')?'animation:knPut .35s ease-out':''}">`};
  const mk=["moni_0","moni_bier","moni_lach","moni_wut","moni_flirt"][mp]||"moni_0";m.innerHTML="";
  let h='';
  h+=im('erwin',KN.pose.erwin===1?'erwin_pleite':'erwin_spiel');
@@ -3028,7 +3029,7 @@ function knDraw(){const m=document.getElementById('knm'),box=document.getElement
  if(K5[mk+'_top'])h+=im('moni',mk+'_top');
  h+=im('batch',['batch_prost','batch_laber','batch_selfie','batch_kuss','batch_koma'][Math.min(4,batchPose())]);
  box.innerHTML=h}
-if(!document.getElementById('knCss')){const c=document.createElement('style');c.id='knCss';c.textContent='.knOn #hud1,.knOn #hud2{display:none!important}@keyframes knIn{from{transform:translateX(-40%);opacity:0}to{transform:none;opacity:1}}';document.head.appendChild(c)}
+if(!document.getElementById('knCss')){const c=document.createElement('style');c.id='knCss';c.textContent='@keyframes knPut{from{transform:translate(-3%,-6%);opacity:.6}to{transform:none;opacity:1}}.knOn #hud1,.knOn #hud2{display:none!important}@keyframes knIn{from{transform:translateX(-40%);opacity:0}to{transform:none;opacity:1}}';document.head.appendChild(c)}
 function knClose(msg){const d=document.getElementById('kneipe');if(d)d.remove();document.getElementById('app').classList.remove('knOn');try{layout()}catch(e){}KN=null;busyUI=false;advance(2);if(msg)toast(msg,'',4500);setTimeout(()=>{try{promCheck()}catch(e){}},600)}
 function knSay(t,sub){const ui=document.getElementById('knui');if(!ui)return;
  ui.innerHTML=`<div style="line-height:1.35">${esc(t)}</div>${sub?`<div style="margin-top:4px;color:#f2c14e;font-weight:800;font-size:13px">${esc(sub)}</div>`:''}`;ui.style.display=t?'block':'none';ui.scrollTop=0;knBar()}
