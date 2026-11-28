@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 172</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 173</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=172;
+const APPVER=173;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -409,7 +409,7 @@ function tvFromSprite(){const k=tvKey(),i=SP[k];if(!(i&&i.complete&&i.naturalWid
 function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Math.max(W/iw,H/(ih+170*k)),ox=(W-iw*s)/2,oy=H-ih*s;L0={iw,ih,s,ox,oy};const m=(x0,y0,x1,y1)=>({x:ox+x0*k*s,y:oy+y0*k*s,w:(x1-x0)*k*s,h:(y1-y0)*k*s});
   L={roomMode:true,wall:oy+900*k*s,
    shelf:m(0,120,270,930),win:m(765,150,941,585),cab:m(278,660,748,895),
-   neon:m(425,172,605,340),plant:m(790,430,905,597),lamp:m(708,345,965,905),fridge:m(196,778,344,962),massage:m(735,560,1075,995),gold:m(495,705,765,1005),stash:m(104,200,128,300),
+   neon:m(425,172,605,340),plant:m(790,430,905,597),lamp:m(708,345,965,905),fridge:m(196,778,344,962),massage:m(760,700,1040,1000),gold:m(760,720,1040,1000),stash:m(104,200,128,300),
    table:{y0:oy+1000*k*s,y1:oy+1215*k*s},tableHit:m(0,995,941,1222),
    crate:m(95,905,300,1085),cigpack:m(318,995,385,1095),lighter:m(386,1003,412,1060),ash:m(395,1035,525,1112),remote:m(525,1045,670,1130),phone:m(396,1118,471,1231),catalog:m(625,962,759,1087),
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
@@ -2513,6 +2513,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:173,t:['🛋️ Massagesessel und Goldthron stehen jetzt passend klein rechts in der Ecke']},
  {v:172,t:['🐱 Nach Weihnachten zieht Fettsack vorne an den Tisch – Pfützen und Kotze landen nicht mehr bei ihm']},
  {v:171,t:['💬 Kneipe: Beim Quatschen reden die Leute jetzt in Sprechblasen über ihrem Kopf']},
  {v:170,t:['🍺 Monis Arm beim Bierhinstellen geht jetzt sauber über die Theke']},
