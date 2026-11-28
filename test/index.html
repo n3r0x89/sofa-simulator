@@ -53,6 +53,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:600 14
 .need.beer i{background:linear-gradient(0deg,#d98a1d,#ffd36b)}
 .info{display:flex;flex-wrap:wrap;gap:1px 9px;font-size:11.5px;line-height:1.3;color:var(--dim)}
 .info b{color:var(--ink)}
+@media (max-width:380px){.info{font-size:10.5px;gap:1px 6px}}
 #stage{position:relative;flex:1;overflow:hidden;background:#000}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #toast{position:absolute;left:50%;top:19%;transform:translate(-50%,-50%) scale(.9);max-width:86%;background:#120c09e8;border:2px solid var(--amb);border-radius:14px;padding:10px 14px;text-align:center;font:800 17px/1.25 Nunito,sans-serif;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:5}
@@ -109,7 +110,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 174</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 175</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +147,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=174;
+const APPVER=175;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2513,6 +2514,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:175,t:['🔧 Fehler aus dem Testdurchlauf behoben: Armdrücken und Automat nach dem Quatschen, Besuch über Nacht, Anzeige auf kleinen Handys']},
  {v:173,t:['🛋️ Massagesessel und Goldthron stehen jetzt passend klein rechts in der Ecke']},
  {v:172,t:['🐱 Nach Weihnachten zieht Fettsack vorne an den Tisch – Pfützen und Kotze landen nicht mehr bei ihm']},
  {v:171,t:['💬 Kneipe: Beim Quatschen reden die Leute jetzt in Sprechblasen über ihrem Kopf']},
@@ -2933,7 +2935,7 @@ function budeMenu(back){const b=B();const row=(t,s,btn)=>`<div class="row"><div 
   '[data-pet]':el=>{const k=el.dataset.pet,P=PETS[k];if(S.money<P.p)return;S.money-=P.p;if(!S.pets)S.pets={};S.pets[k]={fed:S.day,pose:0,poseT:0};S.petfood=(S.petfood||0)+5;snd('cash');stat('pet-'+k);toast(P.n+' zieht ein. 5 Portionen Futter sind dabei.','Futter gibt’s im Späti-Shop',4000);budeMenu(back)},
   '[data-bk]':()=>back?back():closeModal()}))}
 // Knopf im Möbel-Katalog
-{const _oc=openCatalog;openCatalog=function(){_oc();try{const h=M.querySelector('h2');if(h&&!M.querySelector('[data-bude]')){const d=document.createElement('div');d.className='list';d.style.margin='6px 0 10px';d.innerHTML='<button class="btn pri" data-bude style="background:#6b4a2a;color:#fff">🏠 Bude einrichten: Tapete, Poster, Tiere, Dart, Wasserpfeife</button>';(h.nextElementSibling||h).after(d);d.querySelector('button').onclick=()=>{initAudio();snd('pop');budeMenu(openCatalog)}}}catch(e){}}}
+{const _oc=openCatalog;openCatalog=function(){_oc();try{const h=M.querySelector('h2');if(h&&!M.querySelector('[data-bude]')){const d=document.createElement('div');d.className='list';d.style.margin='6px 0 10px';d.innerHTML='<button class="btn pri" data-bude style="background:#6b4a2a;color:#fff">🏠 Bude einrichten: Tapete, Poster, Tiere, Dart</button>';(h.nextElementSibling||h).after(d);d.querySelector('button').onclick=()=>{initAudio();snd('pop');budeMenu(openCatalog)}}}catch(e){}}}
 SHOP.push({n:'Tierfutter-Sack (10 Portionen)',p:3,d:'Für Katze, Hamster und Vogel. Schmeckt nach Pappe',c:()=>!!(S.pets&&Object.values(S.pets).some(Boolean)),f:()=>{S.petfood=(S.petfood||0)+10;return'10 Portionen Futter. Die Viecher sind dir trotzdem nicht dankbar.'}},
  {n:'Shisha-Tabak „Doppelapfel-Diesel“',p:3,d:'5 Köpfe für die Wasserpfeife',c:()=>false,f:()=>{B().shisha.tab+=5;return'5 Köpfe Tabak. Riecht nach Tankstelle und Kaugummi.'}});
 
@@ -3290,9 +3292,11 @@ function knBubble(who,t){const w=document.getElementById('knw'),st=document.getE
  b.style.left=x+'px';b.style.top=y+'px';const tx=Math.max(18,Math.min(bw-30,hx-sr.left-x-11));b.querySelectorAll('i').forEach((e,i)=>e.style.left=(tx+(i?3:0))+'px');
  const ui=document.getElementById('knui');if(ui)ui.style.display='none';
  KN.bubT=setTimeout(knBubbleOff,3200+txt.length*45)}
-function knBubbleOff(){const b=document.getElementById('knbub');if(b)b.remove();if(KN&&KN.bubT){clearTimeout(KN.bubT);KN.bubT=0}}
+function knBubbleOff(){const b=document.getElementById('knbub');if(b)b.remove();if(KN&&KN.bubT){clearTimeout(KN.bubT);KN.bubT=0}const ui=document.getElementById('knui');if(ui&&ui.style.display==='none'&&ui.textContent.trim())ui.style.display='block'}
 {const _ks=knSay;knSay=function(t,sub){if(KN&&KN.bub){const who=KN.bub;KN.bub=null;if(KN_HEAD[who]){setTimeout(()=>knBubble(who,t),30);return}}knBubbleOff();return _ks.apply(this,arguments)}}
 {const _kc=knClose;knClose=function(){knBubbleOff();return _kc.apply(this,arguments)}}
+
+for(const f of ['knArm','knSlot','knMenu','knPutBack','knCigAsk'])try{const o=window[f]||eval(f);const w=function(){knBubbleOff();const ui=document.getElementById('knui');if(ui&&f!=='knMenu'&&f!=='knPutBack'&&f!=='knCigAsk')ui.style.display='block';return o.apply(this,arguments)};eval(f+'=w')}catch(e){}
 // ================= Zurück-Knopf immer oben (klebt beim Scrollen fest) =================
 const BACK_TXT=/^(←\s*)?(Zurück|Schließen|Doch nicht|Tür zu)$/;
 function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.querySelectorAll('button')].filter(b=>BACK_TXT.test(b.textContent.trim())&&!b.closest('.backbar'));if(!bs.length)return;
@@ -3303,6 +3307,8 @@ function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.query
 // „Spendier dem Assi ein Bier“ immer direkt unter „Erfolge“
 function supUnderAch(){try{const sup=M.querySelector('[data-a="sup"]'),ach=M.querySelector('[data-a="ach"]');if(sup&&ach&&ach.nextElementSibling!==sup)ach.after(sup)}catch(e){}}
 {const _om2=openModal;openModal=function(){const r=_om2.apply(this,arguments);supUnderAch();return r}}
+// Gäste gehen, wenn man pennen geht
+{const _sl=sleep;sleep=function(){const g=S.guest&&canSleep()?S.guest:null;const r=_sl.apply(this,arguments);if(g&&S.guest===g){const n=GUESTS[g.who]?GUESTS[g.who].n:'Dein Besuch';S.guest=null;try{guestDraw()}catch(e){}setTimeout(()=>toast(n+' hat sich verpisst, während du gepennt hast.','Dein letztes Bier ist auch weg.',3500),3800)}return r}}
 // Seitenknöpfe: Essen/Duschen links unten, Einkaufen/Schlafen rechts unten
 (()=>{try{const st=document.getElementById('stage');const mk=(cls,ids)=>{const d=document.createElement('div');d.className='sideBtns '+cls;for(const id of ids){const b=document.getElementById(id);if(b)d.appendChild(b)}st.appendChild(d)};mk('l',['bSnack','bWash']);mk('r',['bShop','bSleep'])}catch(e){}})();
 // ================= HUD =================
@@ -3366,9 +3372,9 @@ layout();try{window.__dbg={L:()=>L,W:()=>W,H:()=>H,ev:id=>{CUR_EV=id;EVENTS.find
 loadSprites().then(()=>{});
 mainMenu();
 requestAnimationFrame(frame);
+if(IMPORTED)setTimeout(()=>toast('Willkommen auf assi-simulator.de!','Dein Spielstand ist mitgezogen.',3500),1500);
 try{if('serviceWorker' in navigator&&location.protocol==='https:'&&!/claude/.test(location.hostname))navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
 }
 </script>
 </body>
 </html>
-if(IMPORTED)setTimeout(()=>toast('Willkommen auf assi-simulator.de!','Dein Spielstand ist mitgezogen.',3500),1500);
