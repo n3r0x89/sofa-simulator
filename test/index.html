@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 165</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 166</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=165;
+const APPVER=166;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2513,6 +2513,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:166,t:['🚬 Kippen alle in der Kneipe? Moni verkauft dir eine Schachtel unterm Tresen – bar oder auf Deckel']},
  {v:165,t:['🍺 Kneipe aufgeräumt: keine Wohnungs-Statusleiste mehr, Monis Arm beim Bierreichen sitzt jetzt']},
  {v:164,t:['🛠️ Cheat-Menü aufgeräumt: Reiter, Plus/Minus-Knöpfe und Schnellaktionen']},
  {v:163,t:['🍺 Kneipe komplett neu gezeichnet: Moni, Rüdiger, Erwin, Klaus und Ralle im Wohnungs-Look mit neuen Posen']},
@@ -3033,7 +3034,7 @@ function knSay(t,sub){const ui=document.getElementById('knui');if(!ui)return;
 function knBar(){const b=document.getElementById('knbar');if(!b)return;b.innerHTML=`<button class="btn" data-kh style="flex:0 0 auto;padding:8px 12px">🚪 Heim</button><div style="flex:1;background:rgba(25,15,8,.8);border-radius:10px;padding:6px 10px;font-size:12px;color:#eadfcf">${hourStr()} Uhr · ${eur(S.money)} · ${S.prom.toFixed(2).replace('.',',')} ‰${S.kn.deckel>0?' · Deckel '+eur(S.kn.deckel):''}<br><span style="color:var(--dim)">Leute antippen · Glas und Kippe über deine Hände</span></div>`;
  b.querySelector('[data-kh]').onclick=()=>{initAudio();snd('pop');knMenuClose();knAct('h')}}
 const KN_ACTS={
- moni:{n:'Wirtin Moni',a:()=>[['b','🍺 Bier bestellen (3,50 €)',S.money>=3.5],['d','📝 Anschreiben lassen',S.kn.deckel<20],...(S.kn.deckel>0?[['zd','💶 Deckel bezahlen ('+eur(S.kn.deckel)+')',S.money>=S.kn.deckel]]:[]),['k','🥃 Runde Kurze für alle (12,00 €)',S.money>=12],['m','😏 Flirten',true],['q:moni','💬 Quatschen',true]]},
+ moni:{n:'Wirtin Moni',a:()=>[['b','🍺 Bier bestellen (3,50 €)',S.money>=3.5],['d','📝 Anschreiben lassen',S.kn.deckel<20],...(S.kn.deckel>0?[['zd','💶 Deckel bezahlen ('+eur(S.kn.deckel)+')',S.money>=S.kn.deckel]]:[]),['zig','🚬 Schachtel Kippen (6,50 €)',S.money>=6.5||S.kn.deckel<20],['k','🥃 Runde Kurze für alle (12,00 €)',S.money>=12],['m','😏 Flirten',true],['q:moni','💬 Quatschen',true]]},
  batch:{n:'Rüdiger',a:()=>[['bm','🍻 Zusammen saufen (Runde 7,00 €)',S.money>=7],['q:batch','💬 Quatschen',true]]},
  erwin:{n:'Zocker-Erwin',a:()=>[['s','🎰 Am Automaten zocken (2,00 €)',S.money>=2],['q:erwin','💬 Quatschen',true]]},
  tisch:{n:'Klaus & Ralle',a:()=>[['aw','💪 Armdrücken: Wette (5,00 €)',S.money>=5],['dart','🎯 Dart gegen Ralle (5,00 €)',S.money>=5],['f','👊 Ralle provozieren',true],['q:klaus','💬 Mit Klaus quatschen',true],['q:ralle','💬 Mit Ralle quatschen',true]]},
@@ -3183,7 +3184,7 @@ function knThrow(){if(!KN||!KN.glass)return;KN.glass=null;snd('whoosh');setTimeo
  setTimeout(()=>{if(!KN)return;if(thrown){S.kn.ban=S.day;knClose('Das Glas zerplatzt neben der Dartscheibe. Moni brüllt: „RAUS! Und das Glas kommt auf deinen Deckel!“ Hausverbot bis morgen.');return}
   knSay(pick(['KLIRR! Das Glas zerschellt an der Wand. Ralle klatscht. Moni schreibt 5 € auf deinen Deckel: „Noch so ein Ding und du fliegst!“','Scherben überall. Klaus hebt den Kopf, sagt „Prost“ und schläft weiter. Moni: „5 Euro Bruch, du Wichser!“']),'Glasbruch: +5,00 € auf den Deckel');KN.pose.moni=0;setTimeout(()=>{if(KN){KN.mp=0;knDraw()}},2500);knBar()},700)}
 function knRight(){if(S.right==='cig'){puff();setTimeout(knBar,50);return}
- if(S.right!=='empty')S.right='empty';if(S.cigs<=0){toast('Keine Kippen mehr. Am Automaten neben dem Klo gibt’s welche. Also nicht.');snd('bad');return}
+ if(S.right!=='empty')S.right='empty';if(S.cigs<=0){snd('bad');return knCigAsk()}
  takeCig();if(Math.random()<.4)knSay(pick(['Kippe an. Moni schiebt dir den Aschenbecher hin, ohne hinzugucken.','Du zündest dir eine an. Klaus schnorrt sofort: „Haste mal eine?“']))}
 // Bestellung landet als Glas auf dem Tresen
 {const _ka2=knAct;knAct=function(a){if((a==='b'||a==='d')&&KN&&S.prom<2.6){if(KN.glass){knSay(KN.glass.fill>0?'Moni: „Erst austrinken, du Gierschlund. Dein Glas steht doch da.“':'Moni: „Stell erst das leere Glas auf die Theke.“');return}
@@ -3217,9 +3218,9 @@ const inB2=(p,b,m)=>p&&p.x>b[0]-(m||0)&&p.x<b[2]+(m||0)&&p.y>b[1]-(m||0)&&p.y<b[
 // Tippen/Halten/Wischen über eigene Pointer-Logik (wie im Wohnzimmer)
 let KPD=null;
 function knWhich(e){const hc=document.getElementById('knh');if(!hc||!KN)return null;const r=hc.getBoundingClientRect(),lx=e.clientX-r.left,ly=e.clientY-r.top;
+ const p=knToKn(e.clientX,e.clientY);if(inB2(p,KN_CP,20))return 'CP';if(inB2(p,KN_AS,10))return 'AS';
  if(KN.lhb&&lx>KN.lhb.x&&lx<KN.lhb.x+KN.lhb.w&&ly>KN.lhb.y&&e.clientY>=r.top)return 'L';
  if(KN.rhb&&lx>KN.rhb.x&&lx<KN.rhb.x+KN.rhb.w&&ly>KN.rhb.y&&e.clientY>=r.top)return 'R';
- const p=knToKn(e.clientX,e.clientY);if(inB2(p,KN_CP,20))return 'CP';if(inB2(p,KN_AS,10))return 'AS';
  if(KN.glass&&KN.glass.at==='counter'){const gr=knGlassRect();if(gr&&e.clientX>gr.x-20&&e.clientX<gr.x+gr.w+20&&e.clientY>gr.y-20&&e.clientY<gr.y+gr.h+20)return 'G'}
  return null}
 function knSipHold(){const g=KN&&KN.glass;if(!g||g.at!=='hand'||g.fill<=0)return false;g.fill--;KN.drinkT=performance.now()+700;S.prom+=.075;S.th=Math.max(0,S.th-6);S.bo=Math.max(0,S.bo-4);S.lastBeer=S.tot;snd('gulp');vib(20);
@@ -3235,13 +3236,30 @@ function knUp(e){if(!KPD)return;const P=KPD;KPD=null;if(KN)KN.swal=performance.n
  if(P.w==='L'&&KN&&KN.glass&&KN.glass.at==='hand'&&dy<-60&&dt<450&&Math.abs(dy)>Math.abs(dx)){knThrow();return}
  if(P.acted||dt>450||Math.hypot(dx,dy)>25)return;
  if(P.w==='G'){KN.glass.at='hand';snd('clink');knSay(KN.glass.fill>0?'Glas in der Hand.':'Leeres Glas in der Hand.','Glas gedrückt halten = trinken · schnell nach oben wischen = an die Wand');return}
- if(P.w==='CP'){if(S.right==='cig'){toast('Du hast doch schon eine an, du Doppelschlot.');return}if(S.cigs<=0){toast('Schachtel leer. Wie dein Konto.');snd('bad');return}S.right='empty';takeCig();knBar();if(Math.random()<.4)knSay(pick(['Kippe an. Moni schiebt den Aschenbecher näher, ohne hinzugucken.','Klaus ruft rüber: „Haste mal eine?“ Nein.']));return}
+ if(P.w==='CP'){if(S.right==='cig'){toast('Du hast doch schon eine an, du Doppelschlot.');return}if(S.cigs<=0){snd('bad');return knCigAsk()}S.right='empty';takeCig();knBar();if(S.cigs<=0){setTimeout(()=>{if(KN)knCigAsk(true)},1500);return}if(Math.random()<.4)knSay(pick(['Kippe an. Moni schiebt den Aschenbecher näher, ohne hinzugucken.','Klaus ruft rüber: „Haste mal eine?“ Nein.']));return}
  if(P.w==='AS'){toast(S.ash>=12?'Der Aschenbecher quillt über. Moni leert ihn. In dein Bier. Fast.':'Ein Aschenbecher. Moni hat ihn 1983 aus Italien mitgebracht.');return}
  if(P.w==='L'){const g=KN.glass;if(!g){knMenu('moni');return}if(g.at==='hand'&&g.fill<=0){knPutBack();return}if(g.at==='hand'){knSay('Glas gedrückt halten = trinken.','Leer antippen = auf die Theke stellen');return}}
  if(P.w==='R'){if(S.right==='cig')knSay('Hand gedrückt halten = ziehen.');else knSay('Die Kippen liegen auf der Theke. Antippen zum Anzünden.');return}}
 {const _kg3=kneipeGo;kneipeGo=function(){_kg3.apply(this,arguments);const d=document.getElementById('kneipe');if(d&&KN){d.addEventListener('pointerdown',knDown,true);d.addEventListener('pointermove',e=>{if(KPD){KPD.cx=e.clientX;KPD.cy=e.clientY}},true);d.addEventListener('pointerup',knUp,true);d.addEventListener('pointercancel',()=>KPD=null,true)}}}
 // alte Klick-Logik für Hände/Glas/Kippen abschalten (läuft jetzt über Halten/Wischen)
 {const _kht=knHandTap;knHandTap=function(e){if(!KN)return true;if(KN.swal&&performance.now()<KN.swal)return true;return !!knWhich(e)||_kht(e)}}
+
+// Kippen bei Moni nachkaufen
+function knCigAsk(last){if(!KN)return;const M2=document.getElementById('knmenu');if(!M2)return;KN.mp=4;knDraw();
+ knSay(last?pick(['Moni sieht, wie du die leere Schachtel zerknüllst: „Na, Lunge leer gesaugt? Ich hab noch ’ne Packung „Gelbe Lunge“ unterm Tresen. 6,50.“','Moni: „Das war deine Letzte, Schätzchen. Soll Mutti dir neue geben? Kostet aber.“']):pick(['Moni: „Schachtel leer? Ich hab welche unterm Tresen. Teurer als im Späti, aber der Späti hat keine Moni.“','Moni wedelt mit einer Schachtel: „Willste? 6,50. Oder du lutschst weiter am leeren Karton.“']));
+ M2.innerHTML=`<div style="display:flex;flex-direction:column;gap:6px"><b style="color:#f2c14e">🚬 Kippen von Moni (20 Stück)</b><button class="btn pri" data-kc="pay" ${S.money>=6.5?'':'disabled'}>💶 Kaufen (6,50 €)</button><button class="btn" data-kc="deckel" ${S.kn.deckel<20?'':'disabled'}>📝 Auf den Deckel</button><button class="btn" data-kc="no">🙅 Nee, lass mal</button></div>`;M2.style.display='block';
+ M2.querySelectorAll('[data-kc]').forEach(el=>el.onclick=()=>{initAudio();knMenuClose();const v=el.dataset.kc;KN.mp=0;
+  if(v==='no'){knDraw();knSay(pick(['Moni: „Dann schnorr halt bei Klaus. Der hat seit 1998 keine eigenen mehr gekauft.“','Moni zuckt mit den Schultern und raucht demonstrativ vor deiner Nase weiter.']));return}
+  if(v==='pay')S.money-=6.5;else S.kn.deckel+=6.5;S.cigs+=20;S.packClosed=true;snd('cash');KN.mp=1;knDraw();
+  knSay(pick(['Moni schiebt dir die Schachtel über die Theke. Sie war in ihrem BH. Sie ist noch warm.','Moni wirft dir die Schachtel an den Kopf: „Fang, du Schnorrer!“','„Gelbe Lunge“, frisch aus dem Lager. Also aus Monis Handtasche.']),v==='pay'?'+20 Kippen · −6,50 €':'+20 Kippen · +6,50 € auf den Deckel');
+  setTimeout(()=>{if(KN){KN.mp=0;knDraw()}},2500);knBar()})}
+{const _ka=knAct;knAct=function(a){if(a==='zig')return knCigAsk();return _ka.apply(this,arguments)}}
+// Theken-Sachen (Glas, Kippen, Ascher) in den sichtbaren Bildausschnitt schieben
+const KN_BASE={cp:KN_CP.slice(),as:KN_AS.slice(),gx:KN_GL.x};
+function knFit(){const st=document.getElementById('stage'),w=document.getElementById('knw');if(!st||!w)return;const sr=st.getBoundingClientRect(),r=w.getBoundingClientRect();
+ const vx1=(sr.right-r.left)/r.width*941;const sh=Math.min(0,vx1-18-KN_BASE.cp[2]);
+ KN_CP[0]=KN_BASE.cp[0]+sh;KN_CP[2]=KN_BASE.cp[2]+sh;KN_AS[0]=KN_BASE.as[0]+sh;KN_AS[2]=KN_BASE.as[2]+sh;KN_GL.x=KN_BASE.gx+sh}
+{const _kg9=kneipeGo;kneipeGo=function(){_kg9.apply(this,arguments);try{knFit()}catch(e){}}}
 // ================= Zurück-Knopf immer oben (klebt beim Scrollen fest) =================
 const BACK_TXT=/^(←\s*)?(Zurück|Schließen|Doch nicht|Tür zu)$/;
 function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.querySelectorAll('button')].filter(b=>BACK_TXT.test(b.textContent.trim())&&!b.closest('.backbar'));if(!bs.length)return;
