@@ -2906,7 +2906,7 @@ function petPose(k){const P=S.pets[k],n=isNight();if(P.poseT>S.tot)return P.pose
  if(k==='cat')return n||S.hour%5===2?1:0;if(k==='ham')return n||Math.floor(S.tot/40)%3===0?0:1;if(k==='bird')return n||P.cover?2:0;return 0}
 function drawPets(){if(!S.pets||!L.roomMode)return;for(const k in PETS){if(!S.pets[k])continue;const r=mmR(PETS[k].box);spr(PETS[k].k+'_'+petPose(k),r);hit('pet_'+k,r)}}
 function drawShisha(){const s=B().shisha;if(!s||!L.roomMode)return;const k=s.down?'shisha_2':(s.lit>S.tot?'shisha_1':'shisha_0');const r=s.down?mmR([540,930,690,1015]):mmR([560,800,662,1014]);spr(k,r);hit('shisha',r)}
-{const _ds2=drawStash;drawStash=function(){const r=_ds2.apply(this,arguments);try{drawPets();drawShisha()}catch(e){}return r}}
+{const _ds2=drawStash;drawStash=function(){const r=_ds2.apply(this,arguments);try{drawPets();if(!(S.furn.gold&&!xTreeUp()))drawShisha()}catch(e){}return r}}
 {const _pb=poopBlocked;poopBlocked=function(x,y){if(_pb(x,y))return true;const Bx=[];if(B().shisha)Bx.push([555,900,665,1030]);if(S.pets&&S.pets.cat)Bx.push(PETS.cat.box);return Bx.some(b=>x>b[0]-15&&x<b[2]+15&&y>b[1]-10&&y<b[3]+10)}}
 // Antippen
 const _tapB=tap;tap=function(id,p){if(id==='dartb')return dartGame();if(id==='shisha')return shishaTap();if(id&&id.startsWith('pet_'))return petTap(id.slice(4));return _tapB(id,p)};
@@ -3001,12 +3001,14 @@ function drawExPhoto(c,mx,my,w){const k=sprKey('jessica_0'),f=SP[k],cr=EXHEAD[k]
  c.fillStyle='#d22';c.beginPath();c.arc(0,-h/2+w*.04,w*.055,0,7);c.fill();c.fillStyle='#fff8';c.beginPath();c.arc(-w*.015,-h/2+w*.025,w*.018,0,7);c.fill();c.restore()}
 
 // Katze: an Weihnachten neben dem Kasten, sonst vorne links am Tisch. Pfützen/Kotze nie unter oder über ihr.
-Object.defineProperty(PETS.cat,'box',{get:()=>(typeof xTreeUp==='function'&&xTreeUp())?[760,870,925,995]:[278,860,443,985]});
+Object.defineProperty(PETS.cat,'box',{get:()=>(typeof xTreeUp==='function'&&xTreeUp())?[760,870,925,995]:(S.furn&&S.furn.fridge?[348,862,492,985]:[278,860,443,985])});
 function petClear(){if(!S.pets||!S.pets.cat||!L.roomMode)return;const b=PETS.cat.box,pad=35;
  const out=(x,lo,hi,mn,mx)=>{const r=hi+pad+Math.random()*60;return r<=mx?r:Math.max(mn,lo-pad-Math.random()*60)};
  if(Array.isArray(S.wet))for(const p of S.wet){if(p.z==='f'&&p.x>b[0]-pad&&p.x<b[2]+pad&&p.y>b[1]&&p.y<b[3]+pad)p.x=out(p.x,b[0],b[2],60,880)}
  const r=mmR(b);for(const p of S.puddles||[]){if(p.x>r.x-30&&p.x<r.x+r.w+30&&p.y>r.y&&p.y<r.y+r.h+20){const z=L.puddleZone;p.x=out(p.x,r.x,r.x+r.w,z?z.x:20,z?z.x+z.w:W-20)}}}
 {const _dp=drawPets;drawPets=function(){try{petClear()}catch(e){}return _dp.apply(this,arguments)}}
+
+{const _dr=drawRoom;drawRoom=function(){const r=_dr.apply(this,arguments);try{if(S.furn.gold&&!xTreeUp()&&L.roomMode)drawShisha()}catch(e){}return r}}
 // ================= KNEIPE „ZUM FEUCHTEN FURZ“ =================
 const KN_P={batch:{n:'Rüdiger',x:0,h:40},moni:{n:'Wirtin Moni',x:68,h:40},klaus:{n:'Klaus',x:22,h:38},ralle:{n:'Schläger-Ralle',x:44,h:41},erwin:{n:'Zocker-Erwin',x:0,h:37}};
 let KN=null;
