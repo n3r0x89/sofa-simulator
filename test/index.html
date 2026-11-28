@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 170</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 171</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=170;
+const APPVER=171;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2513,6 +2513,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:171,t:['💬 Kneipe: Beim Quatschen reden die Leute jetzt in Sprechblasen über ihrem Kopf']},
  {v:170,t:['🍺 Monis Arm beim Bierhinstellen geht jetzt sauber über die Theke']},
  {v:169,t:['🍺 Moni stellt dir das Bier kurz hin und macht dann weiter mit Gläserpolieren']},
  {v:168,t:['🔧 Bilder werden nach Updates zuverlässig neu geladen']},
@@ -3030,7 +3031,7 @@ function knDraw(){const m=document.getElementById('knm'),box=document.getElement
  if(K5[mk+'_top'])h+=im('moni',mk+'_top');
  h+=im('batch',['batch_prost','batch_laber','batch_selfie','batch_kuss','batch_koma'][Math.min(4,batchPose())]);
  box.innerHTML=h}
-if(!document.getElementById('knCss')){const c=document.createElement('style');c.id='knCss';c.textContent='@keyframes knPut{from{transform:translate(-6px,-10px);opacity:.7}to{transform:none;opacity:1}}.knOn #hud1,.knOn #hud2{display:none!important}@keyframes knIn{from{transform:translateX(-40%);opacity:0}to{transform:none;opacity:1}}';document.head.appendChild(c)}
+if(!document.getElementById('knCss')){const c=document.createElement('style');c.id='knCss';c.textContent='@keyframes knBub{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}@keyframes knPut{from{transform:translate(-6px,-10px);opacity:.7}to{transform:none;opacity:1}}.knOn #hud1,.knOn #hud2{display:none!important}@keyframes knIn{from{transform:translateX(-40%);opacity:0}to{transform:none;opacity:1}}';document.head.appendChild(c)}
 function knClose(msg){const d=document.getElementById('kneipe');if(d)d.remove();document.getElementById('app').classList.remove('knOn');try{layout()}catch(e){}KN=null;busyUI=false;advance(2);if(msg)toast(msg,'',4500);setTimeout(()=>{try{promCheck()}catch(e){}},600)}
 function knSay(t,sub){const ui=document.getElementById('knui');if(!ui)return;
  ui.innerHTML=`<div style="line-height:1.35">${esc(t)}</div>${sub?`<div style="margin-top:4px;color:#f2c14e;font-weight:800;font-size:13px">${esc(sub)}</div>`:''}`;ui.style.display=t?'block':'none';ui.scrollTop=0;knBar()}
@@ -3077,7 +3078,7 @@ function knAct(a){const pr=S.prom;let t='',sub='';KN.show=null;KN.mp=0;KN.kr=nul
    erwin:['Erwin flüstert: „Morgen kommt die 7. Ganz sicher. Ich spür das im Knie.“','Erwin: „Ich hab ein System für den Automaten. Hat mich bisher nur 40.000 Euro gekostet.“','Erwin: „Lotto ist Mathematik. Und ich war in Mathe … ach, egal.“','Erwin zieht seine leeren Hosentaschen raus. Eine Motte fliegt weg. „Leihst du mir zwei Euro? Ich spür, dass die 7 kommt.“'],
    ralle:['Ralle: „Was guckst du?“ – Du guckst nicht mehr.','Ralle: „Ich hab mal einen Bullen umgehauen. Also, einen echten. Auf dem Bauernhof.“','Ralle zeigt dir sein neues Tattoo. Es ist ein Totenkopf. Oder ein Kürbis. Er weiß es selbst nicht.'],
    moni:['Moni: „Weißt du, wer früher hier gesessen hat? Dein Vater. Gleicher Hocker, gleicher Blick, gleicher Geruch.“','Moni: „Ich mach den Laden seit 31 Jahren. Wenn ich hier rausgehe, dann im Sarg. Oder mit Klaus. Ist dasselbe.“']}[who];
-  t=pick(L);S.bo=Math.max(0,S.bo-8);if(who==='moni')KN.mp=2;if(who==='klaus')KN.kp=1;if(who==='erwin'){KN.pose.erwin=1;setTimeout(()=>{if(KN){KN.pose.erwin=0;knDraw()}},4000)}}
+  t=pick(L);KN.bub=who;S.bo=Math.max(0,S.bo-8);if(who==='moni')KN.mp=2;if(who==='klaus')KN.kp=1;if(who==='erwin'){KN.pose.erwin=1;setTimeout(()=>{if(KN){KN.pose.erwin=0;knDraw()}},4000)}}
  else if(a==='aw'){return knArm()}
  else if(a==='bm'){S.money-=7;S.prom+=.3;KN.bp=(KN.bp||0)+1;S.bo=Math.max(0,S.bo-20);S.th=Math.max(0,S.th-15);addXP(3);snd('gulp');KN.show='batch';t=KN.bp<3&&Math.random()<.5?'Rüdiger prostet dir zu: „'+pick(RUEDI_FACT)+'“':pick(KN.bp>=3?BATCH_DRUNK:BATCH_DRINK)}
  else if(a==='m'){const w=isW();KN.pose.moni=Math.random()<.3?1:0;if(!KN.pose.moni)KN.mp=4;knDraw();t=KN.pose.moni?pick(['Moni: „Noch ein Spruch und ich zapf dir das nächste Bier direkt in die Hose.“','Moni wirft dir das Spültuch ins Gesicht. Es riecht nach 1994.']):pick(w?['Moni zwinkert: „Schätzchen, wenn dein Kerl dich nicht ranlässt, ich hab hinten noch ’ne Couch. Und keine Scham.“','Moni: „Schätzchen, wir zwei Hübschen gegen den Rest der Kneipe. Prost.“ Sie zwinkert. Mit beiden Augen gleichzeitig.','Moni: „Du hast schöne Augen. Das eine besonders.“']:['Moni leckt sich die Lippen: „Nach Feierabend zeig ich dir den Keller. Da ist es dunkel und keiner hört dich schreien.“','Moni drückt die Brust auf den Tresen: „Na, Großer? Für dich zapf ich heute mit ganz viel Gefühl.“','Moni: „Wenn du so weitermachst, zeig ich dir nach Feierabend den Keller. Da müssen Bierkästen geschleppt werden.“','Moni beugt sich über den Tresen: „Für dich, Schätzchen, gibt’s den Schaum gratis.“ Sie spuckt ins Glas.']);S.bo=Math.max(0,S.bo-10)}
@@ -3263,6 +3264,24 @@ function knFit(){const st=document.getElementById('stage'),w=document.getElement
  const vx1=(sr.right-r.left)/r.width*941;const sh=Math.min(0,vx1-18-KN_BASE.cp[2]);
  KN_CP[0]=KN_BASE.cp[0]+sh;KN_CP[2]=KN_BASE.cp[2]+sh;KN_AS[0]=KN_BASE.as[0]+sh;KN_AS[2]=KN_BASE.as[2]+sh;KN_GL.x=KN_BASE.gx+sh}
 {const _kg9=kneipeGo;kneipeGo=function(){_kg9.apply(this,arguments);try{knFit()}catch(e){}}}
+
+// Sprechblase über der Person beim Quatschen
+const KN_HEAD={moni:[700,'moni'],batch:[430,'batch'],erwin:[230,'erwin'],klaus:[95,'tisch'],ralle:[340,'tisch']};
+function knBubble(who,t){const w=document.getElementById('knw'),st=document.getElementById('stage');if(!w||!st)return;knBubbleOff();
+ const m=t.match(/^[^„:]{0,30}:\s*„([\s\S]*)“\s*$/);const txt=m?m[1]:t;const name=KN_P&&KN_P[who]?KN_P[who].n:'';
+ const im=w.querySelector(`#knp img[data-kp="${KN_HEAD[who][1]}"]`);const wr=w.getBoundingClientRect(),sr=st.getBoundingClientRect();
+ const hx=wr.left+KN_HEAD[who][0]/941*wr.width,hy=im?im.getBoundingClientRect().top+6:wr.top+wr.height*.4;
+ const b=document.createElement('div');b.id='knbub';
+ b.style.cssText='position:absolute;z-index:6;max-width:72%;background:#fffaf0;color:#2a1a0e;border:3px solid #2a1a0e;border-radius:18px;padding:8px 12px;font:600 15px/1.3 Nunito,sans-serif;box-shadow:0 4px 14px #0008;pointer-events:none;animation:knBub .18s ease-out';
+ b.innerHTML=`${name?`<div style="font-weight:900;font-size:12px;color:#a0522d;margin-bottom:2px">${esc(name)}</div>`:''}<div style="${m?'':'font-style:italic'}">${esc(txt)}</div><i style="position:absolute;bottom:-13px;width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:13px solid #2a1a0e"></i><i style="position:absolute;bottom:-8px;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid #fffaf0"></i>`;
+ document.getElementById('kneipe').appendChild(b);const bw=b.offsetWidth,bh=b.offsetHeight;
+ let x=hx-sr.left-bw/2;x=Math.max(8,Math.min(sr.width-bw-8,x));let y=hy-sr.top-bh-16;const minY=70;if(y<minY)y=minY;
+ b.style.left=x+'px';b.style.top=y+'px';const tx=Math.max(18,Math.min(bw-30,hx-sr.left-x-11));b.querySelectorAll('i').forEach((e,i)=>e.style.left=(tx+(i?3:0))+'px');
+ const ui=document.getElementById('knui');if(ui)ui.style.display='none';
+ KN.bubT=setTimeout(knBubbleOff,3200+txt.length*45)}
+function knBubbleOff(){const b=document.getElementById('knbub');if(b)b.remove();if(KN&&KN.bubT){clearTimeout(KN.bubT);KN.bubT=0}}
+{const _ks=knSay;knSay=function(t,sub){if(KN&&KN.bub){const who=KN.bub;KN.bub=null;if(KN_HEAD[who]){setTimeout(()=>knBubble(who,t),30);return}}knBubbleOff();return _ks.apply(this,arguments)}}
+{const _kc=knClose;knClose=function(){knBubbleOff();return _kc.apply(this,arguments)}}
 // ================= Zurück-Knopf immer oben (klebt beim Scrollen fest) =================
 const BACK_TXT=/^(←\s*)?(Zurück|Schließen|Doch nicht|Tür zu)$/;
 function backToTop(){try{if(M.style.display==='none')return;const bs=[...M.querySelectorAll('button')].filter(b=>BACK_TXT.test(b.textContent.trim())&&!b.closest('.backbar'));if(!bs.length)return;
