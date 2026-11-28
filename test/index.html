@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 163</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 164</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=163;
+const APPVER=164;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1152,11 +1152,38 @@ function imgMenu(back){openModal(`<h2>Bilder laden</h2><p>Lade ein fertiges Samm
   bindAll({'[data-x]':back,'[data-clr]':()=>confirmBox('Alle geladenen Bilder entfernen und Platzhalter zeigen?',()=>{for(const k in SP)delete SP[k];dbClear();imgMenu(back)},()=>imgMenu(back))})})}
 // ---------- Admin ----------
 let adminTaps=0,adminT=0;
-function adminMenu(){openModal(`<h2>Admin</h2><div class="list">${[['money','Geld'],['lvl','Level'],['prom','Promille'],['beer','Bier'],['empties','Leergut'],['basket','Korb'],['butts','Kippen im Ascher'],['th','Durst'],['hu','Hunger'],['bo','Langeweile'],['chaos','Chaos'],['hour','Uhrzeit']].map(([k,n])=>`<div class="row"><div class="t"><b>${n}</b></div><input type="number" step="0.1" data-k="${k}" value="${Math.round(S[k]*100)/100}"></div>`).join('')}
- ${['police','neighbor','nice','jc','inkasso','lf','kowNo'].map(k=>`<div class="row"><div class="t"><b>${k}</b></div><input type="number" data-h="${k}" value="${S.h[k]}"></div>`).join('')}
- <button class="btn" data-ev>Ereignis jetzt</button><button class="btn" data-all>Alle Möbel</button></div><button class="btn pri close" data-ok>Übernehmen</button>`,()=>bindAll({
-  '[data-ok]':()=>{M.querySelectorAll('[data-k]').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))S[i.dataset.k]=i.dataset.k==='lvl'?Math.max(1,Math.round(v)):v});M.querySelectorAll('[data-h]').forEach(i=>{const v=parseFloat(i.value);if(!isNaN(v))S.h[i.dataset.h]=v});clampAll();layout();closeModal()},
-  '[data-ev]':()=>{evTimer=0;closeModal()},'[data-all]':()=>{['plant','lamp','neon','fridge','massage','vcr','console','tv43','lava','gold','stash','stereo'].forEach(k=>S.furn[k]=true);layout();toast('Alles da.')}}))}
+let ADM_TAB='werte';
+const ADM={
+ werte:{n:'📊 Werte',f:[['money','Geld €',10],['lvl','Level',1],['xp','XP',10],['prom','Promille ‰',.5],['th','Durst',10],['hu','Hunger',10],['bo','Langeweile',10],['chaos','Chaos',10],['dirt','Dreck',10]],
+  q:[['+100 €',()=>{S.money+=100}],['+1 Level',()=>{S.lvl++;levelUp()}],['Bedürfnisse auf 0',()=>{S.th=S.hu=S.bo=0}],['Nüchtern',()=>{S.prom=0;S.hang=0}],['Sturzbesoffen',()=>{S.prom=3}],['Bude sauber',()=>{S.dirt=0;S.chaos=0;S.puddles=[];S.stains=[];S.splats=[]}]]},
+ vorrat:{n:'🍺 Vorrat',f:[['beer','Bier',6],['bp','BilloPisse',6],['kk','Keilerkotze',6],['gk','Glühkotze',6],['snacks','Snacks',5],['cigs','Kippen',10],['empties','Leergut',5],['basket','Pfandkorb',5],['butts','Kippen im Ascher',5],['petfood','Tierfutter',10]],
+  q:[['Alles voll',()=>{S.beer=24;S.bp=12;S.kk=12;S.gk=12;S.snacks=10;S.cigs=40}],['Kühlschrank voll',()=>{if(typeof FOOD!=='undefined')for(const k in FOOD)foodAdd(k,3)}],['Leergut weg',()=>{S.empties=0;S.basket=0;S.pfandStock=0}],['Ascher leer',()=>{S.butts=0;S.ash=0}]]},
+ zeit:{n:'⏰ Zeit',f:[['hour','Uhrzeit',1],['day','Tag',1]],
+  q:[['Morgens 8 Uhr',()=>{S.hour=8}],['Abends 20 Uhr',()=>{S.hour=20}],['Nachts 23 Uhr',()=>{S.hour=23}],['Nächster Tag',()=>{S.day++;S.hour=8}]],
+  x:()=>`<div class="row"><div class="t"><b>Datum testen</b><span>z. B. 2026-12-24, lädt neu</span></div><input type="date" id="admD" style="width:150px"></div><button class="btn" data-adx="datum">Mit Datum neu laden</button><button class="btn" data-adx="heute">Echtes Datum</button>`},
+ aerger:{n:'🚨 Ärger',h:[['police','Polizei'],['neighbor','Nachbar sauer'],['nice','Nachbar nett'],['jc','Jobcenter'],['inkasso','Inkasso'],['lf','Vermieter'],['kowNo','Kowalski abgewiesen']],
+  q:[['Alles auf 0',()=>{for(const k of['police','neighbor','jc','inkasso','lf','kowNo'])S.h[k]=0}],['Hausverbot Kneipe weg',()=>{if(S.kn){S.kn.ban=-1;S.kn.deckel=0}}]]},
+ frei:{n:'🔓 Freischalten',
+  q:[['Alle Möbel',()=>{['plant','lamp','neon','fridge','massage','vcr','console','tv43','lava','gold','stash','stereo'].forEach(k=>S.furn[k]=true)}],['Alle Tapeten & Poster',()=>{const b=B();b.walls=Object.keys(WALLS).map(Number).filter(Boolean);b.posters=Object.keys(POSTERS).map(Number)}],['Dartscheibe',()=>{const b=B();b.dart=1;b.dartEx=1}],['Shisha',()=>{B().shisha={tab:5,lit:0,down:false}}],['Alle Haustiere',()=>{if(!S.pets)S.pets={};for(const k in PETS)if(!S.pets[k])S.pets[k]={fed:S.day,pose:0,poseT:0};S.petfood=(S.petfood||0)+10}],['Haustiere weg',()=>{S.pets={}}]]},
+ action:{n:'⚡ Auslösen',
+  q:[['Zufallsereignis',()=>{evTimer=0},1],['Kneipe',()=>{kneipeGo()},1],['Rubbellos',()=>{scratchGame()},1],['Lotto-Ziehung jetzt',()=>{if(S.lotto){S.lotto.day=S.day-1;S.hour=20}else toast('Erst Lottoschein kaufen')},1],['Neue Tagesaufgaben',()=>{newQuests()}],['Dart spielen',()=>{dartGame()},1],['Spielstand-Code',()=>{codeMenu(adminMenu)},2]]}};
+function adminMenu(){const T=ADM[ADM_TAB];const v=k=>{const x=S[k]||0;return k==='money'||k==='prom'?Math.round(x*100)/100:k==='hour'?Math.round(x*10)/10:Math.round(x)};
+ const tabs=Object.keys(ADM).map(k=>`<button class="btn${k===ADM_TAB?' pri':''}" data-adt="${k}" style="flex:1 1 30%;min-width:0;padding:8px 4px;font-size:13px">${ADM[k].n}</button>`).join('');
+ const fld=(T.f||[]).map(([k,n,st])=>`<div class="row"><div class="t"><b>${n}</b></div><button class="btn" data-ads="${k}:-${st}" style="width:38px;padding:6px 0">−</button><input type="number" step="any" data-k="${k}" value="${v(k)}" style="width:76px;text-align:center"><button class="btn" data-ads="${k}:${st}" style="width:38px;padding:6px 0">+</button></div>`).join('')
+  +(T.h||[]).map(([k,n])=>`<div class="row"><div class="t"><b>${n}</b></div><button class="btn" data-adh="${k}:-1" style="width:38px;padding:6px 0">−</button><input type="number" data-h="${k}" value="${S.h[k]||0}" style="width:76px;text-align:center"><button class="btn" data-adh="${k}:1" style="width:38px;padding:6px 0">+</button></div>`).join('');
+ const qk=(T.q||[]).map(([n],i)=>`<button class="btn" data-adq="${i}" style="flex:1 1 45%;min-width:0;font-size:13px">${n}</button>`).join('');
+ openModal(`<h2>🛠️ Cheat-Menü</h2><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${tabs}</div>
+ <p style="font-size:12px;color:var(--dim);margin:0 0 6px">Geld ${eur(S.money)} · Level ${S.lvl} · ${S.prom.toFixed(2)} ‰ · Tag ${S.day}, ${Math.floor(S.hour)} Uhr</p>
+ ${qk?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">${qk}</div>`:''}<div class="list">${fld}${T.x?T.x():''}</div><button class="btn pri close" data-adok>Fertig</button>`,()=>{
+  const upd=()=>{clampAll();if(S.lvl<1)S.lvl=1;S.lvl=Math.round(S.lvl);S.hour=((S.hour%24)+24)%24;S.day=Math.max(1,Math.round(S.day));layout()};
+  M.querySelectorAll('[data-k]').forEach(i=>i.onchange=()=>{const x=parseFloat(i.value);if(!isNaN(x))S[i.dataset.k]=x;upd();adminMenu()});
+  M.querySelectorAll('[data-h]').forEach(i=>i.onchange=()=>{const x=parseFloat(i.value);if(!isNaN(x))S.h[i.dataset.h]=x;adminMenu()});
+  bindAll({'[data-adt]':el=>{ADM_TAB=el.dataset.adt;adminMenu()},
+  '[data-ads]':el=>{const[k,d]=el.dataset.ads.split(':');S[k]=Math.round(((S[k]||0)+parseFloat(d))*100)/100;if(S[k]<0&&k!=='money')S[k]=0;upd();adminMenu()},
+  '[data-adh]':el=>{const[k,d]=el.dataset.adh.split(':');S.h[k]=Math.max(0,(S.h[k]||0)+parseFloat(d));adminMenu()},
+  '[data-adq]':el=>{const q=T.q[+el.dataset.adq];if(q[2])closeModal();try{q[1]()}catch(e){toast('Geht gerade nicht',String(e.message||e))}upd();if(q[2]===1)return;if(q[2]!==2){toast('Erledigt: '+q[0]);adminMenu()}},
+  '[data-adx]':el=>{const u=new URL(location.href);if(el.dataset.adx==='datum'){const d=document.getElementById('admD').value;if(!d)return toast('Erst Datum wählen');u.searchParams.set('datum',d)}else u.searchParams.delete('datum');save();location.replace(u.toString())},
+  '[data-adok]':()=>{upd();save();closeModal()}})})}
 // ---------- Video ----------
 function stopFilm(silent){if(tvState.film===null)return;tvState.film=null;if(!silent)toast('Film gestoppt.')}
 function openVideo(){if(S.lvl<8){toast('Videothek erst ab Level 8. Streng dich an. Also nicht.');return}
@@ -2486,6 +2513,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:164,t:['🛠️ Cheat-Menü aufgeräumt: Reiter, Plus/Minus-Knöpfe und Schnellaktionen']},
  {v:163,t:['🍺 Kneipe komplett neu gezeichnet: Moni, Rüdiger, Erwin, Klaus und Ralle im Wohnungs-Look mit neuen Posen']},
  {v:162,t:['🎲 Trinkspiele mit Gästen: „Ich hab noch nie …“ und Flaschendrehen','🍄 Rubbellos mit Gutscheinen und Lotto 6 aus 49 im Shop','🎯 Neue Tagesaufgaben und eine Wochen-Challenge mit Pokal fürs Regal','🏠 Bude einrichten: Tapeten, Poster, Dartscheibe mit Ex-Foto, Wasserpfeife','🐾 Haustiere: Katze Fettsack, Hamster Rambo, Wellensittich Hansi','🍺 Ab in die Kneipe „Zum feuchten Furz“: Saufen, Zocken, Dart und Prügeln. Stammgast Rüdiger ist immer da']},
  {v:154,t:['🍕 Essen im Vorratspack: Pizza, Fleischwurst und Mett für den Kühlschrank, Ravioli für den Schrank','🧊 Kühlschrank-Menü: kaltes Bier oder was zu fressen','🛒 Späti-Shop nach Saufen, Fressen, Kippen und Zocken sortiert']},
