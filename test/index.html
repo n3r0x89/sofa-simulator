@@ -110,7 +110,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 175</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 176</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -147,7 +147,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=175;
+const APPVER=176;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -1617,7 +1617,7 @@ function callContact(c){if(!S.callCd)S.callCd={};S.callCd[c.k]=S.tot+30;
 const RANK_TOPIC='assisim-rangliste-n3r0x89-test',RANK_URL='https://ntfy.sh/'+RANK_TOPIC;
 function playerId(){let id='';try{id=localStorage.getItem('sofatest_pid')||''}catch(e){}if(!id){id=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);try{localStorage.setItem('sofatest_pid',id)}catch(e){}}return id}
 let rankLastSend=0;
-async function rankSend(force){try{if(!S.started||!assiName())return;const now=Date.now();if(!force&&now-rankLastSend<180000)return;rankLastSend=now;
+async function rankSendNtfy(force){try{if(!S.started||!assiName())return;const now=Date.now();if(!force&&now-rankLastSend<180000)return;rankLastSend=now;
   const body=JSON.stringify({v:1,id:playerId(),n:assiName().slice(0,20),l:S.lvl,x:Math.floor(S.xp),d:S.day,t:now});await fetch(RANK_URL,{method:'POST',body})}catch(e){}}
 // ntfy.sh hebt Nachrichten nur 12 Stunden auf. Damit die Rangliste trotzdem alle Assis zeigt:
 // 1) jedes Handy merkt sich jeden Spieler, den es einmal gesehen hat (Archiv im Speicher)
@@ -1628,13 +1628,25 @@ function rankArch(){try{return JSON.parse(localStorage.getItem(RANK_ARCH)||'{}')
 function rankArchSave(A){const v=Object.values(A).sort((a,b)=>b.seen-a.seen).slice(0,300);const o={};for(const p of v)o[p.id]=p;try{localStorage.setItem(RANK_ARCH,JSON.stringify(o))}catch(e){}return o}
 function rankClean(p){if(!p||typeof p.id!=='string'||typeof p.n!=='string'||p.id.length>24)return null;return{id:p.id,n:p.n.slice(0,20),l:Math.max(1,Math.min(999,+p.l||1)),x:Math.max(0,+p.x||0),d:Math.max(1,+p.d||1),seen:+p.seen||0,ord:+p.ord||0}}
 function rankPut(P,p){if(!p)return;const o=P[p.id];if(!o||o.seen<p.seen||(o.seen===p.seen&&(o.ord||0)<=(p.ord||0)))P[p.id]=p}
-async function rankLoad(){const r=await fetch(RANK_URL+'/json?poll=1&since=12h',{cache:'no-store'});if(!r.ok)throw new Error('http '+r.status);const tx=await r.text();const P=rankArch();
+async function rankLoadNtfy(){const r=await fetch(RANK_URL+'/json?poll=1&since=12h',{cache:'no-store'});if(!r.ok)throw new Error('http '+r.status);const tx=await r.text();const P=rankArch();
   for(const line of tx.split('\n')){if(!line.trim())continue;let m;try{m=JSON.parse(line)}catch(e){continue}if(m.event!=='message')continue;let p;try{p=JSON.parse(m.message)}catch(e){continue}
     const mt=(m.time||0)*1000;
     if(p&&p.type==='board'&&Array.isArray(p.b)){lastBoardSeen=Math.max(lastBoardSeen,mt);for(const e of p.b.slice(0,60))if(Array.isArray(e))rankPut(P,rankClean({id:e[0],n:e[1],l:e[2],x:e[3],d:e[4],seen:Math.min(+e[5]||0,mt)}));continue}
     if(!p||p.type)continue;p.seen=mt;p.ord=(+p.t||0);rankPut(P,rankClean(p))}
   const A=rankArchSave(P);return Object.values(A).sort((a,b)=>b.l-a.l||b.x-a.x||b.d-a.d)}
-async function rankBoardSend(list){try{const now=Date.now();let mine=0;try{mine=+localStorage.getItem('sofatest_boardsent')||0}catch(e){}
+
+// ---- Eigene Rangliste (Cloudflare Worker). Leer = alte ntfy-Rangliste ----
+const RANK_API='';
+function playerKey(){let k='';try{k=localStorage.getItem('sofatest_pkey')||''}catch(e){}if(k.length<16){k='';const a=new Uint8Array(18);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<18;i++)a[i]=Math.random()*256}for(const b of a)k+=b.toString(36);k=k.slice(0,32);try{localStorage.setItem('sofatest_pkey',k)}catch(e){}}return k}
+async function rankSend(force){if(!RANK_API)return rankSendNtfy(force);try{if(!S.started||!assiName())return;const now=Date.now();if(!force&&now-rankLastSend<180000)return;rankLastSend=now;
+  await fetch(RANK_API+'/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:playerId(),k:playerKey(),n:assiName().slice(0,20),l:S.lvl,x:Math.floor(S.xp),d:S.day})})}catch(e){}}
+async function rankImportOld(){try{if(localStorage.getItem('sofatest_rankimp'))return;try{await rankLoadNtfy()}catch(e){}const b=Object.values(rankArch()).sort((a,b)=>b.seen-a.seen).slice(0,80).map(p=>[p.id,p.n,p.l,p.x,p.d,p.seen]);
+  if(b.length){const r=await fetch(RANK_API+'/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({b})});if(!r.ok)return}localStorage.setItem('sofatest_rankimp','1')}catch(e){}}
+async function rankLoad(){if(!RANK_API)return rankLoadNtfy();await rankImportOld();const r=await fetch(RANK_API+'/top',{cache:'no-store'});if(!r.ok)throw new Error('http '+r.status);const j=await r.json();
+  const P=rankArch();const list=[];for(const q of (j.players||[])){const p=rankClean(q);if(p){list.push(p);rankPut(P,p)}}rankArchSave(P);RANK_TOTAL=+j.total||list.length;
+  return list.sort((a,b)=>b.l-a.l||b.x-a.x||b.d-a.d)}
+let RANK_TOTAL=0;
+async function rankBoardSend(list){try{if(RANK_API)return;const now=Date.now();let mine=0;try{mine=+localStorage.getItem('sofatest_boardsent')||0}catch(e){}
   if(now-lastBoardSeen<BOARD_EVERY||now-mine<BOARD_EVERY||list.length<2)return;
   let b=list.slice(0,50).map(p=>[p.id,p.n,p.l,p.x,p.d,p.seen]);let body=JSON.stringify({type:'board',v:1,b});while(body.length>3800&&b.length>5){b=b.slice(0,b.length-5);body=JSON.stringify({type:'board',v:1,b})}
   await fetch(RANK_URL,{method:'POST',body});try{localStorage.setItem('sofatest_boardsent',String(now))}catch(e){}lastBoardSeen=now}catch(e){}}
@@ -1646,7 +1658,7 @@ async function rankMenu(back){openModal(`<h2>Rangliste & Streiche</h2><p>Alle As
   const me=playerId();if(!list.some(p=>p.id===me)&&assiName())list.push({id:me,n:assiName(),l:S.lvl,x:Math.floor(S.xp),d:S.day,seen:Date.now()});list.sort((a,b)=>b.l-a.l||b.x-a.x||b.d-a.d);
   const box=document.getElementById('rankBox');if(!box)return;const now=Date.now();
   const canPrank=list.length>2&&!err;RANK_LIST=list;
-  box.innerHTML=(err?'<p style="color:#e88">Rangliste gerade nicht erreichbar. Du siehst nur dich selbst.</p>':'')+(list.length<=2?'<p style="font-size:13px;color:var(--dim)">Streiche gehen erst, wenn mehr als 2 Assis in der Liste stehen.</p>':'')+list.slice(0,50).map((p,i)=>{const cd=prankCdLeft(p.id),off=now-p.seen>11*3600000;return`<div class="row"${p.id===me?' style="outline:2px solid #f2c14e"':''}><div class="t"><b>${i+1}. ${now-p.seen<10*60000?'🟢 ':''}${esc(p.n)}${p.id===me?' (du)':''}</b><span>Level ${p.l} · ${p.x} XP · Tag ${p.d}${p.id!==me&&off?' · '+rankAgo(now-p.seen):''}${p.id!==me&&canPrank&&!off&&cd?' · Streich wieder in '+cd:''}</span></div>${p.id!==me&&canPrank&&!off?`<button class="btn pri" data-pr="${i}" ${cd?'disabled':''}>😈</button>`:''}</div>`}).join('');
+  box.innerHTML=(RANK_API&&!err&&RANK_TOTAL?`<p style="font-size:13px;color:var(--dim);margin:0 0 6px">${RANK_TOTAL} Assis in der Rangliste</p>`:'')+(err?'<p style="color:#e88">Rangliste gerade nicht erreichbar. Du siehst nur dich selbst.</p>':'')+(list.length<=2?'<p style="font-size:13px;color:var(--dim)">Streiche gehen erst, wenn mehr als 2 Assis in der Liste stehen.</p>':'')+list.slice(0,100).map((p,i)=>{const cd=prankCdLeft(p.id),off=now-p.seen>11*3600000;return`<div class="row"${p.id===me?' style="outline:2px solid #f2c14e"':''}><div class="t"><b>${i+1}. ${now-p.seen<10*60000?'🟢 ':''}${esc(p.n)}${p.id===me?' (du)':''}</b><span>Level ${p.l} · ${p.x} XP · Tag ${p.d}${p.id!==me&&off?' · '+rankAgo(now-p.seen):''}${p.id!==me&&canPrank&&!off&&cd?' · Streich wieder in '+cd:''}</span></div>${p.id!==me&&canPrank&&!off?`<button class="btn pri" data-pr="${i}" ${cd?'disabled':''}>😈</button>`:''}</div>`}).join('');
   bindAll({'[data-pr]':el=>prankMenu(RANK_LIST[+el.dataset.pr],back),'[data-r]':()=>back?back():closeModal()})}
 // ================= STREICHE gegen andere Assis =================
 let RANK_LIST=[];const PRANK_CD=48*3600*1000;
