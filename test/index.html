@@ -409,7 +409,7 @@ function tvFromSprite(){const k=tvKey(),i=SP[k];if(!(i&&i.complete&&i.naturalWid
 function roomLayout(){const i=SP.room,iw=i.naturalWidth,k=iw/941,ih=1385*k,s=Math.max(W/iw,H/(ih+170*k)),ox=(W-iw*s)/2,oy=H-ih*s;L0={iw,ih,s,ox,oy};const m=(x0,y0,x1,y1)=>({x:ox+x0*k*s,y:oy+y0*k*s,w:(x1-x0)*k*s,h:(y1-y0)*k*s});
   L={roomMode:true,wall:oy+900*k*s,
    shelf:m(0,120,270,930),win:m(765,150,941,585),cab:m(278,660,748,895),
-   neon:m(425,172,605,340),plant:m(790,430,905,597),lamp:m(708,345,965,905),fridge:m(196,778,344,962),massage:m(760,700,1040,1000),gold:m(760,720,1040,1000),stash:m(104,200,128,300),
+   neon:m(425,172,605,340),plant:m(790,430,905,597),lamp:m(708,345,965,905),fridge:m(196,778,344,962),massage:m(720,585,1160,1005),gold:m(720,600,1160,1005),stash:m(104,200,128,300),
    table:{y0:oy+1000*k*s,y1:oy+1215*k*s},tableHit:m(0,995,941,1222),
    crate:m(95,905,300,1085),cigpack:m(318,995,385,1095),lighter:m(386,1003,412,1060),ash:m(395,1035,525,1112),remote:m(525,1045,670,1130),phone:m(396,1118,471,1231),catalog:m(625,962,759,1087),
    ctrl:m(330,1110,450,1185),empties:m(600,1100,760,1205),
