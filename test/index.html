@@ -109,7 +109,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 @media (prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
-<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 171</div>
+<body><div style="position:fixed;left:50%;top:0;transform:translateX(-50%);z-index:99999;background:#d33;color:#fff;font:900 11px Nunito,sans-serif;padding:2px 10px;border-radius:0 0 8px 8px;pointer-events:none;letter-spacing:1px">TESTVERSION 172</div>
 <div id="app">
   <div class="hud" id="hud1">
     <div class="lvl" id="lvl">Lv 1</div>
@@ -146,7 +146,7 @@ input[type=number]{font:16px Nunito;width:90px;border-radius:8px;border:0;paddin
 </div>
 <script>
 {
-const APPVER=171;
+const APPVER=172;
 const IDEA_MAIL='wtgames89@outlook.de';
 const PAYPAL='https://www.paypal.me/wtgames89';
 const TIME_SCALE=.75; // 1 Spielstunde = gut 13 Sekunden
@@ -2513,6 +2513,7 @@ fPhoto=function(p,lines){const g=isW()?'w':'m';const me=lines[lines.length-1];if
  tChat(p,L2,[{t:'😍 Geil',f:()=>fFinal(p,L2.concat([['me','Geil. Komm vorbei.']]),.75)},{t:'🍆 Versaut antworten',f:()=>fIsHot(p)?fSext(p,L2):fFinal(p,L2.concat([['me','Davon will ich mehr sehen. In echt.']]),.6)},{t:'🤮 Igitt',f:()=>fFight(p,L2.concat([['me','Igitt. Das hab ich jetzt für immer im Kopf.'],['you',pick(isW()?F_INS_HER:F_INS_HIM)]]),false)}])};
 // ================= „Was ist neu?“ nach einem Update (kurz) =================
 const NEWS=[
+ {v:172,t:['🐱 Nach Weihnachten zieht Fettsack vorne an den Tisch – Pfützen und Kotze landen nicht mehr bei ihm']},
  {v:171,t:['💬 Kneipe: Beim Quatschen reden die Leute jetzt in Sprechblasen über ihrem Kopf']},
  {v:170,t:['🍺 Monis Arm beim Bierhinstellen geht jetzt sauber über die Theke']},
  {v:169,t:['🍺 Moni stellt dir das Bier kurz hin und macht dann weiter mit Gläserpolieren']},
@@ -2998,6 +2999,14 @@ function drawExPhoto(c,mx,my,w){const k=sprKey('jessica_0'),f=SP[k],cr=EXHEAD[k]
  c.fillStyle='#111';c.font='900 '+Math.round(w*.2)+'px Nunito,sans-serif';c.textAlign='center';c.fillText('EX',0,h/2-w*.06);c.strokeStyle='#111';c.lineWidth=Math.max(1,w*.025);c.beginPath();c.moveTo(-w*.22,h/2-w*.04);c.lineTo(w*.22,h/2-w*.02);c.stroke();
  c.strokeStyle='#c11';c.lineWidth=Math.max(1,w*.03);c.beginPath();c.moveTo(ix+iw*.15,iy+ih*.15);c.lineTo(ix+iw*.85,iy+ih*.85);c.moveTo(ix+iw*.85,iy+ih*.15);c.lineTo(ix+iw*.15,iy+ih*.85);c.globalAlpha=.55;c.stroke();c.globalAlpha=1;
  c.fillStyle='#d22';c.beginPath();c.arc(0,-h/2+w*.04,w*.055,0,7);c.fill();c.fillStyle='#fff8';c.beginPath();c.arc(-w*.015,-h/2+w*.025,w*.018,0,7);c.fill();c.restore()}
+
+// Katze: an Weihnachten neben dem Kasten, sonst vorne links am Tisch. Pfützen/Kotze nie unter oder über ihr.
+Object.defineProperty(PETS.cat,'box',{get:()=>(typeof xTreeUp==='function'&&xTreeUp())?[760,870,925,995]:[278,860,443,985]});
+function petClear(){if(!S.pets||!S.pets.cat||!L.roomMode)return;const b=PETS.cat.box,pad=35;
+ const out=(x,lo,hi,mn,mx)=>{const r=hi+pad+Math.random()*60;return r<=mx?r:Math.max(mn,lo-pad-Math.random()*60)};
+ if(Array.isArray(S.wet))for(const p of S.wet){if(p.z==='f'&&p.x>b[0]-pad&&p.x<b[2]+pad&&p.y>b[1]&&p.y<b[3]+pad)p.x=out(p.x,b[0],b[2],60,880)}
+ const r=mmR(b);for(const p of S.puddles||[]){if(p.x>r.x-30&&p.x<r.x+r.w+30&&p.y>r.y&&p.y<r.y+r.h+20){const z=L.puddleZone;p.x=out(p.x,r.x,r.x+r.w,z?z.x:20,z?z.x+z.w:W-20)}}}
+{const _dp=drawPets;drawPets=function(){try{petClear()}catch(e){}return _dp.apply(this,arguments)}}
 // ================= KNEIPE „ZUM FEUCHTEN FURZ“ =================
 const KN_P={batch:{n:'Rüdiger',x:0,h:40},moni:{n:'Wirtin Moni',x:68,h:40},klaus:{n:'Klaus',x:22,h:38},ralle:{n:'Schläger-Ralle',x:44,h:41},erwin:{n:'Zocker-Erwin',x:0,h:37}};
 let KN=null;
